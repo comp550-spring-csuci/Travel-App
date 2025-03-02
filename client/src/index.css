@@ -18,3 +18,20 @@ code {
   background-position: center -70px;
   background-repeat: no-repeat;
 }
+
+.full-screen {
+  width: 100vw;
+  height: 100vh;
+}
+
+.form-style {
+  background-color: white;
+  border: 1.5px solid #f2cc31;
+  border-radius: 1rem;
+}
+
+.btn-custom {
+  background-color: #f2cc31;
+  border-color: #f2cc31;
+  color: white;
+}

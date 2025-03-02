@@ -32,6 +32,9 @@ code {
 
 .btn-custom {
   background-color: #f2cc31;
-  border-color: #f2cc31;
   color: white;
+}
+
+.btn-custom:hover {
+  background-color: gray;
 }

@@ -3,7 +3,7 @@ import AuthForm from '../components/auth-form';
 import Navbar from '../components/navbar';
 import { AppContext } from '../lib';
 
-export default class Authpage extends React.Component {
+export default class AuthPage extends React.Component {
     render() {
         const { user, route, handleSignIn } = this.context;
 

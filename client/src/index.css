@@ -38,3 +38,12 @@ code {
 .btn-custom:hover {
   background-color: gray;
 }
+
+.croissant {
+  font-family: 'Croissant One';
+}
+
+.form-font {
+  color: #f2cc31;
+  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif 
+}

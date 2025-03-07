@@ -9,11 +9,11 @@ export default class AuthPage extends React.Component {
         const { user, route, handleSignIn } = this.context;
 
         //redirect to home page if authenticated
-        if (user) return <Redirect to=" " />;
+        //if (user) return <Redirect to="" />;
 
         return (
             <div>
-                <Navbar />
+                <Navbar action={route.path}/>
                 <AuthForm
                 key={route.path}
                 action={route.path}

@@ -1,10 +1,7 @@
-//import logo from './logo.svg';
 import React from 'react';
 import { jwtDecode } from 'jwt-decode';
 import './App.css';
-import AuthForm from './components/auth-form';
 import AuthPage from './pages/auth';
-import Navbar from './components/navbar';
 import NotFound from './components/not-found';
 import { parseRoute, AppContext } from './lib';
 
@@ -42,9 +39,9 @@ export default class App extends React.Component {
 
   renderPage() {
     const { path } = this.state.route;
-    if (path === '%20') {
+    if (path === '') {
       //return <Home />;
-      return <AuthForm />;
+      return <AuthPage />;
     }
     if (path === 'sign-in' || path === 'sign-up') {
       return <AuthPage />;
@@ -61,32 +58,8 @@ export default class App extends React.Component {
       <AppContext.Provider value={contextValue}>
         {this.renderPage()}
       </AppContext.Provider>
-      // <div>
-      //   <Navbar />
-      //   <AuthForm />
-      // </div>
     )
   }
 }
-
-// function App() {
-//   // return (
-//   //   <div className="App">
-//   //     <header className="App-header auth-background">
-//   //       <img src={logo} className="App-logo" alt="logo" />
-//   //       <p>
-//   //         Edit <code>src/App.js</code> and save to reload.
-//   //       </p>
-//   //       <a
-//   //         className="App-link"
-//   //         href="https://reactjs.org"
-//   //         target="_blank"
-//   //         rel="noopener noreferrer"
-//   //       >
-//   //         Learn React
-//   //       </a>
-//   //     </header>
-//   //   </div>
-//   // );
   
 App.contextType = AppContext;

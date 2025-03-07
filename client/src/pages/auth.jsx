@@ -1,4 +1,5 @@
 import React from 'react';
+import Redirect from '../components/redirect';
 import AuthForm from '../components/auth-form';
 import Navbar from '../components/navbar';
 import { AppContext } from '../lib';
@@ -8,7 +9,7 @@ export default class AuthPage extends React.Component {
         const { user, route, handleSignIn } = this.context;
 
         //redirect to home page if authenticated
-        //if (user) return <Redirect to=" " />;
+        if (user) return <Redirect to=" " />;
 
         return (
             <div>

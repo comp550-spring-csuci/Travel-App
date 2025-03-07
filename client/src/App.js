@@ -5,6 +5,7 @@ import './App.css';
 import AuthForm from './components/auth-form';
 import AuthPage from './pages/auth';
 import Navbar from './components/navbar';
+import NotFound from './components/not-found';
 import { parseRoute, AppContext } from './lib';
 
 export default class App extends React.Component {
@@ -15,8 +16,8 @@ export default class App extends React.Component {
       isAuthorizing: true,
       route: parseRoute(window.location.hash)
     };
-    //this.handleSignIn = this.handleSignIn.bind(this);
-    //this.handleSignOut = this.handleSignOut.bind(this);
+    this.handleSignIn = this.handleSignIn.bind(this);
+    this.handleSignOut = this.handleSignOut.bind(this);
   }
 
   componentDidMount() {
@@ -41,20 +42,29 @@ export default class App extends React.Component {
 
   renderPage() {
     const { path } = this.state.route;
-    // if (path === '') {
-    //   return <Home />;
-    // }
+    if (path === '%20') {
+      //return <Home />;
+      return <AuthForm />;
+    }
     if (path === 'sign-in' || path === 'sign-up') {
       return <AuthPage />;
     }
+    return <NotFound />
   }
 
   render() {
+    if (this.state.isAuthorizing) return null;
+    const { user, route } = this.state;
+    const { handleSignIn, handleSignOut } = this;
+    const contextValue = { user, route, handleSignIn, handleSignOut };  
     return (
-      <div>
-        <Navbar />
-        <AuthForm />
-      </div>
+      <AppContext.Provider value={contextValue}>
+        {this.renderPage()}
+      </AppContext.Provider>
+      // <div>
+      //   <Navbar />
+      //   <AuthForm />
+      // </div>
     )
   }
 }
@@ -79,14 +89,4 @@ export default class App extends React.Component {
 //   //   </div>
 //   // );
   
-
-//   return (
-//     <div>
-//       <Navbar/>
-//       <AuthForm/>
-//     </div>
-//   )
-// }
-
-// export default App;
 App.contextType = AppContext;

@@ -1,4 +1,5 @@
 //import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 import AuthForm from './components/auth-form';
 import AuthPage from './pages/auth';

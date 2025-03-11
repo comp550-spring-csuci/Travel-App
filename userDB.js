@@ -29,71 +29,71 @@ class userDB {
         }
     }
 
-    async signUpUser(i_username, i_password) { 
+    async signUpUser(userInfo) { 
         await this.connectToDB();
-        //Check if a username of the same value exist, and if so return an error.
-        let userToInsert = {username: i_username};
-        const user_exist = await this.#_users.findOne(userToInsert);
+        //Check if a username of the same value exist, and if so return an failed attempt.
+        const user_exist = await this.#_users.find(userInfo.username);
         if (user_exist != null) {
             console.log("Username already exist, please choose another username.");
+            return false;
         } else {
-            userToInsert = {
-                username: i_username,
-                password: i_password
-            }
-            await this.#_users.insertOne(userToInsert);
-            console.log('A document has been inserted with id: ${i_username}');
+            await this.#_users.insertOne(userInfo);
+            console.log('A document has been inserted with id: ${userInfo.username}');
+            return true;
         }
-        
     }
 
-    async findExistingUser(i_username, i_password) {
-        const userToCheck = {
-            username: i_username,
-            password: i_password
-        };
-        const user_check = await this.#_users.findOne(userToCheck);
-        return user_check;
-    }
-
-    async checkValidUser(i_username, i_password) {
-        console.log("Opening connection...");
+    async checkValidUser(userInfo) {
         await this.connectToDB();
-        const user_check = this.findExistingUser(i_username, i_password);
+        //Find if user exist or not
+        const user_check = await this.#_users.find(userInfo.username);
         if (user_check != null) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
-    async removeUser(i_username, i_password) {
+    async updateUsername(userInfo, updateUserInfo) {
         await this.connectToDB();
-        const user_check = this.findExistingUser(i_username, i_password);
-        if (user_check != null) {
-            const userToCheck = {
-                username: i_username,
-                password: i_password
-            }
-            await this.#_users.deleteOne(userToCheck);
-            console.log("Successfully Removed User.")
+        const validUser = await this.checkValidUser(userInfo);
+        if (validUser) {
+            //If 
+            this.#_users.updateOne(userInfo, updateUserInfo);
+            return true;
         } else {
+            console.log("Update failed, no valid user detected");
+        }
+        return false;
+    }
+
+    async removeUser(userInfo) {
+        await this.connectToDB();
+        const user_check = await this.checkValidUser(userInfo);
+        if (user_check) {
+            await this.#_users.deleteOne(userInfo);
+            console.log("Successfully removed user.")
+            return true;
+        } else {
+            console.log("User does not exist,");
             return false;
         }
     }
     
     async closeConnection() {
         await this.#_travelapp.closeConnection(this.#_connection);
+        return true;
     }
 }
 
 async function main() {
     testUser = new userDB;
-    const adduser = await testUser.signUpUser("tetsutok", "lostaaa");
-    const result = await testUser.checkValidUser("tetsutok", "lostaaa");
+    const adduser = await testUser.signUpUser({username: "tetsutok", password: "lostaaa"});
+    const result = await testUser.checkValidUser({username: "tetsutok", password: "lostaaa"});
     console.log(result);
-    await testUser.removeUser("tetsutok", "lostaaa");
+    const removed = await testUser.removeUser({username: "tetsutok", password: "lostaaa"});
+    console.log(removed);
     testUser.closeConnection();
+    
 }
 
 main();

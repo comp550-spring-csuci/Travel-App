@@ -1,51 +1,47 @@
-const {MongoClient} = require('mongodb');
+//const {MongoClient} = require('mongodb');
+const mongoose = require("mongoose");
 
 class DBconnection { //Singleton class
     #_uri;
-    #_connection;
+    //#_connection;
+    static #instance;
 
     constructor() {
-        if (!DBconnection.instance) {
-            DBconnection.instance = this;
+        if (DBconnection.#instance) {
+            throw new error("Use DBconnection.getInstance() to get an instance.")
         }
-        return DBconnection.instance;
+        return DBconnection.#instance;
     }
 
-    #grabusername() {
-        return "adminuser_610";
+    static getInstance() {
+        if (!DBconnection.#instance) {
+            DBconnection.#instance = new DBconnection();
+        }
+        return DBconnection.#instance;
     }
 
-    #grabpassword() {
-        return "XS0wdkuPjUaeaG7H";
-    }
-
-    setupDB() {
-        if (!this.#_connection) {
+    static async setupDB() {
+        if (!mongoose.connection.readyState) {
             try {
-                //Attempt to connect to mongoDB
-                const username = this.#grabusername();
-                const password = this.#grabpassword();
-                this.#_uri = "mongodb+srv://".concat(username, ":", password, "@travelapp-db.kr1x6.mongodb.net/?retryWrites=true&w=majority&appName=travelapp-db");
-                this.#_connection = new MongoClient(this.#_uri);
-                console.log("MongoDB successfully made.")
-            } catch(error) {
-                console.log("Connection failed.")
+                // Attempt to connect to MongoDB using Mongoose
+                const username = 'adminuser_610';
+                const password = 'XS0wdkuPjUaeaG7H';
+                const uri = `mongodb+srv://${username}:${password}@travelapp-db.kr1x6.mongodb.net/?retryWrites=true&w=majority&appName=travelapp-db`;
+
+                await mongoose.connect(uri);
+                //const db = mongoose.connection;
+                /*
+                db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+                db.once('open', function() {
+                    console.log('MongoDB successfully connected with Mongoose.')
+                })*/
+                console.log("Connection succesfully made.")
+            } catch (error) {
+                console.error("Connection failed:", error)
             }
+            
         }
-        return this.#_connection;
-    }
-
-    async openConnection(setupConnection) {
-        return await setupConnection.connect();
-    }
-
-    async closeConnection(openConnection) {
-        return await openConnection.close();
-    }
-
-    async checkConnection(connectionCheck) {
-        const db = connectionCheck.db("travelapp");
-        return await db.command({ping: 1});
+        return mongoose.connection;
     }
 }
 
@@ -54,6 +50,12 @@ class DBconnection { //Singleton class
 async insertBlog(i_username, i_blogcontent, i_country, i_latitude, i_longitude) {
 blog = this.createDataBase.collection("blog");
 }
+
+async function main() {
+    testConn = await DBconnection.setupDB();
+    await mongoose.disconnect();
+}
+main();
 */
 
 module.exports = {DBconnection};

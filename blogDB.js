@@ -1,70 +1,73 @@
-
-const {DBconnection} = require("./connectDB.js")
+const {DBconnection} = require("./connectDB.js");
+const {User, Blog} = require("./model.js"); 
 
 class blogDB {
-    #_blogs;
-    #_travelapp;
-    #_connection;
+    static #instance;
 
     constructor() {
-        if (!blogDB.instance) {
-            blogDB.instance = this;
-            this.#_travelapp = new DBconnection;
-            this.#_connection = this.#_travelapp.setupDB();
+        if (!blogDB.#instance) {
+            blogDB.#instance = this;
+            DBconnection.setupDB();
         }
-        return blogDB.instance;
-    }
-
-    async connectToDB() {
-        const conn = await this.#_travelapp.checkConnection(this.#_connection);
-        if (conn.ok != 1) {
-            console.log("Attempting to connect to server...");
-            await this.#_travelapp.openConnection(this.#_connection);
-            const createDataBase = this.#_connection.db("travelapp");
-            this.#_blogs = createDataBase.collection("blog");
-        }
-        if (!this.#_blogs) {
-            const createDataBase = this.#_connection.db("travelapp");
-            this.#_blogs = createDataBase.collection("blog");
-        }
+        return blogDB.#instance;
     }
 
     async addBlog(blogContent) { 
-        await this.connectToDB();
-        await this.#_blogs.insertOne(blogContent);
-        console.log('A document has been inserted in blogs with title: #{blogContent.title}');
-        
+        try {
+            const blog = new Blog(blogContent);
+            await blog.save();
+            console.log(`A document has been inserted in blogs with title: ${blogContent.title}`);
+        } catch (error) {
+            console.error("Error inserting blog:", error);
+        }
     }
 
     async findBlog(condition) {
-        const blog = await this.#_blogs.find({$contains:condition});
-        return blog;
+        return await Blog.find(condition).exec();
     }
 
-    async updateBlog(updatedBlogContent) {
-        await this.connectToDB();
-        await this.#_blogs.update({"_id":updatedBlogContent._id}, updatedBlogContent);
-        console.log('A document has been inserted in blogs with title: #{blogContent.title}');
-    }
-
-    async removeBlog(blogID, author) {
-        await this.connectToDB();
-        const blog = this.findBlog({"_id":blogID});
-        if (blog != null) {
-            if (blog.author == author | author == "admin") {
-                await this.#_blogs.deleteOne(userToCheck);
-                console.log("Successfully Removed Blog.")
+    async updateBlog(oldBlogCondition, updatedBlogContent) {
+        try {
+            const result = await Blog.findOneAndUpdate(oldBlogCondition, updatedBlogContent, {new: true}).exec();
+            if (result) {
+                console.log(`Blog updated successfully: ${result.title}`);
             } else {
-                console.log("You do not have permission to delete the blog.")
+                console.log("No matching blog found.");
             }
-        } else {
-            return false;
+        } catch (error) {
+            console.error("Error updating blog:", error);
         }
     }
-    
-    async closeConnection() {
-        await this.#_travelapp.closeConnection(this.#_connection);
+
+    async removeBlog(blogRemoveCondition, author) {
+        try {
+            const blog = await Blog.findOne(blogRemoveCondition).exec();
+            if (!blog) {
+                console.log("Blog not found.");
+                return false;
+            }
+            if (blog.author === author || author === "admin") {
+                await Blog.deleteOne(blogRemoveCondition);
+                console.log("Successfully removed blog.");
+            } else {
+                console.log("You do not have permission to delete the blog.");
+            }
+        } catch (error) {
+            console.error("Error removing blog:", error);
+        }
     }
 }
 
-module.exports = {blogDB};
+/*
+async function main() {
+    testBlog = new blogDB;
+    testBlog.addBlog({
+        title: 'Testing Blog title',
+        content: "Here's the new content stuff",
+        author: 'tetsutok'
+    });
+}
+
+main();
+*/
+export default BlogDB;

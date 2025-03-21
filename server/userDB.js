@@ -1,6 +1,8 @@
 const {DBconnection} = require("./connectDB.js");
 const {User, Blog} = require("./model.js");
 const argon2 = require("argon2");
+const jwt = require('jsonwebtoken');
+const SECRET_KEY = process.env.JWT_SECRET;
 
 class UserDB {
     static #instance;
@@ -80,6 +82,40 @@ class UserDB {
             return false;
         }
     }
+
+    async loginUser(userInfo) {
+        try {
+            //check user
+            const user = await User.findOne({ username: userInfo.username });
+            if (!user) {
+                console.log("User does not exist");
+                return null;
+            }
+            //Check password
+            const validPassword = await argon2.verify(user.password, userInfo.password);
+            if (!validPassword) {
+                console.log("Incorrect password.");
+                return null;
+            }
+            //Generate JWT
+            const token = jwt.sign(
+                { id: user._id, username: user.username },
+                SECRET_KEY,
+                { expiresIn: '7d' }
+            );
+
+            return {
+                user: {
+                    id: user._id.toString(),
+                    username: user.username
+                },
+                token
+            };
+        } catch (error) {
+            console.error("Error logging in user:", error);
+            return null;
+        }
+    }
 }
 
 /*
@@ -96,4 +132,4 @@ async function main() {
 main();
 */
 
-module.exports = {userDB};
+module.exports = {UserDB};

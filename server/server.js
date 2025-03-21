@@ -13,7 +13,7 @@ DBconnection.setupDB();
 
 const userDB = new UserDB();
 
-//Sign up route
+//Sign-up route
 app.post('/api/auth/sign-up', async (req, res) => {
     const { username, password } = req.body;
     
@@ -28,6 +28,21 @@ app.post('/api/auth/sign-up', async (req, res) => {
         res.status(409).json({ error: 'Username already exists '});
     }
 });
+
+//Sign-in route
+app.post('/api/auth/sign-in', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: "Username and password are required fields"});
+    }
+
+    const result = await userDB.loginUser({ username, password });
+    if (!result) {
+        return res.status(401).json({ error: 'Invalid username or password '});
+    }
+    res.status(200).json(result);
+})
 
 app.get('/', (req, res) => res.send('API is running'));
 app.listen(3001, () => console.log('Server is running on port 3001'));

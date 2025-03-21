@@ -3,7 +3,8 @@ const express = require('express');
 const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const { DBconnection } = require("./connectDB");
-const { UserDB } = require('./userDB');
+const { UserDB } = require("./userDB");
+const authorizationMiddleware = require("./authorizationMiddleware");
 
 
 const app = express();

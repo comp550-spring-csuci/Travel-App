@@ -4,7 +4,7 @@ export default class AuthForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: '',
+            username: '',
             password: '',
             incorrect: false
         };
@@ -87,9 +87,9 @@ export default class AuthForm extends React.Component {
                             <input
                             required
                             autoFocus
-                            id='userName'
+                            id='username'
                             type="text"
-                            name="userName"
+                            name="username"
                             onChange={handleChange}
                             className='form-control' />
                         </div>

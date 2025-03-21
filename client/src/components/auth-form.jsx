@@ -4,8 +4,8 @@ export default class AuthForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: 'username',
-            password: 'password1',
+            userName: '',
+            password: '',
             incorrect: false
         };
         this.handleChange = this.handleChange.bind(this);

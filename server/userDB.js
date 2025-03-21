@@ -2,6 +2,7 @@ const {DBconnection} = require("./connectDB.js");
 const {User, Blog} = require("./model.js");
 const argon2 = require("argon2");
 const jwt = require('jsonwebtoken');
+require('dotenv').config(); //for testing
 const SECRET_KEY = process.env.JWT_SECRET;
 
 class UserDB {
@@ -131,5 +132,15 @@ async function main() {
 }
 main();
 */
+
+//Test signUpUser and loginUser
+async function main() {
+    const testUser2 = new UserDB;
+    const adduser2 = await testUser2.signUpUser({username: "test", password: "pass"});
+    console.log("User added:", adduser2);
+    const loginResult = await testUser2.loginUser({username: "test", password: "pass"});
+    console.log("Login result:", loginResult);
+}
+main();
 
 module.exports = {UserDB};

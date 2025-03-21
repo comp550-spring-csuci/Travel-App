@@ -1,5 +1,6 @@
 const {DBconnection} = require("./connectDB.js");
 const {User, Blog} = require("./model.js");
+const argon2 = require("argon2");
 
 class UserDB {
     static #instance;
@@ -21,7 +22,13 @@ class UserDB {
                 return false;
             }
 
-            const newUser = new User(userInfo);
+            //Hash password
+            const hashedPassword = await argon2.hash(userInfo.password);
+            const newUser = new User({
+                username: userInfo.username,
+                password: hashedPassword
+            });
+
             await newUser.save();
             console.log(`A document has been inserted with username: ${userInfo.username}`);
             return true;

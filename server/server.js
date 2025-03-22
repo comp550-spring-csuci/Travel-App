@@ -4,7 +4,7 @@ const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const { DBconnection } = require("./connectDB");
 const { UserDB } = require("./userDB");
-const authorizationMiddleware = require("./authorizationMiddleware");
+const authorizationMiddleware = require("./authorization-middleware");
 
 
 const app = express();

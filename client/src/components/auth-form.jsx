@@ -4,8 +4,8 @@ export default class AuthForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: 'username',
-            password: 'password1',
+            username: '',
+            password: '',
             incorrect: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -30,17 +30,35 @@ export default class AuthForm extends React.Component {
             body: JSON.stringify(this.state)
         };
         //if signing in and bad response -> set to incorrect, if signing up -> redirect to sign in, if user and has token -> sign in
-        fetch(`/api/auth/$action`, req)
-            .then(res => res.json())
-            .then(result => {
-                if (action === 'sign-in' && !Response.ok) {
-                    this.setState({ incorrect: true });
-                }
-                if (action === 'sign-up') {
-                    window.location.hash = 'sign-in'
-                } else if (result.user && result.token) {
-                    this.props.onSignIn(result);
-                }
+        // fetch(`/api/auth/${action}`, req)
+        //     .then(res => res.json())
+        //     .then(result => {
+        //         if (action === 'sign-in' && !Response.ok) {
+        //             this.setState({ incorrect: true });
+        //         }
+        //         if (action === 'sign-up') {
+        //             window.location.hash = 'sign-in'
+        //         } else if (result.user && result.token) {
+        //             this.props.onSignIn(result);
+        //         }
+        //     });
+        
+        fetch(`/api/auth/${action}`, req)
+            .then(async res => {
+              const result = await res.json();
+              if (action === 'sign-in' && !res.ok) {
+                this.setState({ incorrect: true });
+                return;
+              }
+              if (action === 'sign-up') {
+                window.location.hash = 'sign-in';
+              } else if (result.user && result.token) {
+                this.props.onSignIn(result);
+              }
+            })
+            .catch(err => {
+              console.error("Auth error:", err);
+              this.setState({ incorrect: true });
             });
     }
 
@@ -69,9 +87,9 @@ export default class AuthForm extends React.Component {
                             <input
                             required
                             autoFocus
-                            id='userName'
+                            id='username'
                             type="text"
-                            name="userName"
+                            name="username"
                             onChange={handleChange}
                             className='form-control' />
                         </div>

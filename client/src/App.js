@@ -3,8 +3,8 @@ import { jwtDecode } from 'jwt-decode';
 import './App.css';
 import AuthPage from './pages/auth';
 import Navbar from './components/Navbar2';
+import NavbarSI from './components/navbar';
 import LandingPage from './pages/Landingpage';
-import { AppContext } from './lib';
 import NotFound from './components/not-found';
 import { parseRoute, AppContext } from './lib';
 
@@ -44,7 +44,8 @@ export default class App extends React.Component {
     const { path } = this.state.route;
     if (path === '') {
       //return <Home />;
-      return <LandingPage />;
+      //return <LandingPage />;
+      return <AuthPage />;
     }
     if (path === 'sign-in' || path === 'sign-up') {
       return <AuthPage />;
@@ -59,7 +60,7 @@ export default class App extends React.Component {
     const contextValue = { user, route, handleSignIn, handleSignOut };  
     return (
       <AppContext.Provider value={contextValue}>
-        <Navbar />
+        {/* <Navbar /> */}
         {this.renderPage()}
       </AppContext.Provider>
     )

@@ -12,7 +12,7 @@ function Navbar() {
               <ul>
                 <li><a className='nav-link nav-link-line' href="#about">About</a></li>
                 <li><a className='nav-link nav-link-line' href="#destination">Destination</a></li>
-                <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
+                <li><a className='nav-link nav-link-line' href="#sign-in">Sign In</a></li>
               </ul>
           </nav>
       </div>

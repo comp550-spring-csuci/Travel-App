@@ -1,7 +1,7 @@
 import React from 'react';
 import Redirect from '../components/redirect';
 import AuthForm from '../components/auth-form';
-import Navbar from '../components/navbar';
+import NavbarSI from '../components/navbar';
 import { AppContext } from '../lib';
 
 export default class AuthPage extends React.Component {
@@ -13,7 +13,7 @@ export default class AuthPage extends React.Component {
 
         return (
             <div>
-                <Navbar action={route.path}/>
+                <NavbarSI action={route.path}/>
                 <AuthForm
                 key={route.path}
                 action={route.path}

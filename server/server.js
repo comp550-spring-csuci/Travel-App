@@ -4,6 +4,7 @@ const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const { DBconnection } = require("./connectDB");
 const { UserDB } = require("./userDB");
+const Blog = require('./model').Blog;
 const authorizationMiddleware = require("./authorization-middleware");
 
 
@@ -43,6 +44,17 @@ app.post('/api/auth/sign-in', async (req, res) => {
         return res.status(401).json({ error: 'Invalid username or password '});
     }
     res.status(200).json(result);
+})
+
+//Get user blog posts route
+app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const posts = await Blog.find({author: userId}).populate('author', 'username');
+        res.json(posts);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error fetching blog posts. '});
+    }
 })
 
 app.get('/', (req, res) => res.send('API is running'));

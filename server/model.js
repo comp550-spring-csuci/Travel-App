@@ -14,7 +14,7 @@ const blogSchema = new mongoose.Schema({
     content: {type: String, required: true},
     image: {type: String},
     author: {type: Schema.Types.ObjectId, required: true, ref: 'User'},
-    location: {type: String},
+    location: {type: String, required: true},
     createdAt: {type: Date, default: Date.now},
     updatedAt: {type: Date, default: Date.now}
 });

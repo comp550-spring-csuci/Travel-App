@@ -4,9 +4,11 @@ import './App.css';
 import AuthPage from './pages/auth';
 import Navbar from './components/Navbar2';
 import LandingPage from './pages/Landingpage';
-import { AppContext } from './lib';
 import NotFound from './components/not-found';
 import { parseRoute, AppContext } from './lib';
+import About from './pages/about';
+import Newsletter from './pages/newsletter';
+import Footer from './pages/footer';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -61,6 +63,9 @@ export default class App extends React.Component {
       <AppContext.Provider value={contextValue}>
         <Navbar />
         {this.renderPage()}
+        <About />
+        <Newsletter />
+        <Footer />
       </AppContext.Provider>
     )
   }

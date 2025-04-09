@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { DBconnection } = require("./connectDB");
 const { UserDB } = require("./userDB");
 const Blog = require('./model').Blog;
+const { BlogDB } = require("./blogDB");
 const authorizationMiddleware = require("./authorization-middleware");
 
 
@@ -14,6 +15,7 @@ app.use(express.json());
 DBconnection.setupDB();
 
 const userDB = new UserDB();
+const blogDB = new BlogDB();
 
 //Sign-up route
 app.post('/api/auth/sign-up', async (req, res) => {
@@ -72,6 +74,40 @@ app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Server error fetching blog posts. '});
     }
+
+//Get all blog, used for #destination and globe gui
+app.get('/api/get/all', async (req, res) => {
+    const result = await blogDB.findBlog({});
+    if (!result) {
+        return res.status(401).json({ error: 'No blog found.'});
+    }
+    res.status(200).json(result);
+})
+
+//Get selection of blogs, used for user blog 
+//searches in order of title then body (maybe if we can have a place for a country then we can do that?)
+//not done, just returns all blogs atm.
+app.get('/api/get/user', async (req, res) => {
+    const user = req.body;
+    
+    const result = await blogDB.findBlog({username: user});
+    if (!result) {
+        return res.status(401).json({ error: 'No blog found.'});
+    }
+    res.status(200).json(result);
+})
+
+//Get selection of blogs, used for search
+//searches in order of title then body (maybe if we can have a place for a country then we can do that?)
+//not done, just returns all blogs atm.
+app.get('/api/get/search', async (req, res) => {
+    const phrase = req.body;
+    
+    const result = await blogDB.findBlog({});
+    if (!result) {
+        return res.status(401).json({ error: 'No blog found.'});
+    }
+    res.status(200).json(result);
 })
 
 app.get('/', (req, res) => res.send('API is running'));

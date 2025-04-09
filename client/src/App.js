@@ -2,12 +2,17 @@ import React from 'react';
 import { jwtDecode } from 'jwt-decode';
 import './App.css';
 import AuthPage from './pages/auth';
+import AddBlog from './components/blog-form';
+import EditBlog from './components/edit-blog';
 import Navbar from './components/Navbar2';
 import NavbarSI from './components/navbar';
 import LandingPage from './pages/Landingpage';
 import NotFound from './components/not-found';
 import BlogFeed from './components/blog-feed';
 import { parseRoute, AppContext } from './lib';
+import About from './pages/about';
+import Newsletter from './pages/newsletter';
+import Footer from './pages/footer';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -53,6 +58,11 @@ export default class App extends React.Component {
     }
     if (path === 'blog-feed') {
       return <BlogFeed />;
+    if (path === 'add-blog') {
+      return <AddBlog />;
+    }
+    if (path === 'edit-blog') {
+      return <EditBlog />;
     }
     return <NotFound />
   }
@@ -66,6 +76,9 @@ export default class App extends React.Component {
       <AppContext.Provider value={contextValue}>
         <Navbar />
         {this.renderPage()}
+        <About />
+        <Newsletter />
+        <Footer />
       </AppContext.Provider>
     )
   }

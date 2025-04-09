@@ -1,15 +1,15 @@
 const {DBconnection} = require("./connectDB.js");
 const {User, Blog} = require("./model.js"); 
 
-class blogDB {
+class BlogDB {
     static #instance;
 
     constructor() {
-        if (!blogDB.#instance) {
-            blogDB.#instance = this;
+        if (!BlogDB.#instance) {
+            BlogDB.#instance = this;
             DBconnection.setupDB();
         }
-        return blogDB.#instance;
+        return BlogDB.#instance;
     }
 
     async addBlog(blogContent) { 
@@ -77,4 +77,4 @@ async function main() {
 
 main();
 */
-export default BlogDB;
+module.exports = {BlogDB};

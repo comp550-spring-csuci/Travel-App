@@ -4,6 +4,7 @@ const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const { DBconnection } = require("./connectDB");
 const { UserDB } = require("./userDB");
+const Blog = require('./model').Blog;
 const { BlogDB } = require("./blogDB");
 const authorizationMiddleware = require("./authorization-middleware");
 
@@ -46,6 +47,33 @@ app.post('/api/auth/sign-in', async (req, res) => {
     }
     res.status(200).json(result);
 })
+
+app.post('/api/blogs', async (req, res) => {
+    try {
+        const {title, content, image, author, location} = req.body;
+        if (!title || !content || !author || !location) {
+            return res.status(400).json({error: "title, content, author, and location are required fields"});
+        }
+        const result = await BlogDB.addBlog(req.body);
+        if (result) {
+            res.status(201).json({message: "Blog post was created successfully!"});
+        } else {
+            res.status(500).json({error: "Failed to create a blog post."});
+        } 
+    } catch (err) {
+        res.status(500).json({error: "Server error creating a blog post"});
+    }
+})
+
+//Get user blog posts route
+app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const posts = await Blog.find({author: userId}).populate('author', 'username');
+        res.json(posts);
+    } catch (err) {
+        res.status(500).json({ error: 'Server error fetching blog posts. '});
+    }
 
 //Get all blog, used for #destination and globe gui
 app.get('/api/get/all', async (req, res) => {

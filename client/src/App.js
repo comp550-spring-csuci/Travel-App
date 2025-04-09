@@ -5,8 +5,10 @@ import AuthPage from './pages/auth';
 import AddBlog from './components/blog-form';
 import EditBlog from './components/edit-blog';
 import Navbar from './components/Navbar2';
+import NavbarSI from './components/navbar';
 import LandingPage from './pages/Landingpage';
 import NotFound from './components/not-found';
+import BlogFeed from './components/blog-feed';
 import { parseRoute, AppContext } from './lib';
 import About from './pages/about';
 import Newsletter from './pages/newsletter';
@@ -49,10 +51,13 @@ export default class App extends React.Component {
     if (path === '') {
       //return <Home />;
       return <LandingPage />;
+      //return <AuthPage />;
     }
     if (path === 'sign-in' || path === 'sign-up') {
       return <AuthPage />;
     }
+    if (path === 'blog-feed') {
+      return <BlogFeed />;
     if (path === 'add-blog') {
       return <AddBlog />;
     }

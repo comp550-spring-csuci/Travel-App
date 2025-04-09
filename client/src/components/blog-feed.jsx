@@ -4,23 +4,23 @@ import NotFound from "./not-found";
 export default class BlogFeed extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {post: null, loaiding: true, error: false};
+        this.state = {posts: null, loading: true, error: false};
     }
 
     //edit this path with the actual path when created 
     componentDidMount() {
-        fetch('api/posts', {
+        fetch('api/blog-feed', {
             headers: {
                 'x-access-token': localStorage.getItem('jwt')
             }
         })
             .then(res => res.json())
-            .then(res => {
-                if (res.length === 0 ) {
+            .then(data => {
+                if (Array.isArray(data) && data.length === 0 ) {
                     this.setState({ posts: null, loading: false, error: false });
                 }
                 else {
-                    this.setState({ posts: res, loading: false, error: false });
+                    this.setState({ posts: data, loading: false, error: false });
                 }
             })
             .catch(() => {
@@ -30,14 +30,35 @@ export default class BlogFeed extends React.Component {
 
     render() {
         return (
-            <div className="container-fluid">
-                {this.state.error === true &&
+            <div className="container-fluid p-5">
+                <div className="d-flex justify-content-center align-items-center">
+                    <h1 className="p-5">Your Feed</h1>
+                    <a href="create-post" className="btn btn-primary">New+</a>
+                </div>
+                {/* {this.state.error === true &&
                     <NotFound />
+                } */}
+                {this.state.posts && this.state.posts.length > 0 ? (
+                    this.state.posts.map(post => (
+                        <div key={post._id} className="blog-post mb-4 p-3 border rounded">
+                            {post.image && (
+                                <img
+                                    src={post.image}
+                                    alt={post.title}
+                                    style={{width: '100%', maxWidth: '400px', marginBottom: '1rem'}}
+                                />
+                            )}
+                            <h2>{post.title}</h2>
+                            <p>{post.content}</p>
+                            <p>{post.author.username}</p>
+                            <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                            <p>{post.location}</p>
+                        </div>
+                    ))
+                ) : (
+                    <p>No blog posts available.</p>
+                )
                 }
-                {this.state.posts &&
-                this.state.posts.map(event => (
-                    <div key={event.postId}></div>
-                ))}
             </div>
         )
     }

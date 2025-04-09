@@ -14,11 +14,18 @@ class BlogDB {
 
     async addBlog(blogContent) { 
         try {
+            const {title, content, author, location} = blogContent;
+            if (!title || !content || !author || !location) {
+                console.error("Missing required field for a blog post.");
+                return false
+            }
             const blog = new Blog(blogContent);
             await blog.save();
             console.log(`A document has been inserted in blogs with title: ${blogContent.title}`);
+            return true;
         } catch (error) {
             console.error("Error inserting blog:", error);
+            return false;
         }
     }
 

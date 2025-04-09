@@ -46,6 +46,23 @@ app.post('/api/auth/sign-in', async (req, res) => {
     res.status(200).json(result);
 })
 
+app.post('/api/blogs', async (req, res) => {
+    try {
+        const {title, content, image, author, location} = req.body;
+        if (!title || !content || !author || !location) {
+            return res.status(400).json({error: "title, content, author, and location are required fields"});
+        }
+        const result = await BlogDB.addBlog(req.body);
+        if (result) {
+            res.status(201).json({message: "Blog post was created successfully!"});
+        } else {
+            res.status(500).json({error: "Failed to create a blog post."});
+        } 
+    } catch (err) {
+        res.status(500).json({error: "Server error creating a blog post"});
+    }
+})
+
 //Get user blog posts route
 app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
     try {

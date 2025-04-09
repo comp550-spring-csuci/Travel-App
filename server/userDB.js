@@ -134,6 +134,7 @@ main();
 */
 
 //Test signUpUser and loginUser
+/*
 async function main() {
     const testUser2 = new UserDB;
     const adduser2 = await testUser2.signUpUser({username: "test", password: "pass"});
@@ -142,5 +143,6 @@ async function main() {
     console.log("Login result:", loginResult);
 }
 main();
+*/
 
 module.exports = {UserDB};

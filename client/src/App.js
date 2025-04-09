@@ -2,6 +2,8 @@ import React from 'react';
 import { jwtDecode } from 'jwt-decode';
 import './App.css';
 import AuthPage from './pages/auth';
+import AddBlog from './components/blog-form';
+import EditBlog from './components/edit-blog';
 import Navbar from './components/Navbar2';
 import LandingPage from './pages/Landingpage';
 import NotFound from './components/not-found';
@@ -50,6 +52,12 @@ export default class App extends React.Component {
     }
     if (path === 'sign-in' || path === 'sign-up') {
       return <AuthPage />;
+    }
+    if (path === 'add-blog') {
+      return <AddBlog />;
+    }
+    if (path === 'edit-blog') {
+      return <EditBlog />;
     }
     return <NotFound />
   }

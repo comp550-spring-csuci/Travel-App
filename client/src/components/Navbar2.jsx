@@ -40,6 +40,8 @@ function Navbar() {
                 <li><a className='nav-link nav-link-line' href="#about">About</a></li>
                 <li><a className='nav-link nav-link-line' href="#destination">Blog Posts</a></li>
                 <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
+                <li><a className='nav-link nav-link-line' href="#sign-up">Log In</a></li>
+                <li><a className='nav-link nav-link-line' href="#add-blog">Add Blog</a></li>
               </ul>
           </nav>
       </div>
@@ -47,4 +49,4 @@ function Navbar() {
   )
 }
 
-export default Navbar
+export default Navbar;

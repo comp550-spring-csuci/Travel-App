@@ -58,13 +58,14 @@ export default class App extends React.Component {
     }
     if (path === 'blog-feed') {
       return <BlogFeed />;
+    }
     if (path === 'add-blog') {
       return <AddBlog />;
     }
     if (path === 'edit-blog') {
       return <EditBlog />;
     }
-    return <NotFound />
+    return <NotFound />;
   }
 
   render() {

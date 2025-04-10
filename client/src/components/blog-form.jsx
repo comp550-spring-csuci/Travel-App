@@ -25,7 +25,6 @@ export default class AddBlog extends React.Component {
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
-        const { action } = this.props;
         const req = {
             method: 'POST',
             headers: {
@@ -34,7 +33,6 @@ export default class AddBlog extends React.Component {
             body: JSON.stringify(this.state)
         };
         this.setState({ invalid: true });
-        return;
         //if signing in and bad response -> set to incorrect, if signing up -> redirect to sign in, if user and has token -> sign in
         // fetch(`/api/auth/${action}`, req)
         //     .then(res => res.json())
@@ -49,24 +47,19 @@ export default class AddBlog extends React.Component {
         //         }
         //     });
         
-        fetch(`/api/auth/${action}`, req) // change it so that it fetches to the backend server
+        fetch(`/api/post/newblog`, req) // change it so that it fetches to the backend server
         //api/auth is for authenticating the user and not for adding user
         // still need to fetch for access to database.
             .then(async res => {
               const result = await res.json();
-              if (action === 'add-blog' && !res.ok) {
-                this.setState({ incorrect: true });
+              if (!res.ok) {
+                this.setState({ invalid: true });
                 return;
-              }
-              if (action === 'edit-blog') {
-                window.location.hash = 'add-blog';
-              } else if (result.user && result.token) {
-                this.props.onSignIn(result);
               }
             })
             .catch(err => {
               console.error("Auth error:", err);
-              this.setState({ incorrect: true });
+              this.setState({ invalid: true });
             });
     }
 

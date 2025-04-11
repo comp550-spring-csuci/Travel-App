@@ -13,6 +13,8 @@ import { parseRoute, AppContext } from './lib';
 import About from './pages/about';
 import Newsletter from './pages/newsletter';
 import Footer from './pages/footer';
+import TheGlobePage from './pages/the-globe';
+import TheGlobe from './components/the-globe';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -34,6 +36,7 @@ export default class App extends React.Component {
     const user = token ? jwtDecode(token) : null;
     this.setState({ user, isAuthorizing: false });
   }
+  
 
   handleSignIn(result) {
     const { user, token } = result;
@@ -53,19 +56,25 @@ export default class App extends React.Component {
       return <LandingPage />;
       //return <AuthPage />;
     }
+    if (path === 'the-globe') {
+      return <TheGlobePage />;
+    }
     if (path === 'sign-in' || path === 'sign-up') {
       return <AuthPage />;
     }
     if (path === 'blog-feed') {
       return <BlogFeed />;
+    }
     if (path === 'add-blog') {
       return <AddBlog />;
     }
     if (path === 'edit-blog') {
       return <EditBlog />;
     }
+    
     return <NotFound />
   }
+
 
   render() {
     if (this.state.isAuthorizing) return null;
@@ -84,5 +93,5 @@ export default class App extends React.Component {
   }
 
 }
-  
+
 App.contextType = AppContext;

@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 import './navbar.css';
+import { Link } from 'react-router-dom';
+import TheGlobePage from '../pages/the-globe';
 
 function Navbar() {
   // State to store the search query
@@ -42,6 +44,9 @@ function Navbar() {
                 <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
                 <li><a className='nav-link nav-link-line' href="#sign-up">Log In</a></li>
                 <li><a className='nav-link nav-link-line' href="#add-blog">Add Blog</a></li>
+                <li>
+                  <a className='nav-link nav-link-line' href='#the-globe'>The Globe</a> 
+                  </li>
               </ul>
           </nav>
       </div>

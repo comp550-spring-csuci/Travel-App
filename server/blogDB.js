@@ -14,10 +14,13 @@ class BlogDB {
 
     async addBlog(blogContent) { 
         try {
-            const {title, content, author, location} = blogContent;
+            const {title, content, author, latitude, longitude, location} = blogContent;
             if (!title || !content || !author || !location) {
                 console.error("Missing required field for a blog post.");
-                return false
+                return false;
+            } else if (!latitude || !longitude) {
+                console.error("Please fill out the location of the blog post.");
+                return false;
             }
             const blog = new Blog(blogContent);
             await blog.save();

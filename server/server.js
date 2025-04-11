@@ -48,6 +48,7 @@ app.post('/api/auth/sign-in', async (req, res) => {
     res.status(200).json(result);
 })
 
+//Create user blog
 app.post('/api/blogs', async (req, res) => {
     try {
         const {title, content, image, author, location} = req.body;
@@ -74,6 +75,7 @@ app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Server error fetching blog posts. '});
     }
+})
 
 //Get all blog, used for #destination and globe gui
 app.get('/api/get/all', async (req, res) => {
@@ -84,7 +86,7 @@ app.get('/api/get/all', async (req, res) => {
     res.status(200).json(result);
 })
 
-//Get selection of blogs, used for user blog 
+/*//Get selection of blogs, used for user blog 
 //searches in order of title then body (maybe if we can have a place for a country then we can do that?)
 //not done, just returns all blogs atm.
 app.get('/api/get/user', async (req, res) => {
@@ -95,7 +97,7 @@ app.get('/api/get/user', async (req, res) => {
         return res.status(401).json({ error: 'No blog found.'});
     }
     res.status(200).json(result);
-})
+})*/
 
 //Get selection of blogs, used for search
 //searches in order of title then body (maybe if we can have a place for a country then we can do that?)

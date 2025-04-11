@@ -70,9 +70,8 @@ export default class App extends React.Component {
     }
     if (path === 'edit-blog') {
       return <EditBlog />;
-    }
-    
-    return <NotFound />
+    }    
+    return <NotFound />;
   }
 
 

@@ -81,7 +81,7 @@ app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
 app.get('/api/get/all', async (req, res) => {
     const result = await blogDB.findBlog({});
     if (!result) {
-        return res.status(401).json({ error: 'No blog found.'});
+        return res.status(404).json({ error: 'No blog found.'});
     }
     res.status(200).json(result);
 })

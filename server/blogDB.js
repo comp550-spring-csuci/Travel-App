@@ -68,16 +68,25 @@ class BlogDB {
     }
 }
 
-/*
+//Dummy data testing
 async function main() {
-    testBlog = new blogDB;
-    testBlog.addBlog({
-        title: 'Testing Blog title',
-        content: "Here's the new content stuff",
-        author: 'tetsutok'
-    });
-}
+    const testBlog = new BlogDB();
+    // Corrected field name from 'contenet' to 'content'
+    // Also added dummy latitude and longitude values if those fields are required.
+    const dummyBlog = {
+      title: "Test Blog Post",
+      content: "This is a test blog post for testing purposes.",
+      image: "http://example.com/dummyimage.jpg",
+      author: "64d1234567890abcdef12345", // Use a valid dummy ObjectId string
+      location: "Test City",
+      latitude: 40.7128,   // Example dummy latitude (New York City)
+      longitude: -74.0060  // Example dummy longitude (New York City)
+    };
+    // Use 'testBlog' (the instance of BlogDB) rather than blog.DB
+    const result = await testBlog.addBlog(dummyBlog);
+    console.log("Dummy blog inserted:", result);
+  }
+  
+  main();
 
-main();
-*/
 module.exports = {BlogDB};

@@ -9,6 +9,7 @@ import NavbarSI from './components/navbar';
 import LandingPage from './pages/Landingpage';
 import NotFound from './components/not-found';
 import BlogFeed from './components/blog-feed';
+import BlogFeedAll from './components/blog-feed-all';
 import { parseRoute, AppContext } from './lib';
 import About from './pages/about';
 import Newsletter from './pages/newsletter';
@@ -63,7 +64,7 @@ export default class App extends React.Component {
       return <AuthPage />;
     }
     if (path === 'blog-feed') {
-      return <BlogFeed />;
+      return <BlogFeedAll />;
     }
     if (path === 'add-blog') {
       return <AddBlog />;

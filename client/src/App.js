@@ -70,7 +70,8 @@ export default class App extends React.Component {
     }
     if (path === 'edit-blog') {
       return <EditBlog />;
-    }    
+    }
+    //this needs to be fixed, it is curently displayed by default under the navbar    
     return <NotFound />;
   }
 

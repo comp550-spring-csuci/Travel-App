@@ -74,17 +74,31 @@ async function main() {
     // Corrected field name from 'contenet' to 'content'
     // Also added dummy latitude and longitude values if those fields are required.
     const dummyBlog = {
-      title: "Test Blog Post",
-      content: "This is a test blog post for testing purposes.",
-      image: "http://example.com/dummyimage.jpg",
-      author: "64d1234567890abcdef12345", // Use a valid dummy ObjectId string
-      location: "Test City",
-      latitude: 40.7128,   // Example dummy latitude (New York City)
-      longitude: -74.0060  // Example dummy longitude (New York City)
+        title: "Test Blog Post",
+        content: "This is a test blog post for testing purposes.",
+        image: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.rssc.com%2Fships&psig=AOvVaw3Js34jRATkA64187FkGQ-7&ust=1744659190812000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLiPo5bg1YwDFQAAAAAdAAAAABAE",
+        author: "64d1234567890abcdef12345", // Use a valid dummy ObjectId string
+        location: "Test City",
+        latitude: 40.7128,   // Example dummy latitude (New York City)
+        longitude: -74.0060  // Example dummy longitude (New York City)
     };
     // Use 'testBlog' (the instance of BlogDB) rather than blog.DB
     const result = await testBlog.addBlog(dummyBlog);
     console.log("Dummy blog inserted:", result);
+
+    // Dummy blog post 2
+    const dummyBlog2 = {
+        title: "Test Blog Post 2",
+        content: "This is the second test blog post for testing purposes.",
+        image: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.rssc.com%2Fships&psig=AOvVaw3Js34jRATkA64187FkGQ-7&ust=1744659190812000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLiPo5bg1YwDFQAAAAAdAAAAABAE",
+        author: "64d1234567890abcdef12345", // Use the same or a different valid dummy ObjectId string
+        location: "Test City",
+        latitude: 40.7128,   // Same or different coordinates if desired
+        longitude: -74.0060
+    };
+
+    const result2 = await testBlog.addBlog(dummyBlog2);
+    console.log("Dummy blog 2 inserted:", result2);
   }
   
   main();

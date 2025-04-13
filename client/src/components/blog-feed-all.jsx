@@ -38,27 +38,36 @@ export default class BlogFeedAll extends React.Component {
                 {/* {this.state.error === true &&
                     <NotFound />
                 } */}
-                {this.state.posts && this.state.posts.length > 0 ? (
-                    this.state.posts.map(post => (
-                        <div key={post._id} className="blog-post mb-4 p-3 border rounded">
-                            {post.image && (
-                                <img
-                                    src={post.image}
-                                    alt={post.title}
-                                    style={{width: '100%', maxWidth: '400px', marginBottom: '1rem'}}
-                                />
-                            )}
-                            <h2>{post.title}</h2>
-                            <p>{post.content}</p>
-                            <p>{post.author.username}</p>
-                            <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                            <p>{post.location}</p>
-                        </div>
-                    ))
-                ) : (
-                    <p>No blog posts available.</p>
-                )
-                }
+                <div className="row">
+                    {this.state.posts && this.state.posts.length > 0 ? (
+                        this.state.posts.map(post => (
+                            <div key={post._id} className="col-md-4 blog-box-container">
+                                <div className="blog-post mb-4 p-3 border rounded blog-box">
+                                    {post.image && (
+                                        <img
+                                            src={post.image}
+                                            alt={post.title}
+                                            className="blog-image"
+                                            style={{width: '100%', maxWidth: '400px', marginBottom: '1rem'}}
+                                        />
+                                    )}
+                                    <div className="blog-box-text">
+                                        <h2>{post.title}</h2>
+                                        <p>{post.content}</p>
+                                        <div className="blog-author">
+                                            <p className="blog-author-text">{post.author.username}</p>
+                                            <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                                            <p>{post.location}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No blog posts available.</p>
+                    )
+                    }
+                </div>
             </div>
         )
     }

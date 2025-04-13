@@ -72,7 +72,7 @@ export default class AddBlog extends React.Component {
         return (
             <div className="blog-background full-screen d-flex justify-content-center align-items-center">
                 <div className='form-style container-fluid col-10 col-md-5 p-4'>
-                    <Navbar />
+                    {/* <Navbar /> */}
                     <h1 className='text-center mb-3 form-font'>{welcomeMessage}</h1>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-4'>

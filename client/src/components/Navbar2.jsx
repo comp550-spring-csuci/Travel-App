@@ -40,7 +40,7 @@ function Navbar() {
           <nav className='navigation-menu'>
               <ul>
                 <li><a className='nav-link nav-link-line' href="#about">About</a></li>
-                <li><a className='nav-link nav-link-line' href="#destination">Blog Posts</a></li>
+                <li><a className='nav-link nav-link-line' href="#blog-feed">Blog Posts</a></li>
                 <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
                 <li><a className='nav-link nav-link-line' href="#sign-up">Log In</a></li>
                 <li><a className='nav-link nav-link-line' href="#add-blog">Add Blog</a></li>

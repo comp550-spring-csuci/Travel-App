@@ -33,7 +33,7 @@ export default class BlogFeed extends React.Component {
             <div className="container-fluid p-5">
                 <div className="d-flex justify-content-center align-items-center">
                     <h1 className="p-5">Your Feed</h1>
-                    <a href="create-post" className="btn btn-primary">New+</a>
+                    <a href="#add-blog" className="btn btn-primary">New+</a>
                 </div>
                 {/* {this.state.error === true &&
                     <NotFound />

@@ -5,8 +5,8 @@ export default class EditBlog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            blogTitle: '',
-            blogBody: '',
+            title: '',
+            content: '',
             invalid: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -77,23 +77,23 @@ export default class EditBlog extends React.Component {
                     <h1 className='text-center mb-3 form-font'>{welcomeMessage}</h1>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-4'>
-                        <label htmlFor="blogTitle" className='form-label'>Title</label>
+                        <label htmlFor="title" className='form-label'>Title</label>
                             <input
                             required
                             autoFocus
-                            id='blogTitle'
+                            id='title'
                             type="text"
-                            name="blogTitle"
+                            name="title"
                             onChange={handleChange}
                             className='form-control' />
                         </div>
                         <div className='mb-4'>
-                            <label htmlFor='blogBody' className='form-label'>Blog Content</label>
+                            <label htmlFor='content' className='form-label'>Blog Content</label>
                             <input 
                             required
-                            id='blogBody'
+                            id='content'
                             type='text'
-                            name='blogBody'
+                            name='content'
                             onChange={handleChange}
                             className='form-control'/>
                         </div>

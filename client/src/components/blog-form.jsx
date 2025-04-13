@@ -5,11 +5,12 @@ export default class AddBlog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            blogTitle: '',
-            blogBody: '',
+            title: '',
+            content: '',
+            image: '',
+            author: 'user',
             latitude: '',
             longitude: '',
-            thumbnail: '',
             invalid: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -76,23 +77,23 @@ export default class AddBlog extends React.Component {
                     <h1 className='text-center mb-3 form-font'>{welcomeMessage}</h1>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-4'>
-                        <label htmlFor="blogTitle" className='form-label'>Title</label>
+                        <label htmlFor="title" className='form-label'>Title</label>
                             <input
                             required
                             autoFocus
-                            id='blogTitle'
+                            id='title'
                             type="text"
-                            name="blogTitle"
+                            name="title"
                             onChange={handleChange}
                             className='form-control' />
                         </div>
                         <div className='mb-4'>
-                            <label htmlFor='blogBody' className='form-label'>Blog Content</label>
+                            <label htmlFor='content' className='form-label'>Blog Content</label>
                             <input 
                             required
-                            id='blogBody'
+                            id='content'
                             type='text'
-                            name='blogBody'
+                            name='content'
                             onChange={handleChange}
                             className='form-control'/>
                         </div>
@@ -102,7 +103,7 @@ export default class AddBlog extends React.Component {
                             required
                             id='latitude'
                             type='text'
-                            name='latutide'
+                            name='latitude'
                             onChange={handleChange}
                             className='form-control'/>
                         </div>
@@ -121,7 +122,7 @@ export default class AddBlog extends React.Component {
                             <input 
                             id='thumbnail'
                             type='image'
-                            name='thumbnail'
+                            name='image'
                             onChange={handleChange}
                             className='form-control'/>
                         </div>

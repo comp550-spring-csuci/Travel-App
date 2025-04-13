@@ -13,7 +13,7 @@ const blogSchema = new mongoose.Schema({
     title:      { type: String, required: true },
     content:    { type: String, required: true },
     image:      { type: String },
-    author:     { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+    author:     { type: String, required: true, ref: 'User' },
     latitude:   { type: Number },
     longitude:  { type: Number },
     location:   { type: String },

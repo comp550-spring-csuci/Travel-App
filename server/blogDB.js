@@ -14,8 +14,8 @@ class BlogDB {
 
     async addBlog(blogContent) { 
         try {
-            const {title, content, author, latitude, longitude, location} = blogContent;
-            if (!title || !content || !author || !location) {
+            const {title, content, image, author, latitude, longitude} = blogContent;
+            if (!title || !content || !author || !latitude || !longitude) {
                 console.error("Missing required field for a blog post.");
                 return false;
             } else if (!latitude || !longitude) {
@@ -69,6 +69,7 @@ class BlogDB {
 }
 
 //Dummy data testing
+/*
 async function main() {
     const testBlog = new BlogDB();
     // Corrected field name from 'contenet' to 'content'
@@ -101,6 +102,6 @@ async function main() {
     console.log("Dummy blog 2 inserted:", result2);
   }
   
-  main();
+  main();*/
 
 module.exports = {BlogDB};

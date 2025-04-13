@@ -49,13 +49,14 @@ app.post('/api/auth/sign-in', async (req, res) => {
 })
 
 //Create user blog
-app.post('/api/blogs', async (req, res) => {
+app.post('/api/post/newblog', async (req, res) => {
     try {
-        const {title, content, image, author, location} = req.body;
-        if (!title || !content || !author || !location) {
+        const {title, content, image, author, latitude, longitude} = req.body;
+        console.log(req.body);
+        if (!title || !content || !author || !latitude || !longitude) {
             return res.status(400).json({error: "title, content, author, and location are required fields"});
         }
-        const result = await BlogDB.addBlog(req.body);
+        const result = await blogDB.addBlog(req.body);
         if (result) {
             res.status(201).json({message: "Blog post was created successfully!"});
         } else {

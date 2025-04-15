@@ -14,8 +14,8 @@ const blogSchema = new mongoose.Schema({
     content:    { type: String, required: true },
     image:      { type: String },
     author:     { type: String, required: true, ref: 'User' },
-    latitude:   { type: Number },
-    longitude:  { type: Number },
+    latitude:   { type: Number, max: 90, min: -90 },
+    longitude:  { type: Number, max: 180, min: -180 },
     location:   { type: String },
     createdAt:  { type: Date, default: Date.now },
     updatedAt:  { type: Date, default: Date.now }

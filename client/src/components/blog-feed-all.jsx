@@ -55,7 +55,7 @@ export default class BlogFeedAll extends React.Component {
                                         <h2>{post.title}</h2>
                                         <p>{post.content}</p>
                                         <div className="blog-author">
-                                            <p className="blog-author-text">{post.author.username}</p>
+                                            <p className="blog-author-text">{post.author && post.author.username ? post.author.username : "Unknown Author"}</p>
                                             <p>{new Date(post.createdAt).toLocaleDateString()}</p>
                                             <p>{post.location}</p>
                                         </div>

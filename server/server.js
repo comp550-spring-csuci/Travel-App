@@ -10,6 +10,8 @@ const authorizationMiddleware = require("./authorization-middleware");
 
 
 const app = express();
+const cors = require('cors');
+app.use(cors());
 app.use(express.json());
 
 DBconnection.setupDB();

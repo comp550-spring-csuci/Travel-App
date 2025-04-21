@@ -18,18 +18,21 @@ class UserDB {
 
     async signUpUser(userInfo) {
         try {
-            const user_exist = await User.findOne({username: userInfo.username});
+            const {username, password, latitude, longitude} = userInfo;
 
+            const user_exist = await User.findOne({username: userInfo.username});
             if (user_exist) {
                 console.log("Username already exists, please choose another username.");
                 return false;
             }
 
             //Hash password
-            const hashedPassword = await argon2.hash(userInfo.password);
+            const hashedPassword = await argon2.hash(password);
             const newUser = new User({
-                username: userInfo.username,
-                password: hashedPassword
+                username,
+                password: hashedPassword,
+                latitude,
+                longitude
             });
 
             await newUser.save();

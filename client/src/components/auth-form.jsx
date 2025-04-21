@@ -108,7 +108,7 @@ export default class AuthForm extends React.Component {
                         {action === 'sign-up' && (
                             <div>
                                 <div className="mb-4">
-                                <label htmlFor="latitude" className="form-label">Latitude</label>
+                                <label htmlFor="latitude" className="form-label">Your Home Latitude</label>
                                 <input 
                                 required
                                 id="latitude"
@@ -121,7 +121,7 @@ export default class AuthForm extends React.Component {
                                 />
                                 </div>
                                 <div className="mb-4">
-                                <label htmlFor="longitude" className="form-label">Longitude</label>
+                                <label htmlFor="longitude" className="form-label">Your Home Longitude</label>
                                 <input
                                 required
                                 id="longitude"

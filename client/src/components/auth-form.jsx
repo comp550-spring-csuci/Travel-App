@@ -6,6 +6,8 @@ export default class AuthForm extends React.Component {
         this.state = {
             username: '',
             password: '',
+            latitude: '',
+            longitude: '',
             incorrect: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -103,6 +105,36 @@ export default class AuthForm extends React.Component {
                             onChange={handleChange}
                             className='form-control'/>
                         </div>
+                        {action === 'sign-up' && (
+                            <div>
+                                <div className="mb-4">
+                                <label htmlFor="latitude" className="form-label">Your Home Latitude</label>
+                                <input 
+                                required
+                                id="latitude"
+                                type="number"
+                                step="any"
+                                name="latitude"
+                                value={this.state.latitude}
+                                onChange={handleChange}
+                                className="form-control"
+                                />
+                                </div>
+                                <div className="mb-4">
+                                <label htmlFor="longitude" className="form-label">Your Home Longitude</label>
+                                <input
+                                required
+                                id="longitude"
+                                type="number"
+                                step="any"
+                                name="longitude"
+                                value={this.state.longitude}
+                                onChange={handleChange}
+                                className="form-control"
+                                />
+                                </div>
+                            </div>
+                        )}
                         {this.state.incorrect === true &&
                             <div>
                                 <p>Incorrect username or password. Please try again.</p>

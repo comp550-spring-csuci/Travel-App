@@ -4,7 +4,9 @@ const Schema = mongoose.Schema;
 const userSchema = new mongoose.Schema({
     username: {type: String, required: true},
     password: {type: String, required: true},
-    createdAt: {type: Date, default: Date.now}
+    createdAt: {type: Date, default: Date.now},
+    latitude:  { type: Number, max: 90, min: -90, required: true },
+    longitude: { type: Number, max: 180, min: -180, required: true },
 });
 
 const User = mongoose.model("User", userSchema);

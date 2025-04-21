@@ -21,9 +21,9 @@ const blogDB = new BlogDB();
 
 //Sign-up route
 app.post('/api/auth/sign-up', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, latitude, longitude } = req.body;
     
-    if (!username || !password) {
+    if (!username || !password || latitude == null || longitude == null) {
         return res.status(400).json({ error: "Username and password are required fields"});
     }
 

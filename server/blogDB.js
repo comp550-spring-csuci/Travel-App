@@ -36,13 +36,26 @@ class BlogDB {
         return await Blog.find(condition).exec();
     }
 
-    async updateBlog(oldBlogCondition, updatedBlogContent) {
+    async updateBlog(oldBlogCondition, updatedBlogContent, author) {
         try {
-            const result = await Blog.findOneAndUpdate(oldBlogCondition, updatedBlogContent, {new: true}).exec();
-            if (result) {
-                console.log(`Blog updated successfully: ${result.title}`);
+            // First of all check if the blog even exists right now
+            const blog = await Blog.findOne(oldBlogCondition).exec();
+            if (!blog) {
+                console.log("Blog not found.");
+                return "NoBlog";
+            }
+            //Check if blog author matches with the logged in user name (or an admin)
+            if (updatedBlogContent.author === author || author === "admin") {
+                const result = await Blog.findOneAndUpdate(oldBlogCondition, updatedBlogContent, {new: true}).exec();
+                if (result) {
+                    console.log(`Blog updated successfully: ${result.title}`);
+                } else {
+                    console.log("No matching blog found.");
+                    return "NoMatch";
+                }
             } else {
-                console.log("No matching blog found.");
+                console.log("You do not have permission to delete the blog.");
+                return "NoPermission";
             }
         } catch (error) {
             console.error("Error updating blog:", error);
@@ -51,19 +64,25 @@ class BlogDB {
 
     async removeBlog(blogRemoveCondition, author) {
         try {
+            // First of all check if the blog even exists right now
             const blog = await Blog.findOne(blogRemoveCondition).exec();
             if (!blog) {
                 console.log("Blog not found.");
-                return false;
+                return "NoBlog";
             }
+            // Check if user trying to delete blog matches author
+            // ... or is an admin (also for the same reason do not allow the user named admin)
             if (blog.author === author || author === "admin") {
                 await Blog.deleteOne(blogRemoveCondition);
                 console.log("Successfully removed blog.");
+                return true;
             } else {
                 console.log("You do not have permission to delete the blog.");
+                return "NoPermission";
             }
         } catch (error) {
             console.error("Error removing blog:", error);
+            return "Error";
         }
     }
 }

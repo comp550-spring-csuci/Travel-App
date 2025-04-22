@@ -53,7 +53,7 @@ app.post('/api/auth/sign-in', async (req, res) => {
 //Create user blog
 app.post('/api/post/newblog', async (req, res) => {
     try {
-        const {title, content, image, author, latitude, longitude} = req.body;
+        const {title, content, image, author, latitude, longitude, location} = req.body;
         console.log(req.body);
         if (!title || !content || !author || !latitude || !longitude) {
             return res.status(400).json({error: "title, content, author, and location are required fields"});
@@ -107,12 +107,54 @@ app.get('/api/get/user', async (req, res) => {
 //not done, just returns all blogs atm.
 app.get('/api/get/search', async (req, res) => {
     const phrase = req.body;
+    const phrases = phrase.split(" ");
     
-    const result = await blogDB.findBlog({});
+    for (singlePhrase in phrases) {
+        const searchResult = await blogDB.findBlog({ $or: [{ title: /phrases/i }]});
+    }
     if (!result) {
         return res.status(401).json({ error: 'No blog found.'});
     }
-    res.status(200).json(result);
+    res.status(200).json(searchResult);
+})
+
+//Update such blog post
+app.post('/api/post/updateBlog', async (req, res) => {
+    try {
+        const {blogId, title, content, image, author, latitude, longitude} = req.body;
+        console.log(req.body);
+        if (!title || !content || !author || !latitude || !longitude) {
+            return res.status(400).json({error: "title, content, author, and location are required fields" });
+        }
+        const result = await blogDB.updateBlog({_id: blogId}, req.body);
+        if (result) {
+            res.status(201).json({message: "Blog post was created successfully!" });
+        } else {
+            res.status(500).json({ error: "Failed to update a blog post." });
+        } 
+    } catch (err) {
+        res.status(500).json({ error: "Server error creating a blog post" });
+    }
+})
+
+//Delete said blog post
+app.get('/api/delete/blog', async (req, res) => {
+    try {
+        const { _id, title, content, image, author, latitude, longitude, location} = req.body;
+
+        const result = await blogDB.removeBlog(req.body, author);
+        if (result == "Error") {
+            return res.status(500).json({ error: 'Server error deleting a blog post.'}); //blogDB side error
+        } else if (result == "NoBlog") {
+            return res.status(404).json({ error: "Blog does not exist."})
+        } else if (result == "NoPermission") {
+            return res.status(401).json({ error: "You do not have permission to delete the blog." })
+        }
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json({error: "Server error deleting a blog post."}) 
+        //Not sure if this is necessary because blogDB code cathes errors anyways
+    }
 })
 
 app.get('/', (req, res) => res.send('API is running'));

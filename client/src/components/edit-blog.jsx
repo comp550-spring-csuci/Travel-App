@@ -7,6 +7,10 @@ export default class EditBlog extends React.Component {
         this.state = {
             title: '',
             content: '',
+            image: '',
+            author: 'user',
+            latitude: '',
+            longitude: '',
             invalid: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -23,46 +27,59 @@ export default class EditBlog extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         const { action } = this.props;
-        const req = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
-        };
-        this.setState({ invalid: true });
-        return;
-        //if signing in and bad response -> set to incorrect, if signing up -> redirect to sign in, if user and has token -> sign in
-        // fetch(`/api/auth/${action}`, req)
-        //     .then(res => res.json())
-        //     .then(result => {
-        //         if (action === 'add-blog' && !Response.ok) {
-        //             this.setState({ incorrect: true });
-        //         }
-        //         if (action === 'edit-blog') {
-        //             window.location.hash = 'add-blog'
-        //         } else if (result.user && result.token) {
-        //             this.props.onSignIn(result);
-        //         }
-        //     });
-        
-        fetch(`/api/auth/${action}`, req)
-            .then(async res => {
-              const result = await res.json();
-              if (action === 'add-blog' && !res.ok) {
+        const buttonPressed = event.nativeEvent.submitter.value;
+        if (buttonPressed == 'delete') {
+            const req = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.state)
+            };
+            fetch(`/api/auth/${action}`, req)
+                .then(async res => {
+                const result = await res.json();
+                if (action === 'add-blog' && !res.ok) {
+                    this.setState({ incorrect: true });
+                    return;
+                }
+                if (action === 'edit-blog') {
+                    window.location.hash = 'add-blog';
+                } else if (result.user && result.token) {
+                    this.props.onSignIn(result);
+                }
+                })
+                .catch(err => {
+                console.error("Auth error:", err);
                 this.setState({ incorrect: true });
-                return;
-              }
-              if (action === 'edit-blog') {
-                window.location.hash = 'add-blog';
-              } else if (result.user && result.token) {
-                this.props.onSignIn(result);
-              }
-            })
-            .catch(err => {
-              console.error("Auth error:", err);
-              this.setState({ incorrect: true });
-            });
+                });
+        } else {
+            const req = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.state)
+            };
+            fetch(`/api/auth/${action}`, req)
+                .then(async res => {
+                const result = await res.json();
+                if (action === 'add-blog' && !res.ok) {
+                    this.setState({ incorrect: true });
+                    return;
+                }
+                if (action === 'edit-blog') {
+                    window.location.hash = 'add-blog';
+                } else if (result.user && result.token) {
+                    this.props.onSignIn(result);
+                }
+                })
+                .catch(err => {
+                console.error("Auth error:", err);
+                this.setState({ incorrect: true });
+                });
+        }
+        this.setState({ invalid: true });
     }
 
     render() {
@@ -103,8 +120,8 @@ export default class EditBlog extends React.Component {
                             </div>
                         }
                         <div className='d-flex justify-content-center mb-4'>
-                        <button type='submit' className='btn btn-custom col-12'>{'Finish'}</button>
-                        <button type='submit' className='btn btn-custom col-12'>{'Delete'}</button>
+                        <button type='submit' className='btn btn-custom col-12' value = 'edit'>{'Finish'}</button>
+                        <button type='submit' className='btn btn-custom col-12' value = 'delete'>{'Delete'}</button>
                         </div>
                     </form>
                 </div>

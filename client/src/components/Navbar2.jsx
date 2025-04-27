@@ -1,11 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import './navbar.css';
+import { AppContext } from '../lib';
 import { Link } from 'react-router-dom';
 import TheGlobePage from '../pages/the-globe';
 
 function Navbar() {
   // State to store the search query
   const [searchQuery, setSearchQuery] = useState('');
+  const {user, handleSignOut} = useContext(AppContext);
 
   // Handle input change
   const handleSearchChange = (e) => {
@@ -40,13 +42,30 @@ function Navbar() {
           <nav className='navigation-menu'>
               <ul>
                 <li><a className='nav-link nav-link-line' href="#about">About</a></li>
-                <li><a className='nav-link nav-link-line' href="#blog-feed">Blog Posts</a></li>
-                <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
-                <li><a className='nav-link nav-link-line' href="#sign-up">Log In</a></li>
-                <li><a className='nav-link nav-link-line' href="#add-blog">Add Blog</a></li>
-                <li>
-                  <a className='nav-link nav-link-line' href='#the-globe'>The Globe</a> 
-                  </li>
+                {!user ? (
+                  <>
+                    <li><a className='nav-link nav-link-line' href="#sign-in">Log In</a></li>
+                    <li><a className='nav-link nav-link-line' href='#sign-up'>Register</a></li>
+                  </>
+                ) : (
+                  <>
+                    <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
+                    <li><a className='nav-link nav-link-line' href="#blog-feed-all">All Posts</a></li>
+                    <li><a className='nav-link nav-link-line' href="#blog-feed">My Blog</a></li>
+                    <li><a className='nav-link nav-link-line' href='#the-globe'>The Globe</a></li>
+
+                    <li className='nav-text'>Hi, {user.username}</li>
+                    <li>
+                      <button
+                        className='btn btn-link nav-link-line'
+                        onClick={handleSignOut}
+                        style={{ padding: 0 }}
+                      >
+                        Sign Out
+                      </button>
+                    </li>
+                  </>
+                )}
               </ul>
           </nav>
       </div>

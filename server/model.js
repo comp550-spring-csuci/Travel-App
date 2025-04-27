@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
-    username: {type: String, required: true},
+    username: {type: String, required: true, unique: true},
     password: {type: String, required: true},
     createdAt: {type: Date, default: Date.now},
     latitude:  { type: Number, max: 90, min: -90, required: true },
@@ -15,7 +15,7 @@ const blogSchema = new mongoose.Schema({
     title:      { type: String, required: true },
     content:    { type: String, required: true },
     image:      { type: String },
-    author:     { type: String, required: true, ref: 'User' },
+    author:     { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
     latitude:   { type: Number, max: 90, min: -90 },
     longitude:  { type: Number, max: 180, min: -180 },
     location:   { type: String },

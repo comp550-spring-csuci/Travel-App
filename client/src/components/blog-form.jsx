@@ -1,7 +1,9 @@
 import React from "react";
-import Navbar from '../components/navbar';
+import NotFound from "./not-found";
+import { AppContext } from "../lib";
 
 export default class AddBlog extends React.Component {
+    static contextType = AppContext;
     constructor(props) {
         super(props);
         this.state = {

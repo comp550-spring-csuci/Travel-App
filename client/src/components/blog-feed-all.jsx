@@ -1,20 +1,26 @@
 import React from "react";
 import NotFound from "./not-found";
+import { AppContext } from "../lib";
 
 export default class BlogFeedAll extends React.Component {
+    static contextType = AppContext;
     constructor(props) {
         super(props);
         this.state = {posts: null, loading: true, error: false};
     }
 
-    //edit this path with the actual path when created 
     componentDidMount() {
-        fetch('api/get/all', {
+        const { token } = this.context;
+        fetch('/api/get/all', {
             headers: {
-                'x-access-token': localStorage.getItem('jwt')
+                'Content-Type': 'application/json',
+                'x-access-token': token
             }
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error(`Status ${res.status}`);
+                return res.json();
+            })
             .then(data => {
                 if (Array.isArray(data) && data.length === 0 ) {
                     this.setState({ posts: null, loading: false, error: false });
@@ -32,12 +38,12 @@ export default class BlogFeedAll extends React.Component {
         return (
             <div className="container-fluid p-5">
                 <div className="d-flex justify-content-center align-items-center">
-                    <h1 className="p-5">Your Feed</h1>
+                    <h1 className="p-5">All Posts</h1>
                     <a href="#add-blog" className="btn btn-primary">New+</a>
                 </div>
-                {/* {this.state.error === true &&
+                {this.state.error === true &&
                     <NotFound />
-                } */}
+                }
                 <div className="row">
                     {this.state.posts && this.state.posts.length > 0 ? (
                         this.state.posts.map(post => (

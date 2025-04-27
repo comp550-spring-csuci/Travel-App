@@ -1,7 +1,9 @@
 import React from "react";
 import Navbar from '../components/navbar';
+import { AppContext } from "../lib";
 
 export default class EditBlog extends React.Component {
+    static contextType = AppContext;
     constructor(props) {
         super(props);
         this.state = {
@@ -11,10 +13,36 @@ export default class EditBlog extends React.Component {
             author: 'user',
             latitude: '',
             longitude: '',
-            invalid: false
+            invalid: false,
+            loading: true,
+            error: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        const { token, route } = this.context;
+        const { id } = route.params;
+        fetch(`api/blogs/${id}`, {
+
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': token
+            }
+        })
+            .then(post => {
+                this.setState({
+                    title: post.title,
+                    content: post.content,
+                    image: post.image || "",
+                    location: post.location || "",
+                    latitude: post.latitude || "",
+                    longitude: post.longitude || "",
+                    loading: false
+                });
+            })
+            .catch(() => this.setState({error: true, loading: false}));
     }
 
     //handles input change in the form and sets the value

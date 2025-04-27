@@ -73,8 +73,11 @@ export default class App extends React.Component {
     if (path === 'sign-in' || path === 'sign-up') {
       return <AuthPage />;
     }
-    if (path === 'blog-feed') {
+    if (path === 'blog-feed-all') {
       return <BlogFeedAll />;
+    }
+    if (path === 'blog-feed') {
+      return <BlogFeed />;
     }
     if (path === 'add-blog') {
       return <AddBlog />;

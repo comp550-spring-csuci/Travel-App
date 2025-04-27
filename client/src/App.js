@@ -57,7 +57,9 @@ export default class App extends React.Component {
 
   handleSignOut() {
     window.localStorage.removeItem('jwt');
-    this.setState({ user: null, token: null });
+    this.setState({ user: null, token: null }, () => {
+      window.location.hash = '#sign-in';
+    });
   }
 
   renderPage() {

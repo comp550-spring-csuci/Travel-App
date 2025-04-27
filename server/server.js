@@ -82,11 +82,16 @@ app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
 
 //Get all blog, used for #destination and globe gui
 app.get('/api/get/all', async (req, res) => {
-    const result = await blogDB.findBlog({});
-    if (!result) {
-        return res.status(404).json({ error: 'No blog found.'});
+    try {
+        const posts = await Blog.find({}).populate('author', 'username');
+
+        if(!posts.length) {
+            return res.status(404).jsons({error: 'No blog found.'});
+        }
+        return res.status(200).json(posts);
+    } catch (err) {
+        return res.status(500).json({error: 'Server error fetching blogs.'});
     }
-    res.status(200).json(result);
 })
 
 /*//Get selection of blogs, used for user blog 

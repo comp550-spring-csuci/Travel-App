@@ -7,7 +7,6 @@ export default class BlogFeedAll extends React.Component {
         this.state = {posts: null, loading: true, error: false};
     }
 
-    //edit this path with the actual path when created 
     componentDidMount() {
         fetch('api/get/all', {
             headers: {
@@ -32,7 +31,7 @@ export default class BlogFeedAll extends React.Component {
         return (
             <div className="container-fluid p-5">
                 <div className="d-flex justify-content-center align-items-center">
-                    <h1 className="p-5">Your Feed</h1>
+                    <h1 className="p-5">All Posts Feed</h1>
                     <a href="#add-blog" className="btn btn-primary">New+</a>
                 </div>
                 {/* {this.state.error === true &&

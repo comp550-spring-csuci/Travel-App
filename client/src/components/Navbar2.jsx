@@ -49,7 +49,7 @@ function Navbar() {
                   </>
                 ) : (
                   <>
-                    <li><a className='nav-link nav-link-line' href="#blog-feed">Blog Posts</a></li>
+                    <li><a className='nav-link nav-link-line' href="#blog-feed">All Posts</a></li>
                     <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
                     <li><a className='nav-link nav-link-line' href="#add-blog">Add Blog</a></li>
                     <li><a className='nav-link nav-link-line' href='#the-globe'>The Globe</a></li>

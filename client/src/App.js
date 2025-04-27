@@ -1,5 +1,5 @@
 import React from 'react';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import './App.css';
 import AuthPage from './pages/auth';
 import AddBlog from './components/blog-form';
@@ -22,6 +22,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       user: null,
+      token: null,
       isAuthorizing: true,
       route: parseRoute(window.location.hash)
     };
@@ -34,7 +35,16 @@ export default class App extends React.Component {
       this.setState({ route: parseRoute(window.location.hash) });
     });
     const token = window.localStorage.getItem('jwt');
-    const user = token ? jwtDecode(token) : null;
+    let user = null;
+    if (token) {
+      try {
+        user = jwtDecode(token);
+      } catch (e) {
+        // invalid token in storage
+        window.localStorage.removeItem('jwt');
+      }
+    }
+    //const user = token ? jwtDecode(token) : null;
     this.setState({ user, isAuthorizing: false });
   }
   
@@ -42,12 +52,12 @@ export default class App extends React.Component {
   handleSignIn(result) {
     const { user, token } = result;
     window.localStorage.setItem('jwt', token);
-    this.setState({ user });
+    this.setState({ user, token });
   }
 
   handleSignOut() {
     window.localStorage.removeItem('jwt');
-    this.setState({ user: null });
+    this.setState({ user: null, token: null });
   }
 
   renderPage() {
@@ -79,9 +89,9 @@ export default class App extends React.Component {
 
   render() {
     if (this.state.isAuthorizing) return null;
-    const { user, route } = this.state;
+    const { user, token, route } = this.state;
     const { handleSignIn, handleSignOut } = this;
-    const contextValue = { user, route, handleSignIn, handleSignOut };  
+    const contextValue = { user, token, route, handleSignIn, handleSignOut };  
     return (
       <AppContext.Provider value={contextValue}>
         <Navbar />

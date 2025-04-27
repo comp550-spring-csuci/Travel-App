@@ -81,7 +81,7 @@ app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
 })
 
 //Get all blog, used for #destination and globe gui
-app.get('/api/get/all', async (req, res) => {
+app.get('/api/get/all', authorizationMiddleware, async (req, res) => {
     try {
         const posts = await Blog.find({}).populate('author', 'username');
 

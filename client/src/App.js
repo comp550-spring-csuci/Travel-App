@@ -45,7 +45,7 @@ export default class App extends React.Component {
       }
     }
     //const user = token ? jwtDecode(token) : null;
-    this.setState({ user, isAuthorizing: false });
+    this.setState({ user, token, isAuthorizing: false });
   }
   
 

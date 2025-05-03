@@ -51,19 +51,27 @@ app.post('/api/auth/sign-in', async (req, res) => {
 })
 
 //Create user blog
-app.post('/api/post/newblog', async (req, res) => {
+app.post('/api/post/newblog', authorizationMiddleware, async (req, res) => {
     try {
-        const {title, content, image, author, latitude, longitude, location} = req.body;
+        const author = req.user.id;
+        const {title, content, image, latitude, longitude, location} = req.body;
         console.log(req.body);
-        if (!title || !content || !author || !latitude || !longitude) {
-            return res.status(400).json({error: "title, content, author, and location are required fields"});
+        if (!title || !content || author == null || latitude == null || longitude == null || !location) {
+            return res.status(400).json({error: "title, content, latitude, longitude, and location are required fields"});
         }
-        const result = await blogDB.addBlog(req.body);
-        if (result) {
-            res.status(201).json({message: "Blog post was created successfully!"});
+        const success = await blogDB.addBlog({title, content, image, latitude, longitude, location, author});
+        if (success) {
+            return redirect.status(201).json({message: "Created successfully"});
         } else {
-            res.status(500).json({error: "Failed to create a blog post."});
+            return res.status(500).json({error: "Failed to create"});
         } 
+
+        // const result = await blogDB.addBlog(req.body);
+        // if (result) {
+        //     res.status(201).json({message: "Blog post was created successfully!"});
+        // } else {
+        //     res.status(500).json({error: "Failed to create a blog post."});
+        // } 
     } catch (err) {
         res.status(500).json({error: "Server error creating a blog post"});
     }

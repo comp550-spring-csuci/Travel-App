@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const multer = require("multer");
+const path = require("path");
 const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const { DBconnection } = require("./connectDB");
@@ -18,6 +20,29 @@ DBconnection.setupDB();
 
 const userDB = new UserDB();
 const blogDB = new BlogDB();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, "uploads"));
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = `${Date.now()}-${file.originalname}`;
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith("image/")) {
+            return cb(new Error("Not an image"), false);
+        }
+        cb(null, true);
+    },
+    limits: {fileSize: 5 * 1024 * 1024}
+});
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //Sign-up route
 app.post('/api/auth/sign-up', async (req, res) => {
@@ -51,17 +76,20 @@ app.post('/api/auth/sign-in', async (req, res) => {
 })
 
 //Create user blog
-app.post('/api/post/newblog', authorizationMiddleware, async (req, res) => {
+app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {
         const author = req.user.id;
-        const {title, content, image, latitude, longitude, location} = req.body;
+        const {title, content, latitude, longitude, location} = req.body;
         console.log(req.body);
         if (!title || !content || author == null || latitude == null || longitude == null || !location) {
             return res.status(400).json({error: "title, content, latitude, longitude, and location are required fields"});
         }
-        const success = await blogDB.addBlog({title, content, image, latitude, longitude, location, author});
+        if (!req.file) {
+            return res.status(400).json({error: "Image file required"});
+        }
+        const success = await blogDB.addBlog({title, content, latitude: parseFloat(latitude), longitude: parseFloat(longitude), location, author, image: `uploads/${req.file.filename}`});
         if (success) {
-            return redirect.status(201).json({message: "Created successfully"});
+            return res.status(201).json({message: "Created successfully"});
         } else {
             return res.status(500).json({error: "Failed to create"});
         } 

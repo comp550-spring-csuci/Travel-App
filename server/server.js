@@ -16,6 +16,8 @@ const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
+
+
 DBconnection.setupDB();
 
 const userDB = new UserDB();
@@ -122,7 +124,7 @@ app.get('/api/get/all', authorizationMiddleware, async (req, res) => {
         const posts = await Blog.find({}).populate('author', 'username');
 
         if(!posts.length) {
-            return res.status(404).jsons({error: 'No blog found.'});
+            return res.status(404).json({error: 'No blog found.'});
         }
         return res.status(200).json(posts);
     } catch (err) {

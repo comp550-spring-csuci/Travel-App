@@ -35,12 +35,14 @@
 // export default GlobeComponent;
 
 // src/GlobeComponent.js
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useContext } from 'react';
+import { AppContext } from '../lib';
 import Globe from 'globe.gl';
 
 const GlobeComponent = () => {
   const globeContainerRef = useRef(null);
   const [mode, setMode] = useState('light');
+  const { token } = useContext(AppContext);
   // const [globeInstance, setGlobeInstance] = useState(null);
   const [hash, setHash] = useState(window.location.hash); // Track the current hash
 
@@ -70,22 +72,42 @@ const GlobeComponent = () => {
     globe(globeContainerRef.current); // Render the globe
     // setGlobeInstance(globe);
 
+
     // Fetch blog data
-    fetch('http://localhost:3001/api/get/all')
-      .then(res => res.json())
-      .then(data => {
-        const validPoints = data.filter(blog =>
-          typeof blog.latitude === 'number' && typeof blog.longitude === 'number',
-        );
-        globe.pointsData(validPoints);
-        // globe.arcsData(validPoints);
-        // globe.arcsStartLng(validPoints);
-        // globe.arcsStartLat(validPoints);
-        // globe.arcEndLat(validPoints);
-        // globe.arcEndLng(validPoints);
-      
-      })
-      .catch(err => console.error('Failed to fetch blog data:', err));
+    fetch('http://localhost:3001/api/get/all', {
+      headers: {
+        'x-access-token': token
+      }
+    })
+  .then(res => res.json())  // Parse the JSON response
+  .then(data => {
+    console.log("Fetched data:", data);  // Log to see the structure of the response
+
+    // If the response has a property `data` containing the array
+    const blogData = data.data || data;  // Access the array from `data` or use the response itself if it's directly an array
+
+    // Ensure it's an array before applying .filter()
+    if (!Array.isArray(blogData)) {
+      throw new Error("Expected array, got: " + JSON.stringify(blogData));
+    }
+
+    // Filter the posts to only include those with valid latitude and longitude
+    const validPoints = blogData.filter(blog =>
+      typeof blog.latitude === 'number' && typeof blog.longitude === 'number'
+    );
+
+    // Pass the valid points to the globe
+    globe.pointsData(validPoints);
+
+    // Optional: You can use arcsData, arcsStartLng, etc., based on your need
+    // globe.arcsData(validPoints);
+    // globe.arcsStartLng(validPoints);
+    // globe.arcsStartLat(validPoints);
+    // globe.arcEndLat(validPoints);
+    // globe.arcEndLng(validPoints);
+  })
+  .catch(err => console.error('Failed to fetch blog data:', err));
+
 
     // Camera position based on hash
     if (hash.includes('location')) {

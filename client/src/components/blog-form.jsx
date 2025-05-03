@@ -9,7 +9,6 @@ export default class AddBlog extends React.Component {
         this.state = {
             title: '',
             content: '',
-            image: '',
             file: null,
             location: '',
             latitude: '',
@@ -18,7 +17,7 @@ export default class AddBlog extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleFileChange = this.handleFileChange(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
     }
 
     //handles input change in the form and sets the value
@@ -42,8 +41,8 @@ export default class AddBlog extends React.Component {
         form.append("content", content);
         form.append("location", location);
         form.append("latitude", latitude);
+        form.append("longitude", longitude);
         form.append("image", file);
-        form.append("author", user.id);
 
         fetch('/api/post/newblog', {
             method: 'POST',

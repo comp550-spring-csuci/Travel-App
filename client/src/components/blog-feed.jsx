@@ -37,6 +37,7 @@ export default class BlogFeed extends React.Component {
 
     render() {
         const {posts, loading, error} = this.state;
+        const {user} = this.context;
         return (
             <div className="container-fluid p-5">
                 <div className="d-flex justify-content-center align-items-center">
@@ -68,6 +69,9 @@ export default class BlogFeed extends React.Component {
                                             <p>{post.location}</p>
                                         </div>
                                     </div>
+                                    {user && post.author?._id === user.id && (
+                                        <a href={`#edit-blog/${post._id}`} className="btn btn-sm btn-secondary mt-2">Edit</a>
+                                    )}
                                 </div>
                             </div>
                         ))

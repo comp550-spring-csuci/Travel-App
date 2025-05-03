@@ -20,6 +20,35 @@ export default class AddBlog extends React.Component {
         this.handleFileChange = this.handleFileChange.bind(this);
     }
 
+    async componentDidMount() {
+        const {token} = this.context;
+        const {blogId} = this.props;
+
+        if (blogId) {
+            try {
+                const res = await fetch(`/api/blogs/${blogId}`, {
+                    headers: {"x-access-token": token}
+                });
+                if (!res.ok) throw new Error(res.status);
+                const post = await res.json();
+
+                if (post.author._id !== this.context.user.id) {
+                    return window.location.hash = "#blog-feed";
+                }
+
+                this.setState({
+                    title: post.title,
+                    content: post.content,
+                    location: post.location,
+                    latitude: post.latitude,
+                    longitude: post.longitude,
+                });
+            } catch {
+                this.setState({error: true});
+            }
+        }
+    }
+
     //handles input change in the form and sets the value
     handleChange(event) {
         const { name, value } = event.target;
@@ -33,8 +62,9 @@ export default class AddBlog extends React.Component {
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
-        const {title, content, image, file, location, latitude, longitude} = this.state;
-        const {user, token} = this.context;
+        const {title, content, file, location, latitude, longitude} = this.state;
+        const {token} = this.context;
+        const {blogId} = this.props;
 
         const form = new FormData();
         form.append("title", title);
@@ -42,10 +72,14 @@ export default class AddBlog extends React.Component {
         form.append("location", location);
         form.append("latitude", latitude);
         form.append("longitude", longitude);
-        form.append("image", file);
+        if (file) form.append("image", file);
+        if (blogId) form.append("blogId", blogId);
 
-        fetch('/api/post/newblog', {
-            method: 'POST',
+        const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
+        const method = blogId ? "PUT" : "POST";
+
+        fetch(url, {
+            method,
             headers: {
                 'x-access-token': token
             },
@@ -97,15 +131,15 @@ export default class AddBlog extends React.Component {
     render() {
         //const {route} = this.context;
         //const { action } = this.props;
-        const {title, content, image, file, location, latitude, longitude} = this.state;
+        const {title, content, file, location, latitude, longitude} = this.state;
+        const {blogId} = this.props;
         const { handleChange, handleSubmit } = this;
-        const welcomeMessage = 'Create New Blog';
         const submitButtonText = 'Finish';
+        const isEdit = Boolean(blogId);
         return (
             <div className="blog-background full-screen d-flex justify-content-center align-items-center">
                 <div className='form-style container-fluid col-10 col-md-5 p-4'>
-                    {/* <Navbar /> */}
-                    <h1 className='text-center mb-3 form-font'>{welcomeMessage}</h1>
+                    <h1 className='text-center mb-3 mt-5 pt-5 form-font'>{isEdit ? "Edit Blog" : "Create New Blog"}</h1>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-4'>
                         <label htmlFor="title" className='form-label'>Title</label>

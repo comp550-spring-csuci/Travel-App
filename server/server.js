@@ -159,6 +159,14 @@ app.get('/api/get/search', async (req, res) => {
     res.status(200).json(searchResult);
 })
 
+app.get('/api/blogs/:id', authorizationMiddleware, async(req, res) => {
+    const post = await Blog.findById(req.params.id).populate('author', 'username');
+    if (!post) {
+        return res.sendStatus(404);
+    }
+    res.json(post);
+});
+
 //Update such blog post
 app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {

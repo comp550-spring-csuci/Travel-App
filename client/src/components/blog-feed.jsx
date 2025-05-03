@@ -43,10 +43,14 @@ export default class BlogFeed extends React.Component {
                     <h1 className="p-5">Your Feed</h1>
                     <a href="#add-blog" className="btn btn-primary">New+</a>
                 </div>
-                {this.state.posts && this.state.posts.length > 0 ? (
-                    this.state.posts.map(post => (
-                        <div key={post._id} className="col-md-4 blog-box-container">
-                            <div className="blog-post mb-4 p-3 border rounded blog-box">
+                {this.state.error === true &&
+                    <NotFound />
+                }
+                <div className="row">
+                    {this.state.posts && this.state.posts.length > 0 ? (
+                        this.state.posts.map(post => (
+                            <div key={post._id} className="col-md-4 blog-box-container">
+                                <div className="blog-post mb-4 p-3 border rounded blog-box">
                                     {post.image && (
                                         <img
                                             src={post.image}
@@ -65,12 +69,13 @@ export default class BlogFeed extends React.Component {
                                         </div>
                                     </div>
                                 </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No blog posts available.</p>
-                )
-                }
+                            </div>
+                        ))
+                    ) : (
+                        <p>No blog posts available.</p>
+                    )
+                    }
+                </div>
             </div>
         )
     }

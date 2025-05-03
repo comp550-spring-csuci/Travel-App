@@ -160,19 +160,39 @@ app.get('/api/get/search', async (req, res) => {
 })
 
 //Update such blog post
-app.post('/api/post/updateBlog', async (req, res) => {
+app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {
-        const {blogId, title, content, image, author, latitude, longitude} = req.body;
+        const author = req.user.id;
+        const {blogId, title, content, latitude, longitude} = req.body;
+
         console.log(req.body);
-        if (!title || !content || !author || !latitude || !longitude) {
-            return res.status(400).json({error: "title, content, author, and location are required fields" });
+        if (!title || !content || !blogId || latitude == null || longitude == null) {
+            return res.status(400).json({error: "title, content, and location are required fields" });
         }
-        const result = await blogDB.updateBlog({_id: blogId}, req.body);
-        if (result) {
-            res.status(201).json({message: "Blog post was created successfully!" });
-        } else {
-            res.status(500).json({ error: "Failed to update a blog post." });
-        } 
+
+        const post = await Blog.findById(blogId).exec();
+        if (!post) {
+            return res.status(404).json({error: "Post not found"});
+        }
+        if (post.author.toString() !== author) {
+            return res.status(403).json({error: "You can only edit your own posts"});
+        }
+        const updates = {
+            title, content, location, latitude: parseFloat(latitude), longitude: parseFloat(longitude)
+        };
+        if (req.file) {
+            updates.image = `/uploads/${req.file.filename}`;
+        }
+
+        const updated = await Blog.findByIdAndUpdate(blogId, updates, {new: true}.exec());
+        return res.json(updated);
+        
+        //const result = await blogDB.updateBlog({_id: blogId}, req.body);
+        // if (result) {
+        //     res.status(201).json({message: "Blog post was created successfully!" });
+        // } else {
+        //     res.status(500).json({ error: "Failed to update a blog post." });
+        // } 
     } catch (err) {
         res.status(500).json({ error: "Server error creating a blog post" });
     }

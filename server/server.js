@@ -171,7 +171,7 @@ app.get('/api/blogs/:id', authorizationMiddleware, async(req, res) => {
 app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {
         const author = req.user.id;
-        const {blogId, title, content, latitude, longitude} = req.body;
+        const {blogId, title, content, latitude, longitude, location} = req.body;
 
         console.log(req.body);
         if (!title || !content || !blogId || latitude == null || longitude == null) {
@@ -192,7 +192,7 @@ app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"),
             updates.image = `/uploads/${req.file.filename}`;
         }
 
-        const updated = await Blog.findByIdAndUpdate(blogId, updates, {new: true}.exec());
+        const updated = await Blog.findByIdAndUpdate(blogId, updates, {new: true}).exec();
         return res.json(updated);
         
         //const result = await blogDB.updateBlog({_id: blogId}, req.body);

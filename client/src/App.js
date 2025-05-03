@@ -63,7 +63,7 @@ export default class App extends React.Component {
   }
 
   renderPage() {
-    const { path } = this.state.route;
+    const { path, params } = this.state.route;
     if (path === '') {
       //return <Home />;
       return <LandingPage />;
@@ -85,7 +85,8 @@ export default class App extends React.Component {
       return <AddBlog />;
     }
     if (path === 'edit-blog') {
-      return <EditBlog />;
+      const blogId = params.get('id');
+      return <AddBlog blogId={blogId} />;
     }
     //this needs to be fixed, it is curently displayed by default under the navbar    
     return <NotFound />;

@@ -9,14 +9,44 @@ export default class AddBlog extends React.Component {
         this.state = {
             title: '',
             content: '',
-            image: '',
-            author: 'user',
+            file: null,
+            location: '',
             latitude: '',
             longitude: '',
             invalid: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
+    }
+
+    async componentDidMount() {
+        const {token} = this.context;
+        const {blogId} = this.props;
+
+        if (blogId) {
+            try {
+                const res = await fetch(`/api/blogs/${blogId}`, {
+                    headers: {"x-access-token": token}
+                });
+                if (!res.ok) throw new Error(res.status);
+                const post = await res.json();
+
+                if (post.author._id !== this.context.user.id) {
+                    return window.location.hash = "#blog-feed";
+                }
+
+                this.setState({
+                    title: post.title,
+                    content: post.content,
+                    location: post.location,
+                    latitude: post.latitude,
+                    longitude: post.longitude,
+                });
+            } catch {
+                this.setState({error: true});
+            }
+        }
     }
 
     //handles input change in the form and sets the value
@@ -25,17 +55,49 @@ export default class AddBlog extends React.Component {
         this.setState({ [name]: value });
     }
 
+    handleFileChange({target: {files}}) {
+        this.setState({file: files[0]});
+    }
+
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
-        const req = {
-            method: 'POST',
+        const {title, content, file, location, latitude, longitude} = this.state;
+        const {token} = this.context;
+        const {blogId} = this.props;
+
+        const form = new FormData();
+        form.append("title", title);
+        form.append("content", content);
+        form.append("location", location);
+        form.append("latitude", latitude);
+        form.append("longitude", longitude);
+        if (file) form.append("image", file);
+        if (blogId) form.append("blogId", blogId);
+
+        const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
+        const method = blogId ? "PUT" : "POST";
+
+        fetch(url, {
+            method,
             headers: {
-                'Content-Type': 'application/json'
+                'x-access-token': token
             },
-            body: JSON.stringify(this.state)
+            body: form
+        })
+            .then(res => {
+                if (!res.ok) throw new Error(res.status);
+                return res.json();
+            })
+            .then(() => {
+                window.location.hash = '#blog-feed';
+            })
+            .catch(err => {
+                console.error("Upload failed", err);
+                this.setState({error: true, loading: false})
+            })
         };
-        this.setState({ invalid: true });
+        //this.setState({ invalid: true });
         //if signing in and bad response -> set to incorrect, if signing up -> redirect to sign in, if user and has token -> sign in
         // fetch(`/api/auth/${action}`, req)
         //     .then(res => res.json())
@@ -50,33 +112,34 @@ export default class AddBlog extends React.Component {
         //         }
         //     });
         
-        fetch(`/api/post/newblog`, req) // change it so that it fetches to the backend server
-        //api/auth is for authenticating the user and not for adding user
-        // still need to fetch for access to database.
-            .then(async res => {
-              const result = await res.json();
-              if (!res.ok) {
-                this.setState({ invalid: true });
-                return;
-              }
-            })
-            .catch(err => {
-              console.error("Auth error:", err);
-              this.setState({ invalid: true });
-            });
-    }
+        // fetch(`/api/post/newblog`, req) // change it so that it fetches to the backend server
+        // //api/auth is for authenticating the user and not for adding user
+        // // still need to fetch for access to database.
+        //     .then(async res => {
+        //       const result = await res.json();
+        //       if (!res.ok) {
+        //         this.setState({ invalid: true });
+        //         return;
+        //       }
+        //     })
+        //     .catch(err => {
+        //       console.error("Auth error:", err);
+        //       this.setState({ invalid: true });
+        //     });
+    //}
 
     render() {
         //const {route} = this.context;
         //const { action } = this.props;
+        const {title, content, file, location, latitude, longitude} = this.state;
+        const {blogId} = this.props;
         const { handleChange, handleSubmit } = this;
-        const welcomeMessage = 'Create New Blog';
         const submitButtonText = 'Finish';
+        const isEdit = Boolean(blogId);
         return (
             <div className="blog-background full-screen d-flex justify-content-center align-items-center">
                 <div className='form-style container-fluid col-10 col-md-5 p-4'>
-                    {/* <Navbar /> */}
-                    <h1 className='text-center mb-3 form-font'>{welcomeMessage}</h1>
+                    <h1 className='text-center mb-3 mt-5 pt-5 form-font'>{isEdit ? "Edit Blog" : "Create New Blog"}</h1>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-4'>
                         <label htmlFor="title" className='form-label'>Title</label>
@@ -86,6 +149,7 @@ export default class AddBlog extends React.Component {
                             id='title'
                             type="text"
                             name="title"
+                            value={title}
                             onChange={handleChange}
                             className='form-control' />
                         </div>
@@ -96,8 +160,20 @@ export default class AddBlog extends React.Component {
                             id='content'
                             type='text'
                             name='content'
+                            value={content}
                             onChange={handleChange}
                             className='form-control'/>
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="location" className="form-label">Location</label>
+                            <input
+                            required
+                            id="location"
+                            name="location"
+                            value={location}
+                            onChange={this.handleChange}
+                            className="form-control"
+                            />
                         </div>
                         <div className='mb-4'>
                             <label htmlFor='latitude' className='form-label'>Latitude</label>
@@ -106,6 +182,7 @@ export default class AddBlog extends React.Component {
                             id='latitude'
                             type='text'
                             name='latitude'
+                            value={latitude}
                             onChange={handleChange}
                             className='form-control'/>
                         </div>
@@ -116,17 +193,27 @@ export default class AddBlog extends React.Component {
                             id='longitude'
                             type='text'
                             name='longitude'
+                            value={longitude}
                             onChange={handleChange}
                             className='form-control'/>
                         </div>
                         <div className='mb-4'>
-                            <label htmlFor='thumbnail' className='form-label'>Thumbnail</label>
-                            <input 
-                            id='thumbnail'
-                            type='image'
+                            <label htmlFor='image' className='form-label'>Upload Image</label>
+                            {/* <input 
+                            id='image'
+                            type='url'
                             name='image'
+                            value={image}
                             onChange={handleChange}
-                            className='form-control'/>
+                            className='form-control'/> */}
+                            <input 
+                            id="image"
+                            name="image"
+                            type="file"
+                            accept="image/*"
+                            onChange={this.handleFileChange}
+                            className="form-control"
+                            />
                         </div>
                         {this.state.incorrect === true &&
                             <div>

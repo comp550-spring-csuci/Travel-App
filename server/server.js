@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const multer = require("multer");
+const path = require("path");
 const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const { DBconnection } = require("./connectDB");
@@ -18,6 +20,29 @@ DBconnection.setupDB();
 
 const userDB = new UserDB();
 const blogDB = new BlogDB();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, "uploads"));
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = `${Date.now()}-${file.originalname}`;
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith("image/")) {
+            return cb(new Error("Not an image"), false);
+        }
+        cb(null, true);
+    },
+    limits: {fileSize: 5 * 1024 * 1024}
+});
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //Sign-up route
 app.post('/api/auth/sign-up', async (req, res) => {
@@ -51,19 +76,30 @@ app.post('/api/auth/sign-in', async (req, res) => {
 })
 
 //Create user blog
-app.post('/api/post/newblog', async (req, res) => {
+app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {
-        const {title, content, image, author, latitude, longitude, location} = req.body;
+        const author = req.user.id;
+        const {title, content, latitude, longitude, location} = req.body;
         console.log(req.body);
-        if (!title || !content || !author || !latitude || !longitude) {
-            return res.status(400).json({error: "title, content, author, and location are required fields"});
+        if (!title || !content || author == null || latitude == null || longitude == null || !location) {
+            return res.status(400).json({error: "title, content, latitude, longitude, and location are required fields"});
         }
-        const result = await blogDB.addBlog(req.body);
-        if (result) {
-            res.status(201).json({message: "Blog post was created successfully!"});
+        if (!req.file) {
+            return res.status(400).json({error: "Image file required"});
+        }
+        const success = await blogDB.addBlog({title, content, latitude: parseFloat(latitude), longitude: parseFloat(longitude), location, author, image: `uploads/${req.file.filename}`});
+        if (success) {
+            return res.status(201).json({message: "Created successfully"});
         } else {
-            res.status(500).json({error: "Failed to create a blog post."});
+            return res.status(500).json({error: "Failed to create"});
         } 
+
+        // const result = await blogDB.addBlog(req.body);
+        // if (result) {
+        //     res.status(201).json({message: "Blog post was created successfully!"});
+        // } else {
+        //     res.status(500).json({error: "Failed to create a blog post."});
+        // } 
     } catch (err) {
         res.status(500).json({error: "Server error creating a blog post"});
     }
@@ -123,20 +159,48 @@ app.get('/api/get/search', async (req, res) => {
     res.status(200).json(searchResult);
 })
 
+app.get('/api/blogs/:id', authorizationMiddleware, async(req, res) => {
+    const post = await Blog.findById(req.params.id).populate('author', 'username');
+    if (!post) {
+        return res.sendStatus(404);
+    }
+    res.json(post);
+});
+
 //Update such blog post
-app.post('/api/post/updateBlog', async (req, res) => {
+app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {
-        const {blogId, title, content, image, author, latitude, longitude} = req.body;
+        const author = req.user.id;
+        const {blogId, title, content, latitude, longitude, location} = req.body;
+
         console.log(req.body);
-        if (!title || !content || !author || !latitude || !longitude) {
-            return res.status(400).json({error: "title, content, author, and location are required fields" });
+        if (!title || !content || !blogId || latitude == null || longitude == null) {
+            return res.status(400).json({error: "title, content, and location are required fields" });
         }
-        const result = await blogDB.updateBlog({_id: blogId}, req.body);
-        if (result) {
-            res.status(201).json({message: "Blog post was created successfully!" });
-        } else {
-            res.status(500).json({ error: "Failed to update a blog post." });
-        } 
+
+        const post = await Blog.findById(blogId).exec();
+        if (!post) {
+            return res.status(404).json({error: "Post not found"});
+        }
+        if (post.author.toString() !== author) {
+            return res.status(403).json({error: "You can only edit your own posts"});
+        }
+        const updates = {
+            title, content, location, latitude: parseFloat(latitude), longitude: parseFloat(longitude)
+        };
+        if (req.file) {
+            updates.image = `/uploads/${req.file.filename}`;
+        }
+
+        const updated = await Blog.findByIdAndUpdate(blogId, updates, {new: true}).exec();
+        return res.json(updated);
+        
+        //const result = await blogDB.updateBlog({_id: blogId}, req.body);
+        // if (result) {
+        //     res.status(201).json({message: "Blog post was created successfully!" });
+        // } else {
+        //     res.status(500).json({ error: "Failed to update a blog post." });
+        // } 
     } catch (err) {
         res.status(500).json({ error: "Server error creating a blog post" });
     }

@@ -37,33 +37,49 @@ export default class BlogFeed extends React.Component {
 
     render() {
         const {posts, loading, error} = this.state;
+        const {user} = this.context;
         return (
             <div className="container-fluid p-5">
                 <div className="d-flex justify-content-center align-items-center">
                     <h1 className="p-5">Your Feed</h1>
                     <a href="#add-blog" className="btn btn-primary">New+</a>
                 </div>
-                {this.state.posts && this.state.posts.length > 0 ? (
-                    this.state.posts.map(post => (
-                        <div key={post._id} className="blog-post mb-4 p-3 border rounded">
-                            {post.image && (
-                                <img
-                                    src={post.image}
-                                    alt={post.title}
-                                    style={{width: '100%', maxWidth: '400px', marginBottom: '1rem'}}
-                                />
-                            )}
-                            <h2>{post.title}</h2>
-                            <p>{post.content}</p>
-                            <p>{post.author.username}</p>
-                            <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                            <p>{post.location}</p>
-                        </div>
-                    ))
-                ) : (
-                    <p>No blog posts available.</p>
-                )
+                {this.state.error === true &&
+                    <NotFound />
                 }
+                <div className="row">
+                    {this.state.posts && this.state.posts.length > 0 ? (
+                        this.state.posts.map(post => (
+                            <div key={post._id} className="col-md-4 blog-box-container">
+                                <div className="blog-post mb-4 p-3 border rounded blog-box">
+                                    {post.image && (
+                                        <img
+                                            src={post.image}
+                                            alt={post.title}
+                                            className="blog-image"
+                                            style={{width: '100%', maxWidth: '400px', marginBottom: '1rem'}}
+                                        />
+                                    )}
+                                    <div className="blog-box-text">
+                                        <h2>{post.title}</h2>
+                                        <p>{post.content}</p>
+                                        <div className="blog-author">
+                                            <p className="blog-author-text">{post.author && post.author.username ? post.author.username : "Unknown Author"}</p>
+                                            <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                                            <p>{post.location}</p>
+                                        </div>
+                                    </div>
+                                    {user && post.author?._id === user.id && (
+                                        <a href={`#edit-blog/${post._id}`} className="btn btn-sm btn-secondary mt-2">Edit</a>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No blog posts available.</p>
+                    )
+                    }
+                </div>
             </div>
         )
     }

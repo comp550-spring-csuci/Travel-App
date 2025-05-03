@@ -18,6 +18,7 @@ export default class AddBlog extends React.Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleFileChange = this.handleFileChange(this);
     }
 
     //handles input change in the form and sets the value
@@ -26,10 +27,14 @@ export default class AddBlog extends React.Component {
         this.setState({ [name]: value });
     }
 
+    handleFileChange({target: {files}}) {
+        this.setState({file: files[0]});
+    }
+
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
-        const {title, content, image, location, latitude, longitude} = this.state;
+        const {title, content, image, file, location, latitude, longitude} = this.state;
         const {user, token} = this.context;
 
         const form = new FormData();
@@ -93,7 +98,7 @@ export default class AddBlog extends React.Component {
     render() {
         //const {route} = this.context;
         //const { action } = this.props;
-        const {title, content, image, location, latitude, longitude} = this.state;
+        const {title, content, image, file, location, latitude, longitude} = this.state;
         const { handleChange, handleSubmit } = this;
         const welcomeMessage = 'Create New Blog';
         const submitButtonText = 'Finish';
@@ -173,7 +178,7 @@ export default class AddBlog extends React.Component {
                             name="image"
                             type="file"
                             accept="image/*"
-                            onChange={event => this.setState({file: event.target.files[0]})}
+                            onChange={this.handleFileChange}
                             className="form-control"
                             />
                         </div>

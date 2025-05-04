@@ -39,6 +39,26 @@ import React, { useRef, useEffect, useState, useContext } from 'react';
 import { AppContext } from '../lib';
 import Globe from 'globe.gl';
 
+// Create toggle styling
+let toggleButton = document.getElementById('toggleView');
+
+if (!toggleButton) {
+  toggleButton = document.createElement("button")
+  toggleButton.id = 'toggleView';
+  toggleButton.innerText = 'View: All Posts';
+  toggleButton.style.position = 'absolute';
+  toggleButton.style.top = '150px';
+  toggleButton.style.left = '0px';
+  toggleButton.style.zIndex = '1000';
+  toggleButton.style.padding = '0px';
+  toggleButton.style.background = '#222';
+  toggleButton.style.color = '#fff';
+  toggleButton.style.border = 'none';
+  toggleButton.style.cursor = 'pointer';
+  document.body.appendChild(toggleButton);
+}
+
+
 const GlobeComponent = () => {
   const globeContainerRef = useRef(null);
   const [mode, setMode] = useState('light');
@@ -54,60 +74,101 @@ const GlobeComponent = () => {
   const darkModeImageUrl = '//unpkg.com/three-globe/example/img/earth-night.jpg';
 
   useEffect(() => {
+    // Initialize current view
+    let currentView = 'all'
 
-    
 
     // if (!globeContainerRef.current) return;
 
     const globe = Globe()
-      .globeImageUrl(mode === 'light' ? lightModeImageUrl : darkModeImageUrl )
-      // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
-      .pointLat(d => d.latitude)
-      .pointLng(d => d.longitude)
-      .pointLabel(d => `${d.title}: ${d.content}`)
-      .pointColor(() => 'red')
-      .pointAltitude(.3)
+      // .globeImageUrl(mode === 'light' ? lightModeImageUrl : darkModeImageUrl )
+      // // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
+      // .pointLat(d => d.latitude)
+      // .pointLng(d => d.longitude)
+      // .pointLabel(d => `${d.title}: ${d.content} ${d.image} `)
+      // .pointColor(() => 'red')
+      // .pointAltitude(.3)
       
-
     globe(globeContainerRef.current); // Render the globe
     // setGlobeInstance(globe);
 
+    
 
-    // Fetch blog data
-    fetch('http://localhost:3001/api/get/all', {
-      headers: {
-        'x-access-token': token
+
+
+    const fetchAndRenderPosts = async () => {
+
+      try {
+
+        const homeLocation = await fetch('http://localhost:3001/api/home-location', {
+          headers: {
+            'x-access-token' : token
+          }
+        });
+        // const homeData = await homeLocation.json();
+        // console.log("The state of home data is:", homeData)
+        // get homeData
+        // const home = Array.isArray(homeData) ? homeData[0] : homeData
+        // const { latitude: homeLat, longitude: homeLng } = home;
+
+        // const validLatitude = !isNaN(homeLat) && homeLat >= -90 && homeLat <= 90;
+        // const validLongitude = !isNaN(homeLng) && homeLng >= -180 && homeLng <= 180;
+
+        // if (!validLatitude || !validLongitude) {
+        //   console.error('Invalid home location data:', homeLat, homeLng);
+        //   return; // Prevent further processing if the data is invalid
+        // }
+
+        const endpoint = currentView === 'all'
+          ? 'http://localhost:3001/api/get/all'
+          : 'http://localhost:3001/api/blog-feed';
+
+        const postRes = await fetch(endpoint, {
+          headers: {
+            'x-access-token' : token
+          }
+        });
+
+        const posts = await postRes.json()
+
+        const arcs = posts.map(post => ({
+          startLat: 51.5074,
+          startLng: -0.1278,
+          endLat: post.latitude, // e.g. London as destination
+          endLng: post.longitude,
+
+        }));
+        
+
+        globe
+        .pointsData(posts)
+        .globeImageUrl(mode === 'light' ? lightModeImageUrl : darkModeImageUrl )
+    // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
+        .pointLat(d => d.latitude)
+        .pointLng(d => d.longitude)
+        .pointLabel(d => `${d.title}: ${d.content} ${d.image} `)
+        .pointColor(() => 'red')
+        .pointAltitude(.3)
+        .arcsData(arcs)
+        .arcColor(() =>
+          currentView === 'all' ? 'rgba(0, 255, 0, 0.8)' : 'rgba(255, 165, 0, 0.8)'
+        )
+        .arcsTransitionDuration(0)
+        .arcDashLength(0.3)
+        .arcDashGap(1)
+        .arcDashAnimateTime(1000);
+      } catch (err) {
+        console.error("There is an error in fetchAndRenderPosts", err.message);
       }
-    })
-  .then(res => res.json())  // Parse the JSON response
-  .then(data => {
-    console.log("Fetched data:", data);  // Log to see the structure of the response
+    }  
 
-    // If the response has a property `data` containing the array
-    const blogData = data.data || data;  // Access the array from `data` or use the response itself if it's directly an array
+    document.getElementById('toggleView').addEventListener('click', () => {
+      currentView = currentView === 'all' ? 'me' : 'all';
+      toggleButton.innerText = `View: ${currentView === 'all' ? 'All Posts' : 'My Posts'}`;
+      fetchAndRenderPosts();
+    });
 
-    // Ensure it's an array before applying .filter()
-    if (!Array.isArray(blogData)) {
-      throw new Error("Expected array, got: " + JSON.stringify(blogData));
-    }
-
-    // Filter the posts to only include those with valid latitude and longitude
-    const validPoints = blogData.filter(blog =>
-      typeof blog.latitude === 'number' && typeof blog.longitude === 'number'
-    );
-
-    // Pass the valid points to the globe
-    globe.pointsData(validPoints);
-
-    // Optional: You can use arcsData, arcsStartLng, etc., based on your need
-    // globe.arcsData(validPoints);
-    // globe.arcsStartLng(validPoints);
-    // globe.arcsStartLat(validPoints);
-    // globe.arcEndLat(validPoints);
-    // globe.arcEndLng(validPoints);
-  })
-  .catch(err => console.error('Failed to fetch blog data:', err));
-
+    fetchAndRenderPosts()
 
     // Camera position based on hash
     if (hash.includes('location')) {
@@ -122,6 +183,7 @@ const GlobeComponent = () => {
     return () => {
       
     };
+
   }, [mode]); 
   return (
     <div>
@@ -135,5 +197,6 @@ const GlobeComponent = () => {
     </div>
   );
 };
+
 
 export default GlobeComponent;

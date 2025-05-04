@@ -13,6 +13,7 @@ const authorizationMiddleware = require("./authorization-middleware");
 
 const app = express();
 const cors = require('cors');
+const { User } = require('./model');
 app.use(cors());
 app.use(express.json());
 
@@ -107,6 +108,20 @@ app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), a
     }
 })
 
+// Get user location when signing up
+app.get('/api/home-location', authorizationMiddleware, async (req, res) => {
+    try {
+      const users = await User.findById(req.userId, 'latitude longitude');
+      res.json(users);
+    } catch (err) {
+      console.error("GET /api/home-location error:", err); // Add this
+      res.status(500).json({ error: "Server error fetching home location" });
+    }
+  });
+
+  
+
+  
 //Get user blog posts route
 app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
     try {

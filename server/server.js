@@ -163,14 +163,16 @@ app.get('/api/get/user', async (req, res) => {
 //Get selection of blogs, used for search
 //searches in order of title then body (maybe if we can have a place for a country then we can do that?)
 //not done, just returns all blogs atm.
-app.get('/api/get/search', async (req, res) => {
-    const phrase = req.body;
-    const phrases = phrase.split(" ");
+app.post('/api/post/search', async (req, res) => {
+    const { searchString } = req.body;
+    console.log(searchString);
+    const phrases = searchString.split(" ");
     
     for (singlePhrase in phrases) {
         const searchResult = await blogDB.findBlog({ $or: [{ title: /phrases/i }]});
+        console.log("Search successful.");
     }
-    if (!result) {
+    if (!searchResult) {
         return res.status(401).json({ error: 'No blog found.'});
     }
     res.status(200).json(searchResult);

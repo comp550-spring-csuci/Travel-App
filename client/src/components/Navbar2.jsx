@@ -18,7 +18,21 @@ function Navbar() {
   // For now, we'll just log the search query when it's updated
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    console.log('Searching for:', searchQuery);
+    const req = {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ searchString: searchQuery })
+    };
+    fetch(`/api/post/search`, req)
+        .then(async res => {
+        const result = await res.json();
+        if (!res.ok) throw new Error(res.status);})
+        .catch(err => {
+        console.error("Auth error:", err);
+        });
+    
   };  
 
   return (

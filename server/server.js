@@ -112,7 +112,7 @@ app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), a
 app.get('/api/home-location', authorizationMiddleware, async (req, res) => {
     try {
       const userId = req.user.id;
-      const users = await User.findById(req.userId, 'latitude longitude').exec();
+      const user = await User.findById(userId, 'latitude longitude').exec();
       res.json({latitude: user.latitude, longitude: user.longitude});
     } catch (err) {
       console.error("GET /api/home-location error:", err); // Add this

@@ -111,8 +111,9 @@ app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), a
 // Get user location when signing up
 app.get('/api/home-location', authorizationMiddleware, async (req, res) => {
     try {
-      const users = await User.findById(req.userId, 'latitude longitude');
-      res.json(users);
+      const userId = req.user.id;
+      const users = await User.findById(req.userId, 'latitude longitude').exec();
+      res.json({latitude: user.latitude, longitude: user.longitude});
     } catch (err) {
       console.error("GET /api/home-location error:", err); // Add this
       res.status(500).json({ error: "Server error fetching home location" });

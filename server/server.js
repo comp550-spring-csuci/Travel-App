@@ -167,13 +167,10 @@ app.get('/api/get/user', async (req, res) => {
 app.post('/api/post/search', async (req, res) => {
     const { searchString } = req.body;
     console.log(searchString);
-    const phrases = searchString.split(" ");
-    
-    for (singlePhrase in phrases) {
-        const searchResult = await blogDB.findBlog({ $or: [{ title: /phrases/i }]});
-        console.log("Search successful.");
-    }
+    const searchResult = await blogDB.searchBlog(searchString);
+    console.log(searchResult);
     if (!searchResult) {
+        console.log("searchResult is empty, returning 401 error.");
         return res.status(401).json({ error: 'No blog found.'});
     }
     res.status(200).json(searchResult);

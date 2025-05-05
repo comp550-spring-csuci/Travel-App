@@ -36,6 +36,11 @@ class BlogDB {
         return await Blog.find(condition).exec();
     }
 
+    async searchBlog(searchString) {
+        return await Blog.find({ $text: { $search: searchString }}, { score: { $meta: "textScore"}}
+            ).sort({ score: { $meta: "textScore" }}).exec();
+    }
+
     async updateBlog(oldBlogCondition, updatedBlogContent, author) {
         try {
             // First of all check if the blog even exists right now

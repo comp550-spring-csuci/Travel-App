@@ -227,24 +227,29 @@ app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"),
 })
 
 //Delete said blog post
-app.get('/api/delete/blog', async (req, res) => {
+app.delete('/api/blog/:id', authorizationMiddleware, async (req, res) => {
     try {
-        const { _id, title, content, image, author, latitude, longitude, location} = req.body;
+        const blogId = req.params.id;
+        const userId = req.user.id;
 
-        const result = await blogDB.removeBlog(req.body, author);
-        if (result == "Error") {
-            return res.status(500).json({ error: 'Server error deleting a blog post.'}); //blogDB side error
-        } else if (result == "NoBlog") {
-            return res.status(404).json({ error: "Blog does not exist."})
-        } else if (result == "NoPermission") {
-            return res.status(401).json({ error: "You do not have permission to delete the blog." })
+        const result = await blogDB.removeBlog(blogId, userId);
+
+        switch (result) {
+            case 'NoBlog':
+                return res.status(404).json({ error: 'Blog not found.' });
+            case 'NoPermission':
+                return res.status(403).json({ error: 'You do not have permission to delete this blog.' });
+            case 'Error':
+                return res.status(500).json({ error: 'Server error while deleting blog.' });
+            default:
+                return res.status(200).json({ message: 'Blog deleted successfully.' });
         }
-        res.status(200).json(result);
     } catch (err) {
-        res.status(500).json({error: "Server error deleting a blog post."}) 
-        //Not sure if this is necessary because blogDB code cathes errors anyways
+        console.error(err);
+        return res.status(500).json({ error: 'Unexpected server error.' });
     }
-})
+});
+
 
 app.get('/', (req, res) => res.send('API is running'));
 app.listen(3001, () => console.log('Server is running on port 3001'));

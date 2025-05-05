@@ -7,7 +7,7 @@ export default class BlogFeed extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {posts: null, loading: true, error: false};
+        this.state = { posts: null, loading: true, error: false };
     }
 
     componentDidMount() {
@@ -23,10 +23,9 @@ export default class BlogFeed extends React.Component {
                 return res.json();
             })
             .then(data => {
-                if (Array.isArray(data) && data.length === 0 ) {
+                if (Array.isArray(data) && data.length === 0) {
                     this.setState({ posts: null, loading: false, error: false });
-                }
-                else {
+                } else {
                     this.setState({ posts: data, loading: false, error: false });
                 }
             })
@@ -35,18 +34,46 @@ export default class BlogFeed extends React.Component {
             })
     }
 
+    handleDelete = async (postId) => {
+        const { token } = this.context;
+        try {
+            const res = await fetch(`/api/delete/${postId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-access-token": token
+                }
+            });
+            if (!res.ok) throw new Error("Delete failed");
+            this.setState(prevState => ({
+                posts: prevState.posts.filter(post => post._id !== postId)
+            }));
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete post.");
+        }
+    };
+
     render() {
-        const {posts, loading, error} = this.state;
-        const {user} = this.context;
+        const { posts, loading, error } = this.state;
+        const { user } = this.context;
         return (
             <div className="container-fluid p-5">
-                <div className="d-flex justify-content-center align-items-center">
+                <div className="d-flex justify-content-center align-items-center gap-3">
                     <h1 className="p-5">Your Feed</h1>
                     <a href="#add-blog" className="btn btn-primary">New+</a>
+                    {/* Delete Button */}
+                    {/* The Delete button goes next to New+ */}
+                    <button
+                        onClick={() => this.handleDelete(posts[0]._id)} // Example: Delete the first post
+                        className="btn btn-danger"
+                    >
+                        Delete
+                    </button>
                 </div>
-                {this.state.error === true &&
-                    <NotFound />
-                }
+
+                {this.state.error === true && <NotFound />}
+
                 <div className="row">
                     {this.state.posts && this.state.posts.length > 0 ? (
                         this.state.posts.map(post => (
@@ -57,28 +84,39 @@ export default class BlogFeed extends React.Component {
                                             src={post.image}
                                             alt={post.title}
                                             className="blog-image"
-                                            style={{width: '100%', maxWidth: '400px', marginBottom: '1rem'}}
+                                            style={{ width: '100%', maxWidth: '400px', marginBottom: '1rem' }}
                                         />
                                     )}
                                     <div className="blog-box-text">
                                         <h2>{post.title}</h2>
                                         <p>{post.content}</p>
                                         <div className="blog-author">
-                                            <p className="blog-author-text">{post.author && post.author.username ? post.author.username : "Unknown Author"}</p>
+                                            <p className="blog-author-text">
+                                                {post.author && post.author.username ? post.author.username : "Unknown Author"}
+                                            </p>
                                             <p>{new Date(post.createdAt).toLocaleDateString()}</p>
                                             <p>{post.location}</p>
                                         </div>
                                     </div>
+
+                                    {/* Edit button only for the post's author */}
                                     {user && post.author?._id === user.id && (
-                                        <a href={`#edit-blog/${post._id}`} className="btn btn-sm btn-secondary mt-2">Edit</a>
+                                        <>
+                                            <a href={`#edit-blog/${post._id}`} className="btn btn-sm btn-secondary mt-2">Edit</a>
+                                            <button
+                                                onClick={() => this.handleDelete(post._id)} // Delete button for each post
+                                                className="btn btn-danger btn-sm mt-2"
+                                            >
+                                                Delete
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             </div>
                         ))
                     ) : (
                         <p>No blog posts available.</p>
-                    )
-                    }
+                    )}
                 </div>
             </div>
         )

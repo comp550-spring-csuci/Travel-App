@@ -64,12 +64,12 @@ export default class BlogFeed extends React.Component {
                     <a href="#add-blog" className="btn btn-primary">New+</a>
                     {/* Delete Button */}
                     {/* The Delete button goes next to New+ */}
-                    <button
+                    {/* <button
                         onClick={() => this.handleDelete(posts[0]._id)} // Example: Delete the first post
                         className="btn btn-danger"
                     >
                         Delete
-                    </button>
+                    </button> */}
                 </div>
 
                 {this.state.error === true && <NotFound />}

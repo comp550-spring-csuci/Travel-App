@@ -94,14 +94,14 @@ export default class BlogFeedAll extends React.Component {
                       <p>{post.location}</p>
                     </div>
                     {/* Delete Button Below Author Info */}
-                    <div className="mt-2">
+                    {/* <div className="mt-2">
                       <button
                         onClick={() => this.handleDelete(post._id)}
                         className="btn btn-danger btn-sm"
                       >
                         Delete
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

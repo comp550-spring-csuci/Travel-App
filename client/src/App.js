@@ -102,8 +102,6 @@ export default class App extends React.Component {
       <AppContext.Provider value={contextValue}>
         <Navbar />
         {this.renderPage()}
-        <About />
-        <Newsletter />
         <Footer />
       </AppContext.Provider>
     )

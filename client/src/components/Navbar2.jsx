@@ -55,7 +55,6 @@ function Navbar() {
 
           <nav className='navigation-menu'>
               <ul>
-                <li><a className='nav-link nav-link-line' href="#about">About</a></li>
                 {!user ? (
                   <>
                     <li><a className='nav-link nav-link-line' href="#sign-in">Log In</a></li>
@@ -63,7 +62,6 @@ function Navbar() {
                   </>
                 ) : (
                   <>
-                    <li><a className='nav-link nav-link-line' href="#newsletter">Newsletter</a></li>
                     <li><a className='nav-link nav-link-line' href="#blog-feed-all">All Posts</a></li>
                     <li><a className='nav-link nav-link-line' href="#blog-feed">My Blog</a></li>
                     <li><a className='nav-link nav-link-line' href='#the-globe'>The Globe</a></li>

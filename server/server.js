@@ -127,7 +127,7 @@ app.get('/api/home-location', authorizationMiddleware, async (req, res) => {
 app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
-        const posts = await Blog.find({author: userId}).populate('author', 'username');
+        const posts = await Blog.find({author: userId}).sort({createdAt: -1}).populate('author', 'username');
         res.json(posts);
     } catch (err) {
         res.status(500).json({ error: 'Server error fetching blog posts. '});
@@ -137,7 +137,7 @@ app.get('/api/blog-feed', authorizationMiddleware, async (req, res) => {
 //Get all blog, used for #destination and globe gui
 app.get('/api/get/all', authorizationMiddleware, async (req, res) => {
     try {
-        const posts = await Blog.find({}).populate('author', 'username');
+        const posts = await Blog.find({}).sort({createdAt: -1}).populate('author', 'username');
 
         if(!posts.length) {
             return res.status(404).json({error: 'No blog found.'});

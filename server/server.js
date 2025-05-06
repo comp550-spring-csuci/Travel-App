@@ -232,17 +232,17 @@ app.delete('/api/blog/:id', authorizationMiddleware, async (req, res) => {
         const blogId = req.params.id;
         const userId = req.user.id;
 
-        const result = await blogDB.removeBlog(blogId, userId);
+        const result = await blogDB.removeBlog({_id: blogId}, userId);
 
         switch (result) {
             case 'NoBlog':
                 return res.status(404).json({ error: 'Blog not found.' });
             case 'NoPermission':
                 return res.status(403).json({ error: 'You do not have permission to delete this blog.' });
-            case 'Error':
-                return res.status(500).json({ error: 'Server error while deleting blog.' });
+            case 'Success':
+                return res.json({message: 'Blog deleted successfully.'});
             default:
-                return res.status(200).json({ message: 'Blog deleted successfully.' });
+                return res.status(500).json({ error: 'Server error while deleting blog.' });
         }
     } catch (err) {
         console.error(err);

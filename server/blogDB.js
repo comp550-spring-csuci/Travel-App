@@ -72,10 +72,10 @@ class BlogDB {
             }
             // Check if user trying to delete blog matches author
             // ... or is an admin (also for the same reason do not allow the user named admin)
-            if (blog.author === author || author === "admin") {
+            if (blog.author.toString() === author || author === "admin") {
                 await Blog.deleteOne(blogRemoveCondition);
                 console.log("Successfully removed blog.");
-                return true;
+                return "Success";
             } else {
                 console.log("You do not have permission to delete the blog.");
                 return "NoPermission";

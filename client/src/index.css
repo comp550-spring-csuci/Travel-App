@@ -238,3 +238,8 @@ code {
   font-size: 0.8rem;
   font-weight: 500;
 }
+
+.tile-link {
+  text-decoration: none;
+  color: inherit;
+}

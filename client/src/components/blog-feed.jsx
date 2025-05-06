@@ -19,7 +19,7 @@ export default class BlogFeed extends React.Component {
             }
         })
             .then(res => {
-                if (!res.ok) throw new Error(`${res.status}`);
+                if (!res.ok) throw new Error(res.status);
                 return res.json();
             })
             .then(data => {
@@ -37,10 +37,9 @@ export default class BlogFeed extends React.Component {
     handleDelete = async (postId) => {
         const { token } = this.context;
         try {
-            const res = await fetch(`/api/delete/${postId}`, {
+            const res = await fetch(`/api/blog/${postId}`, {
                 method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json",
                     "x-access-token": token
                 }
             });
@@ -77,7 +76,7 @@ export default class BlogFeed extends React.Component {
                 <div className="row">
                     {this.state.posts && this.state.posts.length > 0 ? (
                         this.state.posts.map(post => (
-                            <div key={post._id} className="col-md-4 blog-box-container">
+                            <div key={post._id} className="col-md-4 blog-box-container" onClick={() => window.location.hash = `#blog/${post._id}`}>  
                                 <div className="blog-post mb-4 p-3 border rounded blog-box">
                                     {post.image && (
                                         <img
@@ -102,16 +101,23 @@ export default class BlogFeed extends React.Component {
                                     {/* Edit button only for the post's author */}
                                     {user && post.author?._id === user.id && (
                                         <>
-                                            <a href={`#edit-blog/${post._id}`} className="btn btn-sm btn-secondary mt-2">Edit</a>
+                                            <button 
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    window.location.hash = `#edit-blog/${post._id}`;
+                                                }}
+                                                className="btn btn-sm btn-secondary mt-2">Edit</button>
                                             <button
-                                                onClick={() => this.handleDelete(post._id)} // Delete button for each post
-                                                className="btn btn-danger btn-sm mt-2"
-                                            >
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    this.handleDelete(post._id);
+                                                }}
+                                                className="btn btn-danger btn-sm mt-2">
                                                 Delete
                                             </button>
                                         </>
                                     )}
-                                </div>
+                                </div>   
                             </div>
                         ))
                     ) : (

@@ -16,6 +16,7 @@ import Newsletter from './pages/newsletter';
 import Footer from './pages/footer';
 import TheGlobePage from './pages/the-globe';
 import TheGlobe from './components/the-globe';
+import SingleBlog from './components/single-blog';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -64,6 +65,7 @@ export default class App extends React.Component {
 
   renderPage() {
     const { path, params } = this.state.route;
+    const blogId = params.get('id');
     if (path === '') {
       //return <Home />;
       return <LandingPage />;
@@ -88,6 +90,9 @@ export default class App extends React.Component {
       const blogId = params.get('id');
       return <AddBlog blogId={blogId} />;
     }
+    if (path === 'blog' && blogId) {
+      return <SingleBlog blogId={blogId} />;
+    }
     //this needs to be fixed, it is curently displayed by default under the navbar    
     return <NotFound />;
   }
@@ -102,8 +107,6 @@ export default class App extends React.Component {
       <AppContext.Provider value={contextValue}>
         <Navbar />
         {this.renderPage()}
-        <About />
-        <Newsletter />
         <Footer />
       </AppContext.Provider>
     )

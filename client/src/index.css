@@ -104,6 +104,7 @@ code {
   justify-content: center;
   align-items: center;
   margin-top: 50px;
+  cursor: pointer;
 }
 
 .blog-box{
@@ -237,9 +238,4 @@ code {
   color: #797979;
   font-size: 0.8rem;
   font-weight: 500;
-}
-
-.tile-link {
-  text-decoration: none;
-  color: inherit;
 }

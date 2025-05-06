@@ -19,7 +19,7 @@ export default class BlogFeed extends React.Component {
             }
         })
             .then(res => {
-                if (!res.ok) throw new Error(`${res.status}`);
+                if (!res.ok) throw new Error(res.status);
                 return res.json();
             })
             .then(data => {
@@ -78,40 +78,42 @@ export default class BlogFeed extends React.Component {
                     {this.state.posts && this.state.posts.length > 0 ? (
                         this.state.posts.map(post => (
                             <div key={post._id} className="col-md-4 blog-box-container">
-                                <div className="blog-post mb-4 p-3 border rounded blog-box">
-                                    {post.image && (
-                                        <img
-                                            src={post.image}
-                                            alt={post.title}
-                                            className="blog-image"
-                                            style={{ width: '100%', maxWidth: '400px', marginBottom: '1rem' }}
-                                        />
-                                    )}
-                                    <div className="blog-box-text">
-                                        <h2>{post.title}</h2>
-                                        <p>{post.content}</p>
-                                        <div className="blog-author">
-                                            <p className="blog-author-text">
-                                                {post.author && post.author.username ? post.author.username : "Unknown Author"}
-                                            </p>
-                                            <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                                            <p>{post.location}</p>
+                                <a href={`#blog/${post._id}`} className="tile-link">
+                                    <div className="blog-post mb-4 p-3 border rounded blog-box">
+                                        {post.image && (
+                                            <img
+                                                src={post.image}
+                                                alt={post.title}
+                                                className="blog-image"
+                                                style={{ width: '100%', maxWidth: '400px', marginBottom: '1rem' }}
+                                            />
+                                        )}
+                                        <div className="blog-box-text">
+                                            <h2>{post.title}</h2>
+                                            <p>{post.content}</p>
+                                            <div className="blog-author">
+                                                <p className="blog-author-text">
+                                                    {post.author && post.author.username ? post.author.username : "Unknown Author"}
+                                                </p>
+                                                <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                                                <p>{post.location}</p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    {/* Edit button only for the post's author */}
-                                    {user && post.author?._id === user.id && (
-                                        <>
-                                            <a href={`#edit-blog/${post._id}`} className="btn btn-sm btn-secondary mt-2">Edit</a>
-                                            <button
-                                                onClick={() => this.handleDelete(post._id)} // Delete button for each post
-                                                className="btn btn-danger btn-sm mt-2"
-                                            >
-                                                Delete
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
+                                        {/* Edit button only for the post's author */}
+                                        {user && post.author?._id === user.id && (
+                                            <>
+                                                <a href={`#edit-blog/${post._id}`} className="btn btn-sm btn-secondary mt-2">Edit</a>
+                                                <button
+                                                    onClick={() => this.handleDelete(post._id)} // Delete button for each post
+                                                    className="btn btn-danger btn-sm mt-2"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                </a>
                             </div>
                         ))
                     ) : (

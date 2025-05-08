@@ -179,7 +179,7 @@ code {
   padding: 30px 10px 20px 10px;
 }
 
-.blog-box-text strong
+.blog-box-text strong,
 .blog-box-text p{
   color: #797979;
   font-size: 0.9rem;
@@ -238,4 +238,8 @@ code {
   color: #797979;
   font-size: 0.8rem;
   font-weight: 500;
+}
+
+.black {
+  color: black;
 }

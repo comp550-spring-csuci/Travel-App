@@ -22,15 +22,17 @@ export default class BlogFeedAll extends React.Component {
     const { token } = this.context;
     fetch("/api/get/all", {
       headers: {
-        "Content-Type": "application/json",
         "x-access-token": token
-      }
+      },
+      cache: "no-store"
     })
       .then(res => {
+        console.log("Status:", res.status);
         if (!res.ok) throw new Error(`Status ${res.status}`);
         return res.json();
       })
       .then(data => {
+        console.log("Posts data:", data);
         this.setState({
           posts: Array.isArray(data) && data.length > 0 ? data : null,
           loading: false,
@@ -42,23 +44,23 @@ export default class BlogFeedAll extends React.Component {
       });
   };
 
-  handleDelete = async (postId) => {
-    const { token } = this.context;
-    try {
-      const res = await fetch(`/api/delete/${postId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": token
-        }
-      });
-      if (!res.ok) throw new Error("Delete failed");
-      this.fetchPosts(); // refresh the post list
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete post.");
-    }
-  };
+  // handleDelete = async (postId) => {
+  //   const { token } = this.context;
+  //   try {
+  //     const res = await fetch(`/api/delete/${postId}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "x-access-token": token
+  //       }
+  //     });
+  //     if (!res.ok) throw new Error("Delete failed");
+  //     this.fetchPosts(); // refresh the post list
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Failed to delete post.");
+  //   }
+  // };
 
   render() {
     return (
@@ -85,7 +87,7 @@ export default class BlogFeedAll extends React.Component {
                       />
                     )}
                     <div className="blog-box-text">
-                      <h2>{post.title}</h2>
+                      <h2 className="black">{post.title}</h2>
                       <p>{post.content}</p>
                       <div className="blog-author">
                         <p className="blog-author-text">

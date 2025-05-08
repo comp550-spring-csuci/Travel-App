@@ -1,39 +1,3 @@
-// // src/GlobeComponent.js
-// import React, { useRef, useEffect, useState } from 'react';
-// import Globe from 'globe.gl';
-
-// const GlobeComponent = () => {
-//   const globeContainerRef = useRef(null);
-//   const [hash, setHash] = useState(window.location.hash); // Track the current hash
-
-//   useEffect(() => {
-//     const globe = Globe()
-//       .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
-        
-
-
-//     globe(globeContainerRef.current); // Render the globe
-
-//     // Update globe position based on hash (e.g., '#location=London')
-//     if (hash.includes('location')) {
-//       const location = hash.split('=')[1]; // Simple example: #location=London
-//       if (location === 'London') {
-//         globe.cameraPosition({ lat: 51.5074, lng: -0.1278, altitude: 3 });
-//       }
-//     }
-
-//     return () => {
-//       if (globeContainerRef.current) {
-//         globeContainerRef.current.innerHTML = '';
-//       }
-//     };
-//   }, [hash]); // Re-run effect when the hash changes
-
-//   return <div ref={globeContainerRef} style={{ width: '100%', height: '500px' }}></div>;
-// };
-
-// export default GlobeComponent;
-
 // src/GlobeComponent.js
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { AppContext } from '../lib';
@@ -59,6 +23,21 @@ if (!toggleButton) {
   document.body.appendChild(toggleButton);
 }
 
+const haversineDistance = (lat1, lon1, lat2, lon2) => {
+  const toRadians = angle => angle * (Math.PI / 180);
+  const R = 3958.8; // Earth radius in miles
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+};
+
+
 
 const GlobeComponent = () => {
   const globeContainerRef = useRef(null);
@@ -67,6 +46,7 @@ const GlobeComponent = () => {
   // const [globeInstance, setGlobeInstance] = useState(null);
   const [hash, setHash] = useState(window.location.hash); // Track the current hash
   const [hoveredPoint, setHoveredPoint] = useState(null);
+  // const navigate = useNavigate();
 
   // const navigate = useNavigate()
 
@@ -152,6 +132,7 @@ const GlobeComponent = () => {
           startLng: homeLng,
           endLat: post.latitude, // e.g. London as destination
           endLng: post.longitude,
+          
 
         }));
 
@@ -168,7 +149,18 @@ const GlobeComponent = () => {
         .pointLng(d => d.longitude)
         // .pointLabel(d => `${d.title}: ${d.content} ${d.image} `)
         .pointColor(d => d.isHome ? 'blue': 'red')
-        .pointAltitude(.3)
+        .pointAltitude(d => d.isHome ? 0.3 : 0.2) // Thicker/taller point for 'home'
+        .pointRadius(d => d.isHome ? 0.5 : 0.3)   // width (thickness)
+        .onPointClick(point => {
+          console.log('Clicked point:', point);
+          if (point && point._id && /^[a-f\d]{24}$/i.test(point._id)) {
+            window.location.hash = `#blog/${point._id}`;
+          } else {
+            console.warn('Invalid or missing blog ID on point click:', point);
+          }
+        })
+        
+        // .pointAltitude(.3)
         .onPointHover((point) => {
           // When a point is hovered, update the state with the image URL
           if (point) {
@@ -189,20 +181,27 @@ const GlobeComponent = () => {
         // });
 
         if (currentView !== 'all') {
-          const arcs = posts.map(post => ({
-            startLat: homeLat,
-            startLng: homeLng,
-            endLat: post.latitude, // e.g. London as destination
-            endLng: post.longitude,
-  
-          }));
+          const arcs = posts.map(post => {
+            const distance = haversineDistance(homeLat, homeLng, post.latitude, post.longitude);
+            return {
+              startLat: homeLat,
+              startLng: homeLng,
+              endLat: post.latitude,
+              endLng: post.longitude,
+              distance: distance.toFixed(2), // optional: format to 2 decimal places
+              title: post.title
+            };
+          });
+          
         globe.arcsData(arcs)
         .arcColor(() =>
           currentView === 'all' ? 'rgba(0, 255, 0, 0.8)' : 'rgba(255, 165, 0, 0.8)'
         )
         .arcsTransitionDuration(0)
+        .arcLabel(d => `To ${d.title}<br/>${d.distance} miles`)
         .arcDashLength(0.3)
-        .arcDashGap(1)
+        .arcDashGap(.1)
+        .arcStroke(2)
         .arcDashAnimateTime(1000);
         } else {
           globe.arcsData([])
@@ -251,7 +250,7 @@ const GlobeComponent = () => {
           style={{
             position: 'fixed', // Use fixed positioning to overlay the image on the screen
             top: '50%', // Center the image vertically
-            left: '50%', // Center the image horizontally
+            right: '50%', // Center the image horizontally
             transform: 'translate(-50%, -50%)', // Correct the image position to be perfectly centered
             backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background
             padding: '20px',

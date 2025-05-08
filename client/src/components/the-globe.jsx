@@ -37,6 +37,7 @@
 // src/GlobeComponent.js
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { AppContext } from '../lib';
+import { useNavigate } from 'react-router-dom';
 import Globe from 'globe.gl';
 
 // Create toggle styling
@@ -65,6 +66,9 @@ const GlobeComponent = () => {
   const { token } = useContext(AppContext);
   // const [globeInstance, setGlobeInstance] = useState(null);
   const [hash, setHash] = useState(window.location.hash); // Track the current hash
+  const [hoveredPoint, setHoveredPoint] = useState(null);
+
+  // const navigate = useNavigate()
 
   const toggleMode = () => {
     setMode(prevMode => (prevMode === 'light' ? 'dark' : 'light'));
@@ -76,6 +80,7 @@ const GlobeComponent = () => {
   useEffect(() => {
     // Initialize current view
     let currentView = 'all'
+    
 
 
     // if (!globeContainerRef.current) return;
@@ -105,19 +110,19 @@ const GlobeComponent = () => {
             'x-access-token' : token
           }
         });
-        // const homeData = await homeLocation.json();
-        // console.log("The state of home data is:", homeData)
+        const homeData = await homeLocation.json();
+        console.log("The state of home data is:", homeData)
         // get homeData
-        // const home = Array.isArray(homeData) ? homeData[0] : homeData
-        // const { latitude: homeLat, longitude: homeLng } = home;
+        const home = Array.isArray(homeData) ? homeData[0] : homeData
+        const { latitude: homeLat, longitude: homeLng } = home;
 
-        // const validLatitude = !isNaN(homeLat) && homeLat >= -90 && homeLat <= 90;
-        // const validLongitude = !isNaN(homeLng) && homeLng >= -180 && homeLng <= 180;
+        const validLatitude = !isNaN(homeLat) && homeLat >= -90 && homeLat <= 90;
+        const validLongitude = !isNaN(homeLng) && homeLng >= -180 && homeLng <= 180;
 
-        // if (!validLatitude || !validLongitude) {
-        //   console.error('Invalid home location data:', homeLat, homeLng);
-        //   return; // Prevent further processing if the data is invalid
-        // }
+        if (!validLatitude || !validLongitude) {
+          console.error('Invalid home location data:', homeLat, homeLng);
+          return; // Prevent further processing if the data is invalid
+        }
 
         const endpoint = currentView === 'all'
           ? 'http://localhost:3001/api/get/all'
@@ -130,26 +135,68 @@ const GlobeComponent = () => {
         });
 
         const posts = await postRes.json()
+        console.log("The other posts data:", posts)
+
+        const homeMarker = {
+          latitude: homeLat,
+          longitude: homeLng,
+          title: 'Home',
+          content: 'This is your home location',
+          image: '',
+          isHome: true
+        }
+
 
         const arcs = posts.map(post => ({
-          startLat: 51.5074,
-          startLng: -0.1278,
+          startLat: homeLat,
+          startLng: homeLng,
           endLat: post.latitude, // e.g. London as destination
           endLng: post.longitude,
 
         }));
+
+        
+        const allPoints = [homeMarker, ...posts];
+        console.log("All points:", allPoints)
         
 
         globe
-        .pointsData(posts)
+        .pointsData(allPoints)
         .globeImageUrl(mode === 'light' ? lightModeImageUrl : darkModeImageUrl )
     // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
         .pointLat(d => d.latitude)
         .pointLng(d => d.longitude)
-        .pointLabel(d => `${d.title}: ${d.content} ${d.image} `)
-        .pointColor(() => 'red')
+        // .pointLabel(d => `${d.title}: ${d.content} ${d.image} `)
+        .pointColor(d => d.isHome ? 'blue': 'red')
         .pointAltitude(.3)
-        .arcsData(arcs)
+        .onPointHover((point) => {
+          // When a point is hovered, update the state with the image URL
+          if (point) {
+            setHoveredPoint(point); // Update state with hovered point data
+          } else {
+            setHoveredPoint(null); // Reset when hover is removed
+          }
+        });
+        // .onPointClick((point) => {
+        //   // When a point is clicked, navigate to a new page with more information about the point
+        //   if (point.isHome) {
+        //     // Navigate to home location (or wherever you need to link)
+        //     navigate(`/home`);
+        //   } else {
+        //     // Navigate to post details page using the post ID
+        //     navigate(`/post/${point.id}`);
+        //   }
+        // });
+
+        if (currentView !== 'all') {
+          const arcs = posts.map(post => ({
+            startLat: homeLat,
+            startLng: homeLng,
+            endLat: post.latitude, // e.g. London as destination
+            endLng: post.longitude,
+  
+          }));
+        globe.arcsData(arcs)
         .arcColor(() =>
           currentView === 'all' ? 'rgba(0, 255, 0, 0.8)' : 'rgba(255, 165, 0, 0.8)'
         )
@@ -157,6 +204,9 @@ const GlobeComponent = () => {
         .arcDashLength(0.3)
         .arcDashGap(1)
         .arcDashAnimateTime(1000);
+        } else {
+          globe.arcsData([])
+        }
       } catch (err) {
         console.error("There is an error in fetchAndRenderPosts", err.message);
       }
@@ -194,8 +244,35 @@ const GlobeComponent = () => {
         ref={globeContainerRef}
         style={{ width: '100%', height: '600px', borderRadius: '8px' }}
       ></div>
+  
+      {/* Conditionally render the hovered point's image */}
+      {hoveredPoint && (
+        <div 
+          style={{
+            position: 'fixed', // Use fixed positioning to overlay the image on the screen
+            top: '50%', // Center the image vertically
+            left: '50%', // Center the image horizontally
+            transform: 'translate(-50%, -50%)', // Correct the image position to be perfectly centered
+            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.5)',
+            zIndex: 9999, // Make sure it's on top of the globe
+            textAlign: 'center', // Center the title and image
+          }}
+        >
+          <h3 style={{ color: 'white' }}>{hoveredPoint.title}</h3>
+          <p style={{ color: 'white' }}>{hoveredPoint.content}</p>
+          <img 
+            src={hoveredPoint.image} 
+            alt={hoveredPoint.title} 
+            style={{ width: '50px', height: 'auto', borderRadius: '8px' }} // Make image size smaller
+          />
+        </div>
+      )}
     </div>
   );
+  ;
 };
 
 

@@ -243,3 +243,7 @@ code {
 .black {
   color: black;
 }
+
+.user {
+  font-size: 1rem !important;
+}

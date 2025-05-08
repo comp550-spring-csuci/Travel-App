@@ -66,16 +66,19 @@ function Navbar() {
                     <li><a className='nav-link nav-link-line' href="#blog-feed">My Blog</a></li>
                     <li><a className='nav-link nav-link-line' href='#the-globe'>The Globe</a></li>
 
-                    <li className='nav-text'>Hi, {user.username}</li>
-                    <li>
-                      <button
-                        className='btn btn-link nav-link-line'
-                        onClick={handleSignOut}
-                        style={{ padding: 0 }}
-                      >
-                        Sign Out
-                      </button>
-                    </li>
+                    <div className='d-flex align-items-center'>
+                      <li className='d-flex justify-content-center'>
+                        Hi, <a href='#profile' className='user'>{user.username}</a>
+                      </li>
+                      <li>
+                        <button
+                          className='btn btn-link nav-link-line'
+                          onClick={handleSignOut}
+                          style={{ padding: 0 }}>
+                          Sign Out
+                        </button>
+                      </li>
+                    </div>
                   </>
                 )}
               </ul>

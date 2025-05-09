@@ -82,15 +82,15 @@ app.post('/api/auth/sign-in', async (req, res) => {
 app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {
         const author = req.user.id;
-        const {title, content, latitude, longitude, location} = req.body;
+        const {title, content, latitude, longitude, location, country} = req.body;
         console.log(req.body);
-        if (!title || !content || author == null || latitude == null || longitude == null || !location) {
+        if (!title || !content || latitude == null || longitude == null || !location) {
             return res.status(400).json({error: "title, content, latitude, longitude, and location are required fields"});
         }
         if (!req.file) {
             return res.status(400).json({error: "Image file required"});
         }
-        const success = await blogDB.addBlog({title, content, latitude: parseFloat(latitude), longitude: parseFloat(longitude), location, author, image: `uploads/${req.file.filename}`});
+        const success = await blogDB.addBlog({title, content, latitude: parseFloat(latitude), longitude: parseFloat(longitude), location, country, author, image: `uploads/${req.file.filename}`});
         if (success) {
             return res.status(201).json({message: "Created successfully"});
         } else {
@@ -188,10 +188,10 @@ app.get('/api/blogs/:id', authorizationMiddleware, async(req, res) => {
 app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"), async (req, res) => {
     try {
         const author = req.user.id;
-        const {blogId, title, content, latitude, longitude, location} = req.body;
+        const {blogId, title, content, latitude, longitude, location, country} = req.body;
 
         console.log(req.body);
-        if (!title || !content || !blogId || latitude == null || longitude == null) {
+        if (!title || !content || !blogId || latitude == null || longitude == null || !location) {
             return res.status(400).json({error: "title, content, and location are required fields" });
         }
 
@@ -203,7 +203,7 @@ app.put('/api/post/updateBlog', authorizationMiddleware, upload.single("image"),
             return res.status(403).json({error: "You can only edit your own posts"});
         }
         const updates = {
-            title, content, location, latitude: parseFloat(latitude), longitude: parseFloat(longitude)
+            title, content, location, country, latitude: parseFloat(latitude), longitude: parseFloat(longitude)
         };
         if (req.file) {
             updates.image = `/uploads/${req.file.filename}`;

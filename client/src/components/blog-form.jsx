@@ -63,7 +63,7 @@ export default class AddBlog extends React.Component {
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
-        const {title, content, file, location, latitude, longitude} = this.state;
+        const {title, content, file, location} = this.state;
         const {token} = this.context;
         const {blogId} = this.props;
 

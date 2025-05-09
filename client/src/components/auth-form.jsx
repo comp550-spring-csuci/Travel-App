@@ -111,6 +111,7 @@ export default class AuthForm extends React.Component {
               }
               body.latitude = lat;
               body.longitude = lon;
+              body.zip = zip;
             })
             .then(doAuth)
             .catch((err) => {

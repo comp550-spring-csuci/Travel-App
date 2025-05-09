@@ -37,9 +37,9 @@ export default class ProfilePage extends React.Component {
         const {username, zip} = this.state;
         return (
             <div className="container p-5">
-                <h2>Welcome, {username}</h2>
-                <p>Your home ZIP code is {zip}</p>
-                <button onClick={() => window.location.hash = '#profile/edit'}>Edit Home Location</button>
+                <h2 className='mt-5'>Welcome, {username}</h2>
+                <p>Home ZIP code: {zip}</p>
+                {/* <button onClick={() => window.location.hash = '#profile/edit'}>Edit Home Location</button> */}
             </div>
         )
     }

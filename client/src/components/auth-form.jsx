@@ -168,7 +168,7 @@ export default class AuthForm extends React.Component {
                         {action === 'sign-up' && (
                             <div>
                                 <div className="mb-4">
-                                    <label htmlFor="zip" className="form-label">Home Zip Code</label>
+                                    <label htmlFor="zip" className="form-label">Home ZIP Code</label>
                                     <input
                                     required
                                     id="zip"

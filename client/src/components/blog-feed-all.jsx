@@ -93,8 +93,8 @@ export default class BlogFeedAll extends React.Component {
                         <p className="blog-author-text">
                           {post.author?.username || "Unknown Author"}
                         </p>
-                        <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                        <p>{post.location}</p>
+                        <p className="p-2">{new Date(post.createdAt).toLocaleDateString()}</p>
+                        <p>{post.location}, {post.country}</p>
                       </div>
                       {/* Delete Button Below Author Info */}
                       {/* <div className="mt-2">

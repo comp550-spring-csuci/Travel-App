@@ -93,7 +93,7 @@ export default class BlogFeed extends React.Component {
                                             <p className="blog-author-text">
                                                 {post.author && post.author.username ? post.author.username : "Unknown Author"}
                                             </p>
-                                            <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                                            <p className="p-2">{new Date(post.createdAt).toLocaleDateString()}</p>
                                             <p>{post.location}, {post.country}</p>
                                         </div>
                                     </div>

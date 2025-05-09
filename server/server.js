@@ -57,9 +57,9 @@ app.post('/api/auth/sign-up', async (req, res) => {
 
     const success = await userDB.signUpUser(req.body);
     if (success) {
-        res.status(201).json({ message: 'User created' });
+        return res.status(201).json({ message: 'User created' });
     } else {
-        res.status(409).json({ error: 'Username already exists '});
+        return res.status(409).json({ error: 'Username already exists '});
     }
 });
 

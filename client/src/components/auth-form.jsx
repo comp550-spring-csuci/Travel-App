@@ -8,6 +8,7 @@ export default class AuthForm extends React.Component {
             password: '',
             latitude: '',
             longitude: '',
+            zip: '',
             incorrect: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -21,51 +22,109 @@ export default class AuthForm extends React.Component {
     }
 
     //handles submitting the form, send a POST request
-    handleSubmit(event) {
-        event.preventDefault();
-        const { action } = this.props;
-        const req = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
-        };
-        //if signing in and bad response -> set to incorrect, if signing up -> redirect to sign in, if user and has token -> sign in
-        // fetch(`/api/auth/${action}`, req)
-        //     .then(res => res.json())
-        //     .then(result => {
-        //         if (action === 'sign-in' && !Response.ok) {
-        //             this.setState({ incorrect: true });
-        //         }
-        //         if (action === 'sign-up') {
-        //             window.location.hash = 'sign-in'
-        //         } else if (result.user && result.token) {
-        //             this.props.onSignIn(result);
-        //         }
-        //     });
+    // handleSubmit(event) {
+    //     event.preventDefault();
+    //     const { action } = this.props;
+    //     const req = {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(this.state)
+    //     };
         
-        fetch(`/api/auth/${action}`, req)
-            .then(async res => {
-              const result = await res.json();
-              if (action === 'sign-in' && !res.ok) {
-                this.setState({ incorrect: true });
-                return;
+    //     fetch(`/api/auth/${action}`, req)
+    //         .then(async res => {
+    //           const result = await res.json();
+    //           if (action === 'sign-in' && !res.ok) {
+    //             this.setState({ incorrect: true });
+    //             return;
+    //           }
+    //           if (action === 'sign-up') {
+    //             window.location.hash = 'sign-in';
+    //           } else if (result.user && result.token) {
+    //             this.props.onSignIn(result);
+    //           }
+    //         })
+    //         .catch(err => {
+    //           console.error("Auth error:", err);
+    //           this.setState({ incorrect: true });
+    //         });
+    // }
+
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const { action } = this.props;
+        const { username, password, zip } = this.state;
+        const body = { username, password };
+    
+        const doAuth = () => {
+          fetch(`/api/auth/${action}`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify(body),
+          })
+            .then(async (res) => {
+              const text = await res.text();
+              if (action === "sign-up" && res.status === 201) {
+                return window.location.hash = "#sign-in";
               }
-              if (action === 'sign-up') {
-                window.location.hash = 'sign-in';
-              } else if (result.user && result.token) {
-                this.props.onSignIn(result);
+              let data = {};
+              if (text) {
+                try { data = JSON.parse(text); } 
+                catch {}
+              }
+              return { status: res.status, data };
+            })
+            .then((info) => {
+              if (!info) return;
+              const { status, data } = info;
+              if (action === "sign-in") {
+                if (status !== 200 || !data.user || !data.token) {
+                  return this.setState({ incorrect: true });
+                }
+                this.props.onSignIn(data);
+                window.location.hash = '#blog-feed-all';
               }
             })
-            .catch(err => {
+            .catch((err) => {
               console.error("Auth error:", err);
               this.setState({ incorrect: true });
             });
-    }
+        };
+    
+        if (action === "sign-up") {
+          fetch(`/api/geocoding/zip?zip=${encodeURIComponent(zip)}`)
+            .then(async (res) => {
+              const text = await res.text();
+              if (!res.ok) {
+                const err = text ? JSON.parse(text) : {};
+                throw new Error(err.error || res.status);
+              }
+              return text ? JSON.parse(text) : {};
+            })
+            .then(({ lat, lon }) => {
+              if (lat == null || lon == null) {
+                throw new Error("Could not find coordinates for that ZIP");
+              }
+              body.latitude = lat;
+              body.longitude = lon;
+            })
+            .then(doAuth)
+            .catch((err) => {
+              console.error("Signup lookup error:", err);
+              this.setState({ incorrect: true });
+            });
+        } else {
+          doAuth();
+        }
+      };
 
     render() {
         const { action } = this.props;
+        const {zip} = this.state;
         const { handleChange, handleSubmit } = this;
         const welcomeMessage = action === 'sign-up'
             ? 'Register'
@@ -108,6 +167,20 @@ export default class AuthForm extends React.Component {
                         {action === 'sign-up' && (
                             <div>
                                 <div className="mb-4">
+                                    <label htmlFor="zip" className="form-label">Home Zip Code</label>
+                                    <input
+                                    required
+                                    id="zip"
+                                    name="zip"
+                                    type="text"
+                                    inputMode="numeric"
+                                    pattern="\d{5}"
+                                    value={zip}
+                                    onChange={this.handleChange}
+                                    className="form-control"
+                                    />
+                                </div>
+                                {/* <div className="mb-4">
                                 <label htmlFor="latitude" className="form-label">Your Home Latitude</label>
                                 <input 
                                 required
@@ -132,7 +205,7 @@ export default class AuthForm extends React.Component {
                                 onChange={handleChange}
                                 className="form-control"
                                 />
-                                </div>
+                                </div> */}
                             </div>
                         )}
                         {this.state.incorrect === true &&

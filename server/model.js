@@ -19,6 +19,7 @@ const blogSchema = new mongoose.Schema({
     latitude:   { type: Number, max: 90, min: -90 },
     longitude:  { type: Number, max: 180, min: -180 },
     location:   { type: String },
+    country:    { type: String },
     createdAt:  { type: Date, default: Date.now },
     updatedAt:  { type: Date, default: Date.now }
 });

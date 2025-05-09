@@ -17,6 +17,7 @@ import Footer from './pages/footer';
 import TheGlobePage from './pages/the-globe';
 import TheGlobe from './components/the-globe';
 import SingleBlog from './components/single-blog';
+import ProfilePage from './components/profile-page';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -92,6 +93,9 @@ export default class App extends React.Component {
     }
     if (path === 'blog' && blogId) {
       return <SingleBlog blogId={blogId} />;
+    }
+    if (path === 'profile') {
+      return <ProfilePage />;
     }
     //this needs to be fixed, it is curently displayed by default under the navbar    
     return <NotFound />;

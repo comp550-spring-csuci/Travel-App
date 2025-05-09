@@ -94,7 +94,7 @@ export default class BlogFeed extends React.Component {
                                                 {post.author && post.author.username ? post.author.username : "Unknown Author"}
                                             </p>
                                             <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                                            <p>{post.location}</p>
+                                            <p>{post.location}, {post.country}</p>
                                         </div>
                                     </div>
 

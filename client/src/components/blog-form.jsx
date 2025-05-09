@@ -13,6 +13,7 @@ export default class AddBlog extends React.Component {
             location: '',
             latitude: '',
             longitude: '',
+            country: '',
             invalid: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -62,75 +63,57 @@ export default class AddBlog extends React.Component {
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
-        const {title, content, file, location, latitude, longitude} = this.state;
+        const {title, content, file, location} = this.state;
         const {token} = this.context;
         const {blogId} = this.props;
 
-        const form = new FormData();
-        form.append("title", title);
-        form.append("content", content);
-        form.append("location", location);
-        form.append("latitude", latitude);
-        form.append("longitude", longitude);
-        if (file) form.append("image", file);
-        if (blogId) form.append("blogId", blogId);
-
-        const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
-        const method = blogId ? "PUT" : "POST";
-
-        fetch(url, {
-            method,
-            headers: {
-                'x-access-token': token
-            },
-            body: form
-        })
+        fetch(`/api/geocoding?q=${encodeURIComponent(location)}`)
             .then(res => {
                 if (!res.ok) throw new Error(res.status);
                 return res.json();
             })
-            .then(() => {
-                window.location.hash = '#blog-feed';
+            .then(geoData => {
+                const {lat, lon, country} = geoData;
+                if (lat == null || lon == null) {
+                    throw new Error("Missing latitude or longitude");
+                }
+
+            const form = new FormData();
+            form.append("title", title);
+            form.append("content", content);
+            form.append("location", location);
+            form.append("latitude", lat);
+            form.append("longitude", lon);
+            form.append("country", country)
+            if (file) form.append("image", file);
+            if (blogId) form.append("blogId", blogId);
+
+            const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
+            const method = blogId ? "PUT" : "POST";
+
+            return fetch(url, {
+                method,
+                headers: {
+                    'x-access-token': token
+                },
+                body: form
             })
-            .catch(err => {
-                console.error("Upload failed", err);
-                this.setState({error: true, loading: false})
-            })
+                .then(res => {
+                    if (!res.ok) throw new Error(res.status);
+                    return res.json();
+                })
+                .then(() => {
+                    window.location.hash = '#blog-feed';
+                })
+                .catch(err => {
+                    console.error("Upload failed", err);
+                    this.setState({error: true, loading: false})
+                })
+            })  
         };
-        //this.setState({ invalid: true });
-        //if signing in and bad response -> set to incorrect, if signing up -> redirect to sign in, if user and has token -> sign in
-        // fetch(`/api/auth/${action}`, req)
-        //     .then(res => res.json())
-        //     .then(result => {
-        //         if (action === 'add-blog' && !Response.ok) {
-        //             this.setState({ incorrect: true });
-        //         }
-        //         if (action === 'edit-blog') {
-        //             window.location.hash = 'add-blog'
-        //         } else if (result.user && result.token) {
-        //             this.props.onSignIn(result);
-        //         }
-        //     });
         
-        // fetch(`/api/post/newblog`, req) // change it so that it fetches to the backend server
-        // //api/auth is for authenticating the user and not for adding user
-        // // still need to fetch for access to database.
-        //     .then(async res => {
-        //       const result = await res.json();
-        //       if (!res.ok) {
-        //         this.setState({ invalid: true });
-        //         return;
-        //       }
-        //     })
-        //     .catch(err => {
-        //       console.error("Auth error:", err);
-        //       this.setState({ invalid: true });
-        //     });
-    //}
 
     render() {
-        //const {route} = this.context;
-        //const { action } = this.props;
         const {title, content, file, location, latitude, longitude} = this.state;
         const {blogId} = this.props;
         const { handleChange, handleSubmit } = this;
@@ -175,7 +158,7 @@ export default class AddBlog extends React.Component {
                             className="form-control"
                             />
                         </div>
-                        <div className='mb-4'>
+                        {/* <div className='mb-4'>
                             <label htmlFor='latitude' className='form-label'>Latitude</label>
                             <input 
                             required
@@ -196,7 +179,7 @@ export default class AddBlog extends React.Component {
                             value={longitude}
                             onChange={handleChange}
                             className='form-control'/>
-                        </div>
+                        </div> */}
                         <div className='mb-4'>
                             <label htmlFor='image' className='form-label'>Upload Image</label>
                             {/* <input 

@@ -5,23 +5,23 @@ import { useNavigate } from 'react-router-dom';
 import Globe from 'globe.gl';
 
 // Create toggle styling
-let toggleButton = document.getElementById('toggleView');
+// let toggleButton = document.getElementById('toggleView');
 
-if (!toggleButton) {
-  toggleButton = document.createElement("button")
-  toggleButton.id = 'toggleView';
-  toggleButton.innerText = 'View: All Posts';
-  toggleButton.style.position = 'absolute';
-  toggleButton.style.top = '150px';
-  toggleButton.style.left = '0px';
-  toggleButton.style.zIndex = '1000';
-  toggleButton.style.padding = '0px';
-  toggleButton.style.background = '#222';
-  toggleButton.style.color = '#fff';
-  toggleButton.style.border = 'none';
-  toggleButton.style.cursor = 'pointer';
-  document.body.appendChild(toggleButton);
-}
+// if (!toggleButton) {
+//   toggleButton = document.createElement("button")
+//   toggleButton.id = 'toggleView';
+//   toggleButton.innerText = 'View: All Posts';
+//   toggleButton.style.position = 'absolute';
+//   toggleButton.style.top = '150px';
+//   toggleButton.style.left = '0px';
+//   toggleButton.style.zIndex = '1000';
+//   toggleButton.style.padding = '0px';
+//   toggleButton.style.background = '#222';
+//   toggleButton.style.color = '#fff';
+//   toggleButton.style.border = 'none';
+//   toggleButton.style.cursor = 'pointer';
+//   document.body.appendChild(toggleButton);
+// }
 
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const toRadians = angle => angle * (Math.PI / 180);
@@ -57,7 +57,37 @@ const GlobeComponent = () => {
   const lightModeImageUrl = '//unpkg.com/three-globe/example/img/earth-day.jpg';
   const darkModeImageUrl = '//unpkg.com/three-globe/example/img/earth-night.jpg';
 
-  useEffect(() => {
+
+
+
+useEffect(() => {
+  // Only create button if on the globe page
+
+    if (window.location.hash !== '#the-globe') return;
+
+  let toggleButton = document.getElementById('toggleView');
+  if (!toggleButton) {
+    toggleButton = document.createElement("button");
+    toggleButton.id = 'toggleView';
+    toggleButton.innerText = 'View: All Posts';
+    toggleButton.style.position = 'absolute';
+    toggleButton.style.top = '150px';
+    toggleButton.style.left = '0px';
+    toggleButton.style.zIndex = '1000';
+    toggleButton.style.padding = '0px';
+    toggleButton.style.background = '#222';
+    toggleButton.style.color = '#fff';
+    toggleButton.style.border = 'none';
+    toggleButton.style.cursor = 'pointer';
+    document.body.appendChild(toggleButton);
+  }
+
+  // Clean up on unmount
+  // return () => {
+  //   toggleButton?.remove();
+  // };
+
+
     // Initialize current view
     let currentView = 'all'
     
@@ -230,7 +260,9 @@ const GlobeComponent = () => {
 
     // Cleanup
     return () => {
-      
+      if (toggleButton) {
+        document.body.removeChild(toggleButton);
+      }
     };
 
   }, [mode]); 

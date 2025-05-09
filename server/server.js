@@ -255,7 +255,7 @@ app.get('/api/geocoding', async (req, res) => {
 
     try {
         const apiKey = process.env.APIKEY;
-        const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=1&appid={apiKey}`;
+        const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=1&appid=${apiKey}`;
         const response = await fetch(geoUrl);
         if (!response.ok) {
             throw new Error(response.statusText);

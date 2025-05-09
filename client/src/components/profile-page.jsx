@@ -7,11 +7,14 @@ export default class ProfilePage extends React.Component {
         this.state = {
             latitude: '',
             longitude: '',
+            country: '',
+            geocodingRes: '',
+            editing: false
         };
     }
 
     componentDidMount() {
         const {token} = this.context;
-        
+
     }
 }

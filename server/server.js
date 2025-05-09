@@ -247,6 +247,20 @@ app.delete('/api/blog/:id', authorizationMiddleware, async (req, res) => {
     }
 });
 
+app.get('/api/profile', authorizationMiddleware, async (req, res) => {
+    try {
+        const user = await User
+            .findById(req.user.id, 'username zip latitude longitude')
+            .lean();
+        if (!user) return res.status(404).json({ error: 'No user found'});
+        res.json(user);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Failed to get profile'});
+    }
+});
+
+//api call using location
 app.get('/api/geocoding', async (req, res) => {
     const {q} = req.query;
     if (!q) {
@@ -266,6 +280,27 @@ app.get('/api/geocoding', async (req, res) => {
         res.status(500).json({error: 'Geocoding failed'});
     }
 })
+
+//api call using zip
+app.get('/api/geocoding/zip', async (req, res) => {
+    const { zip } = req.query;
+    if (!/^\d{5}$/.test(zip)) {
+      return res.status(400).json({ error: 'Valid 5-digit ZIP required' });
+    }
+    try {
+      const apiKey = process.env.APIKEY;
+      const geoUrl = `https://api.openweathermap.org/geo/1.0/zip?zip=${zip},US&appid=${apiKey}`;
+      const response = await fetch(geoUrl);
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      const { lat, lon, country, name } = await response.json();
+      return res.json({ lat, lon, country, name });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Zip geocoding failed' });
+    }
+  });
 
 
 app.get('/', (req, res) => res.send('API is running'));

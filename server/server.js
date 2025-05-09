@@ -247,6 +247,26 @@ app.delete('/api/blog/:id', authorizationMiddleware, async (req, res) => {
     }
 });
 
+app.get('/api/geocoding', async (req, res) => {
+    const {q} = req.query;
+    if (!q) {
+        return res.status(400).json({error: 'q is required'});
+    }
+
+    try {
+        const apiKey = process.env.APIKEY;
+        const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=1&appid={apiKey}`;
+        const response = await fetch(geoUrl);
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        const result = await response.json();
+        return res.json(result[0]);
+    } catch {
+        res.status(500).json({error: 'Geocoding failed'});
+    }
+})
+
 
 app.get('/', (req, res) => res.send('API is running'));
 app.listen(3001, () => console.log('Server is running on port 3001'));

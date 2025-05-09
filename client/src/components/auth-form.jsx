@@ -86,7 +86,7 @@ export default class AuthForm extends React.Component {
                   return this.setState({ incorrect: true });
                 }
                 this.props.onSignIn(data);
-                window.location.hash = '#blog-feed-all';
+                window.location.hash = '';
               }
             })
             .catch((err) => {

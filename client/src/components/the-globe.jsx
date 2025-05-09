@@ -183,7 +183,12 @@ useEffect(() => {
         .pointRadius(d => d.isHome ? 0.5 : 0.3)   // width (thickness)
         .onPointClick(point => {
           console.log('Clicked point:', point);
-          if (point && point._id && /^[a-f\d]{24}$/i.test(point._id)) {
+      
+          if (point.isHome) {
+            // Navigate to the user's profile page when the 'home' marker is clicked
+            window.location.hash = '#profile'; // Assuming this takes the user to the profile page
+          } else if (point && point._id && /^[a-f\d]{24}$/i.test(point._id)) {
+            // Navigate to the blog page when a post is clicked
             window.location.hash = `#blog/${point._id}`;
           } else {
             console.warn('Invalid or missing blog ID on point click:', point);

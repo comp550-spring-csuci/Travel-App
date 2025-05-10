@@ -2,7 +2,7 @@ import React from "react";
 import NotFound from "./not-found";
 import { AppContext } from "../lib";
 
-export default class BlogFeedAll extends React.Component {
+export default class BlogByCity extends React.Component {
   static contextType = AppContext;
 
   constructor(props) {
@@ -15,58 +15,33 @@ export default class BlogFeedAll extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchPosts();
+    const { token } = this.context;
+    const cityName = this.context.route.params.get('id');
+
+    fetch(`/api/blogs/city/${encodeURIComponent(cityName)}`, {
+        headers: {
+            'x-access-token': token
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(res.status);
+        return res.json();
+    })
+    .then(data => {
+        this.setState({posts: data});
+    })
+    .catch(() => {
+        this.setState({error: true});
+    });
   }
 
-  fetchPosts = () => {
-    const { token } = this.context;
-    fetch("/api/get/all", {
-      headers: {
-        "x-access-token": token
-      },
-      cache: "no-store"
-    })
-      .then(res => {
-        console.log("Status:", res.status);
-        if (!res.ok) throw new Error(`Status ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        console.log("Posts data:", data);
-        this.setState({
-          posts: Array.isArray(data) && data.length > 0 ? data : null,
-          loading: false,
-          error: false
-        });
-      })
-      .catch(() => {
-        this.setState({ error: true });
-      });
-  };
-
-  // handleDelete = async (postId) => {
-  //   const { token } = this.context;
-  //   try {
-  //     const res = await fetch(`/api/delete/${postId}`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "x-access-token": token
-  //       }
-  //     });
-  //     if (!res.ok) throw new Error("Delete failed");
-  //     this.fetchPosts(); // refresh the post list
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed to delete post.");
-  //   }
-  // };
-
   render() {
+    const {posts} = this.state;
+    const cityName = this.context.route.params.get('id');
     return (
       <div className="container-fluid p-5">
         <div className="d-flex justify-content-center align-items-center gap-3">
-          <h1 className="p-5">All Posts</h1>
+          <h1 className="p-5">Posts in {cityName}</h1>
         </div>
 
         {this.state.error && <NotFound />}

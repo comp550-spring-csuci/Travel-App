@@ -263,7 +263,7 @@ app.get('/api/profile', authorizationMiddleware, async (req, res) => {
 app.get('/api/blogs/city/:cityName', authorizationMiddleware, async (req, res) => {
     console.log("fetching posts for city:", req.params.cityName);
     try {
-        const {cityName} = req.params;
+        const cityName = decodeURIComponent(req.params.cityName);
         const posts = await Blog.find({location: { $regex: cityName, $options: 'i' }}).populate('author', 'username');
         if (!posts.length) {
             return res.status(404).json({error: `No posts found for ${cityName}`});

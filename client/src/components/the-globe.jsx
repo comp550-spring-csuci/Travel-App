@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { AppContext } from '../lib';
 import { useNavigate } from 'react-router-dom';
+import { filterMostRecentPoints } from '../utils/filterMostRecentPoints';
 import Globe from 'globe.gl';
 
 // Create toggle styling
@@ -41,6 +42,8 @@ const haversineDistance = (lat1, lon1, lat2, lon2) => {
 
 const GlobeComponent = () => {
   const globeContainerRef = useRef(null);
+  // const globeEl = useRef();
+  const [pointsData, setPointsData] = useState([]);
   const [mode, setMode] = useState('light');
   const { token } = useContext(AppContext);
   // const [globeInstance, setGlobeInstance] = useState(null);
@@ -57,6 +60,7 @@ const GlobeComponent = () => {
   const lightModeImageUrl = '//unpkg.com/three-globe/example/img/earth-day.jpg';
   const darkModeImageUrl = '//unpkg.com/three-globe/example/img/earth-night.jpg';
 
+  
 
 
 
@@ -96,6 +100,8 @@ useEffect(() => {
     // if (!globeContainerRef.current) return;
 
     const globe = Globe()
+
+
       // .globeImageUrl(mode === 'light' ? lightModeImageUrl : darkModeImageUrl )
       // // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
       // .pointLat(d => d.latitude)
@@ -167,31 +173,56 @@ useEffect(() => {
         }));
 
         
-        const allPoints = [homeMarker, ...posts];
-        console.log("All points:", allPoints)
         
-
+        const allPoints = [homeMarker, ...posts];
+        // const separatedPoints = spreadOverlappingPoints([homeMarker, ...posts]);
+        // setPointsData(separatedPoints);
+        const filteredPoints = filterMostRecentPoints(allPoints);
+        globe.pointsData(filteredPoints);
+        console.log("All points:", allPoints)
+        // globe
+        // .pointsData(allPoints)
         globe
-        .pointsData(allPoints)
         .globeImageUrl(mode === 'light' ? lightModeImageUrl : darkModeImageUrl )
     // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
         .pointLat(d => d.latitude)
         .pointLng(d => d.longitude)
         // .pointLabel(d => `${d.title}: ${d.content} ${d.image} `)
         .pointColor(d => d.isHome ? 'blue': 'red')
-        .pointAltitude(d => d.isHome ? 0.3 : 0.2) // Thicker/taller point for 'home'
+        .pointAltitude(d => d.isHome ? 0.3 : 0.2)
+         // Thicker/taller point for 'home'
         .pointRadius(d => d.isHome ? 0.5 : 0.3)   // width (thickness)
-        .onPointClick(point => {
-          console.log('Clicked point:', point);
-      
-          if (point.isHome) {
-            // Navigate to the user's profile page when the 'home' marker is clicked
-            window.location.hash = '#profile'; // Assuming this takes the user to the profile page
-          } else if (point && point._id && /^[a-f\d]{24}$/i.test(point._id)) {
-            // Navigate to the blog page when a post is clicked
-            window.location.hash = `#blog/${point._id}`;
+        let clickTimeout = null;
+
+        globe.onPointClick(async (point) => {
+          // Check if the point has city or location info
+          if (point.location) {
+            try {
+              // Fetch the posts for that city (or location) from your API
+              const encodedLocation = encodeURIComponent(point.location);
+              const response = await fetch(`http://localhost:3001/api/blogs/city/${encodedLocation}`, {
+                headers: {
+                  'x-access-token': token,  // x-access-token format
+                },
+              });
+
+              const posts = await response.json();
+        
+              if (posts.length === 1) {
+                // If there's only one post for this city, navigate to the individual post page
+                const postId = posts[0]._id; // Assuming each post has a unique _id
+                window.location.hash = `#blog/${postId}`;
+              } else if (posts.length > 1) {
+                // If there are multiple posts for this city, navigate to the city blogs page
+                window.location.hash = `#city/${encodedLocation}`;
+              } else {
+                console.warn('No posts found for this city');
+              }
+            } catch (err) {
+              console.error('Error fetching posts for the city', err);
+            }
           } else {
-            console.warn('Invalid or missing blog ID on point click:', point);
+            console.warn('No city found for point', point);
           }
         })
         
@@ -214,6 +245,10 @@ useEffect(() => {
         //     navigate(`/post/${point.id}`);
         //   }
         // });
+
+
+
+        
 
         if (currentView !== 'all') {
           const arcs = posts.map(post => {
@@ -253,6 +288,7 @@ useEffect(() => {
     });
 
     fetchAndRenderPosts()
+
 
     // Camera position based on hash
     if (hash.includes('location')) {
@@ -298,7 +334,7 @@ useEffect(() => {
           }}
         >
           <h3 style={{ color: 'white' }}>{hoveredPoint.title}</h3>
-          <p style={{ color: 'white' }}>{hoveredPoint.content}</p>
+          {/* <p style={{ color: 'white' }}>{hoveredPoint.content}</p> */}
           <img 
             src={hoveredPoint.image} 
             alt={hoveredPoint.title} 
@@ -310,6 +346,7 @@ useEffect(() => {
   );
   ;
 };
+
 
 
 export default GlobeComponent;

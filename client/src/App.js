@@ -18,6 +18,7 @@ import TheGlobePage from './pages/the-globe';
 import TheGlobe from './components/the-globe';
 import SingleBlog from './components/single-blog';
 import ProfilePage from './components/profile-page';
+import BlogByCity from './components/blog-by-city';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -67,6 +68,8 @@ export default class App extends React.Component {
   renderPage() {
     const { path, params } = this.state.route;
     const blogId = params.get('id');
+    const [root, cityName] = path.split("/");
+    console.log("[APP] renderPage →", this.state.route);
     if (path === '') {
       //return <Home />;
       return <LandingPage />;
@@ -96,6 +99,10 @@ export default class App extends React.Component {
     }
     if (path === 'profile') {
       return <ProfilePage />;
+    }
+    if (path === 'city') {
+      const cityName = params.get('id');
+      return <BlogByCity city={cityName} />;
     }
     //this needs to be fixed, it is curently displayed by default under the navbar    
     return <NotFound />;

@@ -260,6 +260,20 @@ app.get('/api/profile', authorizationMiddleware, async (req, res) => {
     }
 });
 
+app.get('/api/blogs/city/:cityName', authorizationMiddleware, async (req, res) => {
+    console.log("fetching posts for city:", req.params.cityName);
+    try {
+        const {cityName} = req.params;
+        const posts = await Blog.find({location: { $regex: cityName, $options: 'i' }}).populate('author', 'username');
+        if (!posts.length) {
+            return res.status(404).json({error: `No posts found for ${cityName}`});
+        }
+        res.json(posts);
+    } catch (err) {
+        res.status(500).json({error: 'Server error fetching posts'});
+    }
+});
+
 //api call using location
 // app.get('/api/geocoding', async (req, res) => {
 //     const {q} = req.query;

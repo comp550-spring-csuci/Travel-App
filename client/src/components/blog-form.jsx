@@ -204,11 +204,11 @@ export default class AddBlog extends React.Component {
                         </div>
                         <div className='mb-4'>
                             <label htmlFor='content' className='form-label'>Blog Content</label>
-                            <input 
+                            <textarea
                             required
                             id='content'
-                            type='text'
                             name='content'
+                            rows={6}
                             value={content}
                             onChange={handleChange}
                             className='form-control'/>

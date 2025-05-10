@@ -1,5 +1,4 @@
 import React from "react";
-import NotFound from "./not-found";
 import { AppContext } from "../lib";
 
 export default class AddBlog extends React.Component {
@@ -11,6 +10,7 @@ export default class AddBlog extends React.Component {
             content: '',
             file: null,
             location: '',
+            suggestions: [],
             latitude: '',
             longitude: '',
             country: '',
@@ -19,6 +19,8 @@ export default class AddBlog extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+        this.timer = null;
     }
 
     async componentDidMount() {
@@ -54,6 +56,40 @@ export default class AddBlog extends React.Component {
     handleChange(event) {
         const { name, value } = event.target;
         this.setState({ [name]: value });
+
+        if (name === 'location') {
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                if(value.trim()) this.fetchSuggestions(value.trim());
+                else this.setState({suggestions: []});
+            }, 300);
+        }
+    }
+
+    async fetchSuggestions(q) {
+        try {
+            const res = await fetch(`/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
+            if (!res.ok) throw new Error(res.status);
+            const data = await res.json();
+            this.setState({suggestions: Array.isArray(data) ? data : []});
+        } catch (err) {
+            console.error(err);
+            this.setState({suggestions: []});
+        }
+    }
+
+    handleSelect(item) {
+        const fullLocation = [item.name];
+        if(item.state) fullLocation.push(item.state);
+        if(item.country) fullLocation.push(item.country);
+        const finalLocation = fullLocation.join(', ');
+        this.setState({
+            location: finalLocation,
+            latitude: item.lat,
+            longitude: item.lon,
+            country: item.country,
+            suggestions: []
+        });
     }
 
     handleFileChange({target: {files}}) {
@@ -63,60 +99,90 @@ export default class AddBlog extends React.Component {
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
-        const {title, content, file, location} = this.state;
+        const {title, content, file, location, latitude, longitude, country} = this.state;
         const {token} = this.context;
         const {blogId} = this.props;
 
-        fetch(`/api/geocoding?q=${encodeURIComponent(location)}`)
+        const form = new FormData();
+        form.append("title", title);
+        form.append("content", content);
+        form.append("location", location);
+        form.append("latitude", latitude);
+        form.append("longitude", longitude);
+        form.append("country", country)
+        if (file) form.append("image", file);
+        if (blogId) form.append("blogId", blogId);
+
+        const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
+        const method = blogId ? "PUT" : "POST";
+
+        fetch(url, {
+            method,
+            headers: {
+                'x-access-token': token
+            },
+            body: form
+        })
             .then(res => {
                 if (!res.ok) throw new Error(res.status);
                 return res.json();
             })
-            .then(geoData => {
-                const {lat, lon, country} = geoData;
-                if (lat == null || lon == null) {
-                    throw new Error("Missing latitude or longitude");
-                }
-
-            const form = new FormData();
-            form.append("title", title);
-            form.append("content", content);
-            form.append("location", location);
-            form.append("latitude", lat);
-            form.append("longitude", lon);
-            form.append("country", country)
-            if (file) form.append("image", file);
-            if (blogId) form.append("blogId", blogId);
-
-            const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
-            const method = blogId ? "PUT" : "POST";
-
-            return fetch(url, {
-                method,
-                headers: {
-                    'x-access-token': token
-                },
-                body: form
+            .then(() => {
+                window.location.hash = '#blog-feed';
             })
-                .then(res => {
-                    if (!res.ok) throw new Error(res.status);
-                    return res.json();
-                })
-                .then(() => {
-                    window.location.hash = '#blog-feed';
-                })
-                .catch(err => {
-                    console.error("Upload failed", err);
-                    this.setState({error: true, loading: false})
-                })
-            })  
+            .catch(err => {
+                console.error("Upload failed", err);
+            })
+
+        // fetch(`/api/geocoding?q=${encodeURIComponent(location)}`)
+        //     .then(res => {
+        //         if (!res.ok) throw new Error(res.status);
+        //         return res.json();
+        //     })
+        //     .then(geoData => {
+        //         const {lat, lon, country} = geoData;
+        //         if (lat == null || lon == null) {
+        //             throw new Error("Missing latitude or longitude");
+        //         }
+
+        //     const form = new FormData();
+        //     form.append("title", title);
+        //     form.append("content", content);
+        //     form.append("location", location);
+        //     form.append("latitude", lat);
+        //     form.append("longitude", lon);
+        //     form.append("country", country)
+        //     if (file) form.append("image", file);
+        //     if (blogId) form.append("blogId", blogId);
+
+        //     const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
+        //     const method = blogId ? "PUT" : "POST";
+
+        //     return fetch(url, {
+        //         method,
+        //         headers: {
+        //             'x-access-token': token
+        //         },
+        //         body: form
+        //     })
+        //         .then(res => {
+        //             if (!res.ok) throw new Error(res.status);
+        //             return res.json();
+        //         })
+        //         .then(() => {
+        //             window.location.hash = '#blog-feed';
+        //         })
+        //         .catch(err => {
+        //             console.error("Upload failed", err);
+        //         })
+        //     })  
         };
         
 
     render() {
-        const {title, content, file, location, latitude, longitude} = this.state;
+        const {title, content, location, suggestions} = this.state;
         const {blogId} = this.props;
-        const { handleChange, handleSubmit } = this;
+        const { handleChange, handleSubmit, handleSelect } = this;
         const submitButtonText = 'Finish';
         const isEdit = Boolean(blogId);
         return (
@@ -147,7 +213,7 @@ export default class AddBlog extends React.Component {
                             onChange={handleChange}
                             className='form-control'/>
                         </div>
-                        <div className="mb-4">
+                        <div className="mb-4 position-relative">
                             <label htmlFor="location" className="form-label">Location</label>
                             <input
                             required
@@ -157,38 +223,21 @@ export default class AddBlog extends React.Component {
                             onChange={this.handleChange}
                             className="form-control"
                             />
+                            {suggestions.length > 0 && (
+                                <ul className="list-group position-absolute w-100">
+                                    {suggestions.map((suggestion, index) => (
+                                        <li
+                                        key={index}
+                                        className="list-group-item list-group-item-action"
+                                        onClick={() => this.handleSelect(suggestion)}>
+                                            {suggestion.name}, {suggestion.state}, {suggestion.country}
+                                        </li>  
+                                    ))}
+                                </ul>
+                            )}
                         </div>
-                        {/* <div className='mb-4'>
-                            <label htmlFor='latitude' className='form-label'>Latitude</label>
-                            <input 
-                            required
-                            id='latitude'
-                            type='text'
-                            name='latitude'
-                            value={latitude}
-                            onChange={handleChange}
-                            className='form-control'/>
-                        </div>
-                        <div className='mb-4'>
-                            <label htmlFor='longitude' className='form-label'>Longitude</label>
-                            <input 
-                            required
-                            id='longitude'
-                            type='text'
-                            name='longitude'
-                            value={longitude}
-                            onChange={handleChange}
-                            className='form-control'/>
-                        </div> */}
                         <div className='mb-4'>
                             <label htmlFor='image' className='form-label'>Upload Image</label>
-                            {/* <input 
-                            id='image'
-                            type='url'
-                            name='image'
-                            value={image}
-                            onChange={handleChange}
-                            className='form-control'/> */}
                             <input 
                             id="image"
                             name="image"

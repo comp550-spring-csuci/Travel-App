@@ -261,6 +261,26 @@ app.get('/api/profile', authorizationMiddleware, async (req, res) => {
 });
 
 //api call using location
+// app.get('/api/geocoding', async (req, res) => {
+//     const {q} = req.query;
+//     if (!q) {
+//         return res.status(400).json({error: 'q is required'});
+//     }
+
+//     try {
+//         const apiKey = process.env.APIKEY;
+//         const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=1&appid=${apiKey}`;
+//         const response = await fetch(geoUrl);
+//         if (!response.ok) {
+//             throw new Error(response.statusText);
+//         }
+//         const result = await response.json();
+//         return res.json(result[0]);
+//     } catch {
+//         res.status(500).json({error: 'Geocoding failed'});
+//     }
+// })
+
 app.get('/api/geocoding', async (req, res) => {
     const {q} = req.query;
     if (!q) {
@@ -269,13 +289,13 @@ app.get('/api/geocoding', async (req, res) => {
 
     try {
         const apiKey = process.env.APIKEY;
-        const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=1&appid=${apiKey}`;
+        const geoUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=5&appid=${apiKey}`;
         const response = await fetch(geoUrl);
         if (!response.ok) {
             throw new Error(response.statusText);
         }
         const result = await response.json();
-        return res.json(result[0]);
+        return res.json(result);
     } catch {
         res.status(500).json({error: 'Geocoding failed'});
     }

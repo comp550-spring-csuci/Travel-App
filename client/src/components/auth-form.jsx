@@ -7,16 +7,53 @@ export default class AuthForm extends React.Component {
             username: '',
             password: '',
             location: '',
+            suggestions: [],
             incorrect: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+        this.timer = null;
     }
 
     //handles input change in the form and sets the value
     handleChange(event) {
         const { name, value } = event.target;
         this.setState({ [name]: value });
+
+        if (name === 'location') {
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                if(value.trim()) this.fetchSuggestions(value.trim());
+                else this.setState({suggestions: []});
+            }, 300);
+        }
+    }
+
+    async fetchSuggestions(q) {
+        try {
+            const res = await fetch(`/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
+            if (!res.ok) throw new Error(res.status);
+            const data = await res.json();
+            this.setState({suggestions: Array.isArray(data) ? data : []});
+        } catch (err) {
+            console.error(err);
+            this.setState({suggestions: []});
+        }
+    }
+
+    handleSelect(item) {
+        const fullLocation = [item.name];
+        if(item.state) fullLocation.push(item.state);
+        if(item.country) fullLocation.push(item.country);
+        const finalLocation = fullLocation.join(', ');
+        this.setState({
+            location: finalLocation,
+            latitude: item.lat,
+            longitude: item.lon,
+            country: item.country,
+            suggestions: []
+        });
     }
 
     //handles submitting the form, send a POST request
@@ -53,8 +90,8 @@ export default class AuthForm extends React.Component {
     handleSubmit = async (event) => {
         event.preventDefault();
         const { action } = this.props;
-        const { username, password, location } = this.state;
-        const body = { username, password };
+        const { username, password, location, latitude, longitude, country } = this.state;
+        const body = { username, password, location, latitude, longitude, country };
 
         try {
             if (action === 'sign-up') {
@@ -99,7 +136,7 @@ export default class AuthForm extends React.Component {
 
     render() {
         const { action } = this.props;
-        const {location} = this.state;
+        const {username, password, suggestions, location} = this.state;
         const { handleChange, handleSubmit } = this;
         const welcomeMessage = action === 'sign-up'
             ? 'Register'
@@ -141,7 +178,7 @@ export default class AuthForm extends React.Component {
                         </div>
                         {action === 'sign-up' && (
                             <div>
-                                <div className="mb-4">
+                                <div className="mb-4 position-relative">
                                     <label htmlFor="location" className="form-label">Home Location</label>
                                     <input
                                     required
@@ -151,6 +188,18 @@ export default class AuthForm extends React.Component {
                                     onChange={this.handleChange}
                                     className="form-control"
                                     />
+                                    {suggestions.length > 0 && (
+                                        <ul className="list-group position-absolute w-100">
+                                            {suggestions.map((suggestion, index) => (
+                                              <li
+                                                key={index}
+                                                className="list-group-item list-group-item-action"
+                                                onClick={() => this.handleSelect(suggestion)}>
+                                                    {suggestion.name}, {suggestion.state}, {suggestion.country}
+                                                </li>  
+                                            ))}
+                                        </ul>
+                                    )}
                                 </div>
                                 {/* <div className="mb-4">
                                 <label htmlFor="latitude" className="form-label">Your Home Latitude</label>

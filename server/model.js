@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     createdAt: {type: Date, default: Date.now},
     latitude:  { type: Number, max: 90, min: -90, required: true },
     longitude: { type: Number, max: 180, min: -180, required: true },
-    zip:       { type: String, match: /^\d{5}$/}
+    location:   { type: String, required: true }
 });
 
 const User = mongoose.model("User", userSchema);

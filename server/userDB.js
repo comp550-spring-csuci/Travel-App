@@ -18,7 +18,7 @@ class UserDB {
 
     async signUpUser(userInfo) {
         try {
-            const {username, password, latitude, longitude, zip} = userInfo;
+            const {username, password, latitude, longitude, location} = userInfo;
 
             const user_exist = await User.findOne({username: userInfo.username});
             if (user_exist) {
@@ -31,7 +31,7 @@ class UserDB {
             const newUser = new User({
                 username,
                 password: hashedPassword,
-                zip,
+                location,
                 latitude,
                 longitude
             });

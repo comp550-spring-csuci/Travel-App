@@ -6,9 +6,7 @@ export default class AuthForm extends React.Component {
         this.state = {
             username: '',
             password: '',
-            latitude: '',
-            longitude: '',
-            zip: '',
+            location: '',
             incorrect: false
         };
         this.handleChange = this.handleChange.bind(this);
@@ -52,80 +50,56 @@ export default class AuthForm extends React.Component {
     //         });
     // }
 
-    handleSubmit = (e) => {
-        e.preventDefault();
+    handleSubmit = async (event) => {
+        event.preventDefault();
         const { action } = this.props;
-        const { username, password, zip } = this.state;
+        const { username, password, location } = this.state;
         const body = { username, password };
+
+        try {
+            if (action === 'sign-up') {
+                const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
+
+                if (!geoRes.ok) throw new Error(geoRes.status);
+
+                const { lat, lon, country, name } = await geoRes.json();
+                body.latitude = lat;
+                body.longitude = lon;
+                body.location = name;
+                body.country = country;
+            }
+
+            const res = await fetch(`/api/auth/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
     
-        const doAuth = () => {
-          fetch(`/api/auth/${action}`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify(body),
-          })
-            .then(async (res) => {
-              const text = await res.text();
-              if (action === "sign-up" && res.status === 201) {
-                return window.location.hash = "#sign-in";
-              }
-              let data = {};
-              if (text) {
-                try { data = JSON.parse(text); } 
-                catch {}
-              }
-              return { status: res.status, data };
-            })
-            .then((info) => {
-              if (!info) return;
-              const { status, data } = info;
-              if (action === "sign-in") {
-                if (status !== 200 || !data.user || !data.token) {
-                  return this.setState({ incorrect: true });
+            if (action === 'sign-up' && res.status === 201) {
+                window.location.hash = '#sign-in';
+                return;
+            }
+    
+            const result = await res.json();
+            if (action === 'sign-in') {
+                if (!res.ok) {
+                    this.setState({incorrect: true});
+                } else {
+                    this.props.onSignIn(result);
+                    window.location.hash = '';
                 }
-                this.props.onSignIn(data);
-                window.location.hash = '';
-              }
-            })
-            .catch((err) => {
-              console.error("Auth error:", err);
-              this.setState({ incorrect: true });
-            });
-        };
-    
-        if (action === "sign-up") {
-          fetch(`/api/geocoding/zip?zip=${encodeURIComponent(zip)}`)
-            .then(async (res) => {
-              const text = await res.text();
-              if (!res.ok) {
-                const err = text ? JSON.parse(text) : {};
-                throw new Error(err.error || res.status);
-              }
-              return text ? JSON.parse(text) : {};
-            })
-            .then(({ lat, lon }) => {
-              if (lat == null || lon == null) {
-                throw new Error("Could not find coordinates for that ZIP");
-              }
-              body.latitude = lat;
-              body.longitude = lon;
-              body.zip = zip;
-            })
-            .then(doAuth)
-            .catch((err) => {
-              console.error("Signup lookup error:", err);
-              this.setState({ incorrect: true });
-            });
-        } else {
-          doAuth();
+            }
+        } catch (err) {
+            console.error(err);
+            this.setState({incorrect: true});
         }
-      };
+    } 
 
     render() {
         const { action } = this.props;
-        const {zip} = this.state;
+        const {location} = this.state;
         const { handleChange, handleSubmit } = this;
         const welcomeMessage = action === 'sign-up'
             ? 'Register'
@@ -168,15 +142,12 @@ export default class AuthForm extends React.Component {
                         {action === 'sign-up' && (
                             <div>
                                 <div className="mb-4">
-                                    <label htmlFor="zip" className="form-label">Home ZIP Code</label>
+                                    <label htmlFor="location" className="form-label">Home Location</label>
                                     <input
                                     required
-                                    id="zip"
-                                    name="zip"
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="\d{5}"
-                                    value={zip}
+                                    id="location"
+                                    name="location"
+                                    value={location}
                                     onChange={this.handleChange}
                                     className="form-control"
                                     />

@@ -281,27 +281,5 @@ app.get('/api/geocoding', async (req, res) => {
     }
 })
 
-//api call using zip
-// app.get('/api/geocoding/zip', async (req, res) => {
-//     const { zip } = req.query;
-//     if (!/^\d{5}$/.test(zip)) {
-//       return res.status(400).json({ error: 'Valid 5-digit ZIP required' });
-//     }
-//     try {
-//       const apiKey = process.env.APIKEY;
-//       const geoUrl = `https://api.openweathermap.org/geo/1.0/zip?zip=${zip},US&appid=${apiKey}`;
-//       const response = await fetch(geoUrl);
-//       if (!response.ok) {
-//         throw new Error(response.statusText);
-//       }
-//       const { lat, lon, country, name } = await response.json();
-//       return res.json({ lat, lon, country, name });
-//     } catch (err) {
-//       console.error(err);
-//       return res.status(500).json({ error: 'Zip geocoding failed' });
-//     }
-//   });
-
-
 app.get('/', (req, res) => res.send('API is running'));
 app.listen(3001, () => console.log('Server is running on port 3001'));

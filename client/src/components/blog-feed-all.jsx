@@ -94,17 +94,8 @@ export default class BlogFeedAll extends React.Component {
                           {post.author?.username || "Unknown Author"}
                         </p>
                         <p className="p-2">{new Date(post.createdAt).toLocaleDateString()}</p>
-                        <p>{post.location}, {post.country}</p>
+                        <p>{post.location}</p>
                       </div>
-                      {/* Delete Button Below Author Info */}
-                      {/* <div className="mt-2">
-                        <button
-                          onClick={() => this.handleDelete(post._id)}
-                          className="btn btn-danger btn-sm"
-                        >
-                          Delete
-                        </button>
-                      </div> */}
                     </div>
                   </div>
                 </a>

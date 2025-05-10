@@ -46,7 +46,7 @@ export default class SingleBlog extends React.Component {
                 <p>{post.content}</p>
                 <p>{post.author.username}{' '}</p>
                 <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                <p>{post.location}, {post.country}</p>
+                <p>{post.location}</p>
             </div>
         )
     }

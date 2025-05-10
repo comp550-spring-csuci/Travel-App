@@ -10,7 +10,7 @@ export default class ProfilePage extends React.Component {
             latitude: '',
             longitude: '',
             country: '',
-            zip: ''
+            location: ''
         };
     }
 
@@ -25,8 +25,8 @@ export default class ProfilePage extends React.Component {
                 if (!res.ok) throw new Error(res.status);
                 return res.json();
             })
-            .then(({username, zip}) => {
-                this.setState({username, zip});
+            .then(({username, location, latitude, longitude}) => {
+                this.setState({username, location, latitude, longitude});
             })
             .catch(err => {
                 console.error(err);
@@ -34,11 +34,12 @@ export default class ProfilePage extends React.Component {
     }
 
     render() {
-        const {username, zip} = this.state;
+        const {username, location, latitude, longitude} = this.state;
         return (
             <div className="container p-5">
                 <h2 className='mt-5'>Welcome, {username}</h2>
-                <p>Home ZIP code: {zip}</p>
+                <p>Home Location: {location}</p>
+                <p>Coordinates:{latitude}, {longitude}</p>
                 {/* <button onClick={() => window.location.hash = '#profile/edit'}>Edit Home Location</button> */}
             </div>
         )

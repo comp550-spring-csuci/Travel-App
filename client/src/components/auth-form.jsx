@@ -6,19 +6,54 @@ export default class AuthForm extends React.Component {
         this.state = {
             username: '',
             password: '',
-            latitude: '',
-            longitude: '',
-            zip: '',
+            location: '',
+            suggestions: [],
             incorrect: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+        this.timer = null;
     }
 
     //handles input change in the form and sets the value
     handleChange(event) {
         const { name, value } = event.target;
         this.setState({ [name]: value });
+
+        if (name === 'location') {
+            clearTimeout(this.timer);
+            this.timer = setTimeout(() => {
+                if(value.trim()) this.fetchSuggestions(value.trim());
+                else this.setState({suggestions: []});
+            }, 300);
+        }
+    }
+
+    async fetchSuggestions(q) {
+        try {
+            const res = await fetch(`/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
+            if (!res.ok) throw new Error(res.status);
+            const data = await res.json();
+            this.setState({suggestions: Array.isArray(data) ? data : []});
+        } catch (err) {
+            console.error(err);
+            this.setState({suggestions: []});
+        }
+    }
+
+    handleSelect(item) {
+        const fullLocation = [item.name];
+        if(item.state) fullLocation.push(item.state);
+        if(item.country) fullLocation.push(item.country);
+        const finalLocation = fullLocation.join(', ');
+        this.setState({
+            location: finalLocation,
+            latitude: item.lat,
+            longitude: item.lon,
+            country: item.country,
+            suggestions: []
+        });
     }
 
     //handles submitting the form, send a POST request
@@ -52,80 +87,56 @@ export default class AuthForm extends React.Component {
     //         });
     // }
 
-    handleSubmit = (e) => {
-        e.preventDefault();
+    handleSubmit = async (event) => {
+        event.preventDefault();
         const { action } = this.props;
-        const { username, password, zip } = this.state;
-        const body = { username, password };
+        const { username, password, location, latitude, longitude, country } = this.state;
+        const body = { username, password, location, latitude, longitude, country };
+
+        try {
+            if (action === 'sign-up') {
+                const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
+
+                if (!geoRes.ok) throw new Error(geoRes.status);
+
+                const { lat, lon, country, name } = await geoRes.json();
+                body.latitude = lat;
+                body.longitude = lon;
+                body.location = name;
+                body.country = country;
+            }
+
+            const res = await fetch(`/api/auth/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
     
-        const doAuth = () => {
-          fetch(`/api/auth/${action}`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify(body),
-          })
-            .then(async (res) => {
-              const text = await res.text();
-              if (action === "sign-up" && res.status === 201) {
-                return window.location.hash = "#sign-in";
-              }
-              let data = {};
-              if (text) {
-                try { data = JSON.parse(text); } 
-                catch {}
-              }
-              return { status: res.status, data };
-            })
-            .then((info) => {
-              if (!info) return;
-              const { status, data } = info;
-              if (action === "sign-in") {
-                if (status !== 200 || !data.user || !data.token) {
-                  return this.setState({ incorrect: true });
+            if (action === 'sign-up' && res.status === 201) {
+                window.location.hash = '#sign-in';
+                return;
+            }
+    
+            const result = await res.json();
+            if (action === 'sign-in') {
+                if (!res.ok) {
+                    this.setState({incorrect: true});
+                } else {
+                    this.props.onSignIn(result);
+                    window.location.hash = '';
                 }
-                this.props.onSignIn(data);
-                window.location.hash = '';
-              }
-            })
-            .catch((err) => {
-              console.error("Auth error:", err);
-              this.setState({ incorrect: true });
-            });
-        };
-    
-        if (action === "sign-up") {
-          fetch(`/api/geocoding/zip?zip=${encodeURIComponent(zip)}`)
-            .then(async (res) => {
-              const text = await res.text();
-              if (!res.ok) {
-                const err = text ? JSON.parse(text) : {};
-                throw new Error(err.error || res.status);
-              }
-              return text ? JSON.parse(text) : {};
-            })
-            .then(({ lat, lon }) => {
-              if (lat == null || lon == null) {
-                throw new Error("Could not find coordinates for that ZIP");
-              }
-              body.latitude = lat;
-              body.longitude = lon;
-              body.zip = zip;
-            })
-            .then(doAuth)
-            .catch((err) => {
-              console.error("Signup lookup error:", err);
-              this.setState({ incorrect: true });
-            });
-        } else {
-          doAuth();
+            }
+        } catch (err) {
+            console.error(err);
+            this.setState({incorrect: true});
         }
-      };
+    } 
 
     render() {
         const { action } = this.props;
-        const {zip} = this.state;
+        const {username, password, suggestions, location} = this.state;
         const { handleChange, handleSubmit } = this;
         const welcomeMessage = action === 'sign-up'
             ? 'Register'
@@ -167,19 +178,28 @@ export default class AuthForm extends React.Component {
                         </div>
                         {action === 'sign-up' && (
                             <div>
-                                <div className="mb-4">
-                                    <label htmlFor="zip" className="form-label">Home ZIP Code</label>
+                                <div className="mb-4 position-relative">
+                                    <label htmlFor="location" className="form-label">Home Location</label>
                                     <input
                                     required
-                                    id="zip"
-                                    name="zip"
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="\d{5}"
-                                    value={zip}
+                                    id="location"
+                                    name="location"
+                                    value={location}
                                     onChange={this.handleChange}
                                     className="form-control"
                                     />
+                                    {suggestions.length > 0 && (
+                                        <ul className="list-group position-absolute w-100">
+                                            {suggestions.map((suggestion, index) => (
+                                              <li
+                                                key={index}
+                                                className="list-group-item list-group-item-action"
+                                                onClick={() => this.handleSelect(suggestion)}>
+                                                    {suggestion.name}, {suggestion.state}, {suggestion.country}
+                                                </li>  
+                                            ))}
+                                        </ul>
+                                    )}
                                 </div>
                                 {/* <div className="mb-4">
                                 <label htmlFor="latitude" className="form-label">Your Home Latitude</label>

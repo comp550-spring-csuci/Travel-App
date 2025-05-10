@@ -25,7 +25,7 @@ const blogSchema = new mongoose.Schema({
     updatedAt:  { type: Date, default: Date.now }
 });
 
-blogSchema.index({ title: 'text', content:'text', location: 'text' });
+// blogSchema.index({ title: 'text', content:'text', location: 'text' });
 
 // Middleware to update `updatedAt` field before saving
 blogSchema.pre("save", function (next) {

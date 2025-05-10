@@ -33,10 +33,29 @@ class BlogDB {
     }
 
     async findBlog(condition) {
-        return await Blog.find(condition).exec();
+        return await Blog.find(condition).sort({createdAt: -1}).exec();
     }
 
     async searchBlog(searchString) {
+        // Check if the search string is empty
+        // Instead of searching for direct relevancy within field, search for fuzzy search match, then
+        // add up the scores of the search results.
+        return await Blog.aggregate([
+            { $search: {
+                index: "dynamic",
+                compound: {
+                  should: [ 
+                    { text: { path: "title", query: searchString, fuzzy: { maxEdits: 2, prefixLength: 1 }} },
+                    { text: { path: "content", query: searchString, fuzzy: { maxEdits: 2, prefixLength: 1 }} },
+                    { text: { path: "location", query: searchString, fuzzy: { maxEdits: 2, prefixLength: 1 }} }],
+                  minimumShouldMatch: 0
+                }
+              }
+            },
+            { $addFields: { score: { $meta: "searchScore" } } },
+            { $sort: { score: -1 } }
+        ]).exec();
+          
         return await Blog.find({ $text: { $search: searchString }}, { score: { $meta: "textScore"}}
             ).sort({ score: { $meta: "textScore" }}).exec();
     }

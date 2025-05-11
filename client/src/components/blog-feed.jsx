@@ -61,17 +61,9 @@ export default class BlogFeed extends React.Component {
         const { user } = this.context;
         return (
             <div className="container-fluid p-5">
-                <div className="d-flex justify-content-center align-items-center gap-3">
-                    <h1 className="p-5">Your Feed</h1>
-                    <a href="#add-blog" className="btn btn-primary">New+</a>
-                    {/* Delete Button */}
-                    {/* The Delete button goes next to New+ */}
-                    {/* <button
-                        onClick={() => this.handleDelete(posts[0]._id)} // Example: Delete the first post
-                        className="btn btn-danger"
-                    >
-                        Delete
-                    </button> */}
+                <div className="d-flex justify-content-center align-items-center gap-3 pt-5 mt-5">
+                    <h1>Your Feed</h1>
+                    <a href="#add-blog" className="btn btn-primary blue-background">New+</a>
                 </div>
 
                 {this.state.error === true && <NotFound />}
@@ -80,7 +72,7 @@ export default class BlogFeed extends React.Component {
                     {this.state.posts && this.state.posts.length > 0 ? (
                         this.state.posts.map(post => (
                             <div key={post._id} className="col-md-4 blog-box-container" onClick={() => window.location.hash = `#blog/${post._id}`}>  
-                                <div className="blog-post mb-4 p-3 border rounded blog-box">
+                                <div className="blog-post mb-4 p-3 rounded blog-box d-flex flex-column" style={{height: "540px"}}>
                                     {post.image && (
                                         <img
                                             src={post.image}
@@ -92,33 +84,35 @@ export default class BlogFeed extends React.Component {
                                     <div className="blog-box-text">
                                         <h2>{post.title}</h2>
                                         <p>{post.content}</p>
+                                        <div className="blog-author mt-4 nm-20">
+                                            <p>{post.location}</p>
+                                        </div>    
                                         <div className="blog-author">
                                             <p className="blog-author-text">
                                                 {post.author && post.author.username ? post.author.username : "Unknown Author"}
                                             </p>
                                             <p className="p-2">{new Date(post.createdAt).toLocaleDateString()}</p>
-                                            <p>{post.location}</p>
                                         </div>
                                     </div>
 
                                     {/* Edit button only for the post's author */}
                                     {user && post.author?._id === user.id && (
-                                        <>
+                                        <div className="justify-content-center d-flex gap-2 mt-auto">
                                             <button 
                                                 onClick={e => {
                                                     e.stopPropagation();
                                                     window.location.hash = `#edit-blog/${post._id}`;
                                                 }}
-                                                className="btn btn-sm btn-secondary mt-2">Edit</button>
+                                                className="btn btn-sm btn-secondary" style={{width: "150px"}}>Edit</button>
                                             <button
                                                 onClick={e => {
                                                     e.stopPropagation();
                                                     this.handleDelete(post._id);
                                                 }}
-                                                className="btn btn-danger btn-sm mt-2">
+                                                className="btn btn-danger btn-sm" style={{width: "150px"}}>
                                                 Delete
                                             </button>
-                                        </>
+                                        </div>
                                     )}
                                 </div>   
                             </div>

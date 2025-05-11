@@ -148,7 +148,7 @@ export default class AuthForm extends React.Component {
           }
       
           const rawGeo = await geoRes.json();
-          const geo    = Array.isArray(rawGeo) ? rawGeo[0] : rawGeo;
+          const geo = Array.isArray(rawGeo) ? rawGeo[0] : rawGeo;
           const { lat, lon, country, name } = geo;
       
           if (lat == null || lon == null) {

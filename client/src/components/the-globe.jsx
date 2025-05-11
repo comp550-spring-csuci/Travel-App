@@ -130,7 +130,7 @@ useEffect(() => {
         console.log("The state of home data is:", homeData)
         // get homeData
         const home = Array.isArray(homeData) ? homeData[0] : homeData
-        const { latitude: homeLat, longitude: homeLng } = home;
+        const { latitude: homeLat, longitude: homeLng, image: homeImage} = home;
 
         const validLatitude = !isNaN(homeLat) && homeLat >= -90 && homeLat <= 90;
         const validLongitude = !isNaN(homeLng) && homeLng >= -180 && homeLng <= 180;
@@ -158,7 +158,7 @@ useEffect(() => {
           longitude: homeLng,
           title: 'Home',
           content: 'This is your home location',
-          image: '',
+          image: homeImage,
           isHome: true
         }
 

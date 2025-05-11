@@ -174,7 +174,7 @@ app.get('/api/get/search/:searchQuery', authorizationMiddleware, async (req, res
 })
 
 app.get('/api/blogs/:id', authorizationMiddleware, async(req, res) => {
-    const post = await Blog.findById(req.params.id).populate('author', 'username');
+    const post = await Blog.findById(req.params.id).populate('author', 'username image');
     if (!post) {
         return res.sendStatus(404);
     }

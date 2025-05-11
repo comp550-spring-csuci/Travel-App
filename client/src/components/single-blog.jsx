@@ -36,7 +36,6 @@ export default class SingleBlog extends React.Component {
         return (
             <div className="container"style={{paddingTop: "120px"}}>
                 <div className='card mx-auto mb-3' style={{maxWidth: "800px", border: "none"}}>
-                    <h1>{post.title}</h1>
                     {post.image && (
                     <img
                         src={post.image}
@@ -44,10 +43,29 @@ export default class SingleBlog extends React.Component {
                         style={{ maxWidth: '100%', marginBottom: '1rem' }}
                     />
                     )}
+                    <h1>{post.title}</h1>
+                    <div className="blog-author">
+                        <p>{post.location}</p>
+                    </div>
                     <p>{post.content}</p>
-                    <p>{post.author.username}{' '}</p>
-                    <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                    <p>{post.location}</p>
+                    <div className="blog-author d-flex align-items-center mt-auto">
+                      {post.author.image
+                        ? <img
+                            src={`/${post.author.image}`}
+                            alt={post.author.username}
+                            style={{
+                              width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', marginRight: '0.5rem'
+                            }}
+                          />
+                        : <div
+                            style={{width: 32, height: 32, borderRadius: '50%', backgroundColor: '#ddd', marginRight: '0.5rem'
+                            }}
+                        />}
+                        <p className="blog-author-text mb-0">
+                            {post.author && post.author.username ? post.author.username : "Unknown Author"}
+                        </p>
+                        <p className="p-2 mb-0">{new Date(post.createdAt).toLocaleDateString()}</p>
+                      </div>
                 </div>
             </div>
         )

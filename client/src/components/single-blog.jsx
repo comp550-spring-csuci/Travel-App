@@ -34,19 +34,21 @@ export default class SingleBlog extends React.Component {
         if (!post) return <p>Cannot find post.</p>;
 
         return (
-            <div className="container my-5">
-                <h1>{post.title}</h1>
-                {post.image && (
-                <img
-                    src={post.image}
-                    alt={post.title}
-                    style={{ maxWidth: '100%', marginBottom: '1rem' }}
-                />
-                )}
-                <p>{post.content}</p>
-                <p>{post.author.username}{' '}</p>
-                <p>{new Date(post.createdAt).toLocaleDateString()}</p>
-                <p>{post.location}</p>
+            <div className="container"style={{paddingTop: "120px"}}>
+                <div className='card mx-auto mb-3' style={{maxWidth: "800px", border: "none"}}>
+                    <h1>{post.title}</h1>
+                    {post.image && (
+                    <img
+                        src={post.image}
+                        alt={post.title}
+                        style={{ maxWidth: '100%', marginBottom: '1rem' }}
+                    />
+                    )}
+                    <p>{post.content}</p>
+                    <p>{post.author.username}{' '}</p>
+                    <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+                    <p>{post.location}</p>
+                </div>
             </div>
         )
     }

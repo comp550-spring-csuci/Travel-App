@@ -59,7 +59,7 @@ function Navbar() {
                     <li><a className='nav-link nav-link-line' href='#the-globe'>The Globe</a></li>
 
                     <div className='d-flex align-items-center'>
-                      <li className='d-flex justify-content-center'>
+                      <li className='d-flex justify-content-center gap-1'>
                         Hi, <a href='#profile' className='user'>{user.username}</a>
                       </li>
                       <li>

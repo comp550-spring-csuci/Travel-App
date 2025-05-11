@@ -99,6 +99,7 @@ export default class AddBlog extends React.Component {
     //handles submitting the form, send a POST request
     handleSubmit(event) {
         event.preventDefault();
+        this.setState({invalid: false});
         const {title, content, file, location, latitude, longitude, country} = this.state;
         const {token} = this.context;
         const {blogId} = this.props;
@@ -124,7 +125,10 @@ export default class AddBlog extends React.Component {
             body: form
         })
             .then(res => {
-                if (!res.ok) throw new Error(res.status);
+                if (!res.ok){
+                    this.setState({invalid: true});
+                    throw new Error(res.status);
+                } 
                 return res.json();
             })
             .then(() => {
@@ -134,48 +138,7 @@ export default class AddBlog extends React.Component {
                 console.error("Upload failed", err);
             })
 
-        // fetch(`/api/geocoding?q=${encodeURIComponent(location)}`)
-        //     .then(res => {
-        //         if (!res.ok) throw new Error(res.status);
-        //         return res.json();
-        //     })
-        //     .then(geoData => {
-        //         const {lat, lon, country} = geoData;
-        //         if (lat == null || lon == null) {
-        //             throw new Error("Missing latitude or longitude");
-        //         }
-
-        //     const form = new FormData();
-        //     form.append("title", title);
-        //     form.append("content", content);
-        //     form.append("location", location);
-        //     form.append("latitude", lat);
-        //     form.append("longitude", lon);
-        //     form.append("country", country)
-        //     if (file) form.append("image", file);
-        //     if (blogId) form.append("blogId", blogId);
-
-        //     const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
-        //     const method = blogId ? "PUT" : "POST";
-
-        //     return fetch(url, {
-        //         method,
-        //         headers: {
-        //             'x-access-token': token
-        //         },
-        //         body: form
-        //     })
-        //         .then(res => {
-        //             if (!res.ok) throw new Error(res.status);
-        //             return res.json();
-        //         })
-        //         .then(() => {
-        //             window.location.hash = '#blog-feed';
-        //         })
-        //         .catch(err => {
-        //             console.error("Upload failed", err);
-        //         })
-        //     })  
+          
         };
         
 
@@ -247,9 +210,9 @@ export default class AddBlog extends React.Component {
                             className="form-control"
                             />
                         </div>
-                        {this.state.incorrect === true &&
+                        {this.state.invalid === true &&
                             <div>
-                                <p>Blog is invalid. Please try again.</p>
+                                <p>Location is invalid. Please try again.</p>
                             </div>
                         }
                         <div className='d-flex justify-content-center mb-4'>

@@ -12,7 +12,8 @@ export default class ProfileEdit extends React.Component {
             country: '',
             location: '',
             image: '',
-            suggestions: []
+            suggestions: [],
+            invalid: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -87,11 +88,25 @@ export default class ProfileEdit extends React.Component {
         this.setState({file: files[0]});
     }
 
-    handleSubmit(event) {
+    handleSubmit = async (event) => {
         event.preventDefault();
+        this.setState({invalid: false});
         const {file, location, latitude, longitude, country} = this.state;
         const {token} = this.context;
-        const {blogId} = this.props;
+
+        const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
+        if (!geoRes.ok) {
+            this.setState({invalid: true});
+            return;
+        }
+
+        const rawGeo = await geoRes.json();
+        const geo = Array.isArray(rawGeo) ? rawGeo[0] : rawGeo;
+
+        if (!geo || geo.lat == null || geo.lon == null) {
+            this.setState({invalid: true});
+            return;
+        }
 
         const form = new FormData();
         form.append("location", location);
@@ -100,26 +115,20 @@ export default class ProfileEdit extends React.Component {
         form.append("country", country)
         if (file) form.append("image", file);
 
-        const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
-        const method = blogId ? "PUT" : "POST";
-
-        fetch('/api/profile/edit', {
+        const res = await fetch('/api/profile/edit', {
             method: 'PATCH',
             headers: {
                 'x-access-token': token
             },
-            body: form
+            body: form,
         })
-            .then(res => {
-                if (!res.ok) throw new Error(res.status);
-                return res.json();
-            })
-            .then(() => {
-                window.location.hash = '#profile';
-            })
-            .catch(err => {
-                console.error("Upload failed", err);
-            })
+
+        if (!res.ok) {
+            throw new Error(res.status);
+            return;
+        }
+
+        window.location.hash = '#profile';
         };
 
     render() {
@@ -164,9 +173,9 @@ export default class ProfileEdit extends React.Component {
                         className="form-control"
                         />
                     </div>
-                    {this.state.incorrect === true &&
+                    {this.state.invalid === true &&
                         <div>
-                            <p>Edit is invalid. Please try again.</p>
+                            <p>Location is invalid. Please try again.</p>
                         </div>
                     }
                     <div className='d-flex justify-content-center mb-4'>

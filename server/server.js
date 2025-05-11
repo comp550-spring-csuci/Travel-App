@@ -251,6 +251,27 @@ app.get('/api/profile', authorizationMiddleware, async (req, res) => {
     }
 });
 
+//edit profile - must use patch instead of put because we don't want to override all user fields
+app.patch('/api/profile/edit', authorizationMiddleware, upload.single('image'), async (req, res) => {
+    try {
+        const author = req.user.id;
+        const {location, latitude, longitude, country} = req.body;
+
+        const updates = {};
+        if (location) updates.location = location;
+        if (latitude !== null) updates.latitude = parseFloat(latitude);
+        if (longitude !== null) updates.longitude = parseFloat(longitude);
+        if (country) updates.country = country;
+        if (req.file) updates.image = `uploads/${req.file.filename}`
+
+        const user = await User.findByIdAndUpdate(author, {$set: updates}, {new: true, select: 'username location latitude longitude country image'}).lean();
+        if (!user) return res.status(404).json({error: "User not found"});
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: "Server error updating profile" });
+    }
+})
+
 app.get('/api/blogs/city/:cityName', authorizationMiddleware, async (req, res) => {
     console.log("fetching posts for city:", req.params.cityName);
     try {

@@ -19,6 +19,7 @@ import TheGlobe from './components/the-globe';
 import SingleBlog from './components/single-blog';
 import ProfilePage from './components/profile-page';
 import BlogByCity from './components/blog-by-city';
+import ProfileEdit from './components/profile-edit';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -103,6 +104,9 @@ export default class App extends React.Component {
     if (path === 'city') {
       const cityName = params.get('id');
       return <BlogByCity city={cityName} />;
+    }
+    if (path === 'profile-edit') {
+      return <ProfileEdit />;
     }
     //this needs to be fixed, it is curently displayed by default under the navbar    
     return <NotFound />;

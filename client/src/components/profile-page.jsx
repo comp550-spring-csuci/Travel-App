@@ -10,7 +10,8 @@ export default class ProfilePage extends React.Component {
             latitude: '',
             longitude: '',
             country: '',
-            location: ''
+            location: '',
+            image: ''
         };
     }
 
@@ -25,8 +26,8 @@ export default class ProfilePage extends React.Component {
                 if (!res.ok) throw new Error(res.status);
                 return res.json();
             })
-            .then(({username, location, latitude, longitude}) => {
-                this.setState({username, location, latitude, longitude});
+            .then(({username, location, latitude, longitude, image}) => {
+                this.setState({username, location, latitude, longitude, image});
             })
             .catch(err => {
                 console.error(err);
@@ -34,9 +35,11 @@ export default class ProfilePage extends React.Component {
     }
 
     render() {
-        const {username, location, latitude, longitude} = this.state;
+        const {username, location, latitude, longitude, image} = this.state;
+
         return (
             <div className="container p-5">
+                <img src={`/${image}`} alt='your profile picture' className="mt-5" style={{width: 100, height: 100, borderRadius: '50%'}} />
                 <h2 className='mt-5'>Welcome, {username}</h2>
                 <p>Home Location: {location}</p>
                 <p>Coordinates:{latitude}, {longitude}</p>

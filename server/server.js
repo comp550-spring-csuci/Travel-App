@@ -117,8 +117,8 @@ app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), a
 app.get('/api/home-location', authorizationMiddleware, async (req, res) => {
     try {
       const userId = req.user.id;
-      const user = await User.findById(userId, 'latitude longitude').exec();
-      res.json({latitude: user.latitude, longitude: user.longitude});
+      const user = await User.findById(userId, 'latitude longitude image').exec();
+      res.json({latitude: user.latitude, longitude: user.longitude, image: user.image});
     } catch (err) {
       console.error("GET /api/home-location error:", err); // Add this
       res.status(500).json({ error: "Server error fetching home location" });
@@ -255,8 +255,9 @@ app.delete('/api/blog/:id', authorizationMiddleware, async (req, res) => {
 app.get('/api/profile', authorizationMiddleware, async (req, res) => {
     try {
         const user = await User
-            .findById(req.user.id, 'username location latitude longitude')
+            .findById(req.user.id, 'username location latitude longitude image')
             .lean();
+        if (!user.image) user.image = 'uploads/default-profile-image.jpg'
         if (!user) return res.status(404).json({ error: 'No user found'});
         res.json(user);
     } catch (err) {

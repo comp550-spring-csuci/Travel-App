@@ -49,12 +49,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //Sign-up route
 app.post('/api/auth/sign-up', async (req, res) => {
-    console.log("💡 sign-up payload:", req.body);
-    console.log("→ username:", req.body.username);
-    console.log("→ password:", req.body.password);
-    console.log("→ latitude:", req.body.latitude);
-    console.log("→ longitude:", req.body.longitude);
-    console.log("→ location:", req.body.location);
     const { username, password, latitude, longitude } = req.body;
     if (!username || !password || latitude == null || longitude == null) {
         return res.status(400).json({ error: "Username and password are required fields"});
@@ -101,13 +95,6 @@ app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), a
         } else {
             return res.status(500).json({error: "Failed to create"});
         } 
-
-        // const result = await blogDB.addBlog(req.body);
-        // if (result) {
-        //     res.status(201).json({message: "Blog post was created successfully!"});
-        // } else {
-        //     res.status(500).json({error: "Failed to create a blog post."});
-        // } 
     } catch (err) {
         res.status(500).json({error: "Server error creating a blog post"});
     }
@@ -117,15 +104,13 @@ app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), a
 app.get('/api/home-location', authorizationMiddleware, async (req, res) => {
     try {
       const userId = req.user.id;
-      const user = await User.findById(userId, 'latitude longitude image').exec();
-      res.json({latitude: user.latitude, longitude: user.longitude, image: user.image});
+      const user = await User.findById(userId, 'latitude longitude image location').exec();
+      res.json({latitude: user.latitude, longitude: user.longitude, image: user.image, location: user.location});
     } catch (err) {
       console.error("GET /api/home-location error:", err); // Add this
       res.status(500).json({ error: "Server error fetching home location" });
     }
   });
-
-  
 
   
 //Get user blog posts route

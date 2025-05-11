@@ -130,7 +130,7 @@ useEffect(() => {
         console.log("The state of home data is:", homeData)
         // get homeData
         const home = Array.isArray(homeData) ? homeData[0] : homeData
-        const { latitude: homeLat, longitude: homeLng, image: homeImage} = home;
+        const { latitude: homeLat, longitude: homeLng, image: homeImage, location: homeLoc } = home;
 
         const validLatitude = !isNaN(homeLat) && homeLat >= -90 && homeLat <= 90;
         const validLongitude = !isNaN(homeLng) && homeLng >= -180 && homeLng <= 180;
@@ -158,6 +158,7 @@ useEffect(() => {
           longitude: homeLng,
           title: 'Home',
           content: 'This is your home location',
+          location: homeLoc,
           image: homeImage,
           isHome: true
         }
@@ -196,6 +197,9 @@ useEffect(() => {
 
         globe.onPointClick(async (point) => {
           // Check if the point has city or location info
+          if (point.isHome) {
+            return window.location.hash = '#profile';
+          }
           if (point.location) {
             try {
               // Fetch the posts for that city (or location) from your API

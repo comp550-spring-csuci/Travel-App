@@ -76,7 +76,7 @@ export default class BlogFeedAll extends React.Component {
             this.state.posts.map(post => (
               <div key={post._id} className="col-md-4 blog-box-container">
                 <a href={`#blog/${post._id}`} className="tile-link">
-                  <div className="blog-post mb-4 p-3 rounded blog-box" style={{height: "470px"}}>
+                  <div className="blog-post mb-4 p-3 rounded blog-box d-flex" style={{height: "470px"}}>
                     {post.image && (
                       <div>
                         <img
@@ -88,17 +88,29 @@ export default class BlogFeedAll extends React.Component {
                         <div className="border-top border-2 my-2" />
                       </div>
                     )}
-                    <div className="blog-box-text">
+                    <div className="blog-box-text flex-grow-1">
                       <h2 className="black">{post.title}</h2>
-                      <p>{post.content}</p>
-                      <div className="blog-author mt-4 nm-20">
-                        <p>{post.location}</p>
-                      </div>    
                       <div className="blog-author">
-                        <p className="blog-author-text">
+                        <p>{post.location}</p>
+                      </div>
+                      <p>{post.content}</p>    
+                      <div className="blog-author d-flex align-items-center mt-auto">
+                      {post.author.image
+                        ? <img
+                            src={`/${post.author.image}`}
+                            alt={post.author.username}
+                            style={{
+                              width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', marginRight: '0.5rem'
+                            }}
+                          />
+                        : <div
+                            style={{width: 32, height: 32, borderRadius: '50%', backgroundColor: '#ddd', marginRight: '0.5rem'
+                            }}
+                        />}
+                        <p className="blog-author-text mb-0">
                             {post.author && post.author.username ? post.author.username : "Unknown Author"}
                         </p>
-                        <p className="p-2">{new Date(post.createdAt).toLocaleDateString()}</p>
+                        <p className="p-2 mb-0">{new Date(post.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>

@@ -87,52 +87,108 @@ export default class AuthForm extends React.Component {
     //         });
     // }
 
-    handleSubmit = async (event) => {
+    // handleSubmit = async (event) => {
+    //     event.preventDefault();
+    //     const { action } = this.props;
+    //     const { username, password, location, latitude, longitude, country } = this.state;
+    //     const body = { username, password, location, latitude, longitude, country };
+
+    //     try {
+    //         if (action === 'sign-up') {
+    //             const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
+
+    //             if (!geoRes.ok) throw new Error(geoRes.status);
+
+    //             const { lat, lon, country, name } = await geoRes.json();
+    //             body.latitude = lat;
+    //             body.longitude = lon;
+    //             body.location = name;
+    //             body.country = country;
+    //         }
+
+    //         const res = await fetch(`/api/auth/${action}`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(body)
+    //         });
+    
+    //         if (action === 'sign-up' && res.status === 201) {
+    //             window.location.hash = '#sign-in';
+    //             return;
+    //         }
+    
+    //         const result = await res.json();
+    //         if (action === 'sign-in') {
+    //             if (!res.ok) {
+    //                 this.setState({incorrect: true});
+    //             } else {
+    //                 this.props.onSignIn(result);
+    //                 window.location.hash = '';
+    //             }
+    //         }
+    //     } catch (err) {
+    //         console.error(err);
+    //         this.setState({incorrect: true});
+    //     }
+    // } 
+
+    handleSubmit = async event => {
         event.preventDefault();
         const { action } = this.props;
-        const { username, password, location, latitude, longitude, country } = this.state;
-        const body = { username, password, location, latitude, longitude, country };
-
-        try {
-            if (action === 'sign-up') {
-                const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
-
-                if (!geoRes.ok) throw new Error(geoRes.status);
-
-                const { lat, lon, country, name } = await geoRes.json();
-                body.latitude = lat;
-                body.longitude = lon;
-                body.location = name;
-                body.country = country;
-            }
-
-            const res = await fetch(`/api/auth/${action}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-    
-            if (action === 'sign-up' && res.status === 201) {
-                window.location.hash = '#sign-in';
-                return;
-            }
-    
-            const result = await res.json();
-            if (action === 'sign-in') {
-                if (!res.ok) {
-                    this.setState({incorrect: true});
-                } else {
-                    this.props.onSignIn(result);
-                    window.location.hash = '';
-                }
-            }
-        } catch (err) {
-            console.error(err);
-            this.setState({incorrect: true});
+        const { username, password, location } = this.state;
+        const body = { username, password };
+      
+        if (action === 'sign-up') {
+            const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
+          if (!geoRes.ok) {
+            this.setState({ incorrect: true });
+            return;
+          }
+      
+          const rawGeo = await geoRes.json();
+          const geo    = Array.isArray(rawGeo) ? rawGeo[0] : rawGeo;
+          const { lat, lon, country, name } = geo;
+      
+          if (lat == null || lon == null) {
+            console.error('No coordinates returned');
+            this.setState({ incorrect: true });
+            return;
+          }
+      
+          body.latitude  = lat;
+          body.longitude = lon;
+          body.location  = name;
+          body.country   = country;
         }
-    } 
+      
+        const res = await fetch(`/api/auth/${action}`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json'
+        },
+          body: JSON.stringify(body),
+        });
+      
+        if (action === 'sign-up') {
+          if (res.status === 201) {
+            window.location.hash = '#sign-in';
+          } else {
+            this.setState({ incorrect: true });
+          }
+          return;
+        }
+      
+        const result = await res.json();
+        if (!res.ok || !result.user || !result.token) {
+          this.setState({ incorrect: true });
+        } else {
+          this.props.onSignIn(result);
+          window.location.hash = '';
+        }
+      };
+      
 
     render() {
         const { action } = this.props;

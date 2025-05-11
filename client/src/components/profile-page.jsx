@@ -43,7 +43,7 @@ export default class ProfilePage extends React.Component {
                 <h2 className='mt-5'>Welcome, {username}</h2>
                 <p>Home Location: {location}</p>
                 <p>Coordinates:{latitude}, {longitude}</p>
-                {/* <button onClick={() => window.location.hash = '#profile/edit'}>Edit Home Location</button> */}
+                <button onClick={() => window.location.hash = '#profile-edit'}>Edit Profile</button>
             </div>
         )
     }

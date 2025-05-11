@@ -8,7 +8,8 @@ export default class AuthForm extends React.Component {
             password: '',
             location: '',
             suggestions: [],
-            incorrect: false
+            incorrect: false,
+            invalid: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -136,6 +137,7 @@ export default class AuthForm extends React.Component {
 
     handleSubmit = async event => {
         event.preventDefault();
+        this.setState({incorrect: false, invalid: false});
         const { action } = this.props;
         const { username, password, location } = this.state;
         const body = { username, password };
@@ -143,24 +145,23 @@ export default class AuthForm extends React.Component {
         if (action === 'sign-up') {
             const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
           if (!geoRes.ok) {
-            this.setState({ incorrect: true });
+            this.setState({ invalid: true });
             return;
           }
       
           const rawGeo = await geoRes.json();
           const geo = Array.isArray(rawGeo) ? rawGeo[0] : rawGeo;
-          const { lat, lon, country, name } = geo;
-      
-          if (lat == null || lon == null) {
-            console.error('No coordinates returned');
-            this.setState({ incorrect: true });
+
+          if (!geo || geo.lat == null || geo.lon == null) {
+            this.setState({invalid: true});
             return;
           }
-      
-          body.latitude  = lat;
-          body.longitude = lon;
-          body.location  = name;
-          body.country   = country;
+
+            const { lat, lon, country, name } = geo;
+            body.latitude  = lat;
+            body.longitude = lon;
+            body.location  = name;
+            body.country   = country;
         }
       
         const res = await fetch(`/api/auth/${action}`, {
@@ -288,6 +289,11 @@ export default class AuthForm extends React.Component {
                         {this.state.incorrect === true &&
                             <div>
                                 <p>Incorrect username or password. Please try again.</p>
+                            </div>
+                        }
+                        {this.state.invalid === true &&
+                            <div>
+                                <p>Location is invalid. Please try again.</p>
                             </div>
                         }
                         <div className='d-flex justify-content-center mb-4'>

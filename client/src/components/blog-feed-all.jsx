@@ -78,12 +78,15 @@ export default class BlogFeedAll extends React.Component {
                 <a href={`#blog/${post._id}`} className="tile-link">
                   <div className="blog-post mb-4 p-3 rounded blog-box" style={{height: "470px"}}>
                     {post.image && (
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="blog-image"
-                        style={{ width: "100%", maxWidth: "400px", marginBottom: "1rem" }}
-                      />
+                      <div>
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="blog-image"
+                          style={{ width: "100%", maxWidth: "400px"}}
+                        />
+                        <div className="border-top border-2 my-2" />
+                      </div>
                     )}
                     <div className="blog-box-text">
                       <h2 className="black">{post.title}</h2>

@@ -26,12 +26,12 @@ code {
 
 .form-style {
   background-color: white;
-  border: 1.5px solid #f2cc31;
+  border: 1.5px solid #144272;
   border-radius: 1rem;
 }
 
 .btn-custom {
-  background-color: #f2cc31;
+  background-color: #144272;
   color: white;
 }
 
@@ -44,7 +44,7 @@ code {
 }
 
 .form-font {
-  color: #f2cc31;
+  color: #144272;
   font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif 
 }
 

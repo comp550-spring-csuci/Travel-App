@@ -154,11 +154,10 @@ app.get('/api/get/user', async (req, res) => {
 //Get selection of blogs, used for search
 //searches in order of title then body (maybe if we can have a place for a country then we can do that?)
 //not done, just returns all blogs atm.
-app.post('/api/post/search', async (req, res) => {
-    const { searchString } = req.body;
+app.get('/api/get/search/:searchQuery', authorizationMiddleware, async (req, res) => {
+    const searchString = decodeURIComponent(req.params.searchQuery);
     console.log(searchString);
     const searchResult = await blogDB.searchBlog(searchString);
-    console.log(searchResult);
     if (!searchResult) {
         console.log("searchResult is empty, returning 401 error.");
         return res.status(401).json({ error: 'No blog found.'});

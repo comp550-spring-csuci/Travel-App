@@ -3,6 +3,7 @@ import './navbar.css';
 import { AppContext } from '../lib';
 import { Link } from 'react-router-dom';
 import TheGlobePage from '../pages/the-globe';
+import { useNavigate } from 'react-router-dom';
 
 function Navbar() {
   // State to store the search query
@@ -18,21 +19,12 @@ function Navbar() {
   // For now, we'll just log the search query when it's updated
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const req = {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ searchString: searchQuery })
-    };
-    fetch(`/api/post/search`, req)
-        .then(async res => {
-        const result = await res.json();
-        if (!res.ok) throw new Error(res.status);})
-        .catch(err => {
-        console.error("Auth error:", err);
-        });
-    
+    if (searchQuery.trim()) {
+      window.location.hash = `#search/${encodeURIComponent(searchQuery)}`;
+      if (window.location.hash.startsWith('#search')) {
+        window.location.reload();
+      } 
+    }
   };  
 
   return (
@@ -50,7 +42,7 @@ function Navbar() {
             onChange={handleSearchChange}
             className="search-input"
           />
-          <button type="submit" className="search-button">Search</button>
+          <button type="submit" className="search-button" href="/search-results">Search</button>
         </form>
 
           <nav className='navigation-menu'>

@@ -45,9 +45,9 @@ class BlogDB {
                 index: "dynamic",
                 compound: {
                   should: [ 
-                    { text: { path: "title", query: searchString, fuzzy: { maxEdits: 2, prefixLength: 1 }} },
-                    { text: { path: "content", query: searchString, fuzzy: { maxEdits: 2, prefixLength: 1 }} },
-                    { text: { path: "location", query: searchString, fuzzy: { maxEdits: 2, prefixLength: 1 }} }],
+                    { text: { path: "title", query: searchString, fuzzy:{ maxEdits: 2 }, score: { boost: { value: 3 }} }},
+                    { text: { path: "content", query: searchString, fuzzy: { maxEdits: 2 }, score: { boost: { value: 2 }} }},
+                    { text: { path: "location", query: searchString, fuzzy: { maxEdits: 2 }, score: { boost: { value: 4 }} }}],
                   minimumShouldMatch: 0
                 }
               }

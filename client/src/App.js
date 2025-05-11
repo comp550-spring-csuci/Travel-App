@@ -20,6 +20,7 @@ import SingleBlog from './components/single-blog';
 import ProfilePage from './components/profile-page';
 import BlogByCity from './components/blog-by-city';
 import ProfileEdit from './components/profile-edit';
+import BlogFeedSearch from './components/blog-feed-search';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -104,6 +105,10 @@ export default class App extends React.Component {
     if (path === 'city') {
       const cityName = params.get('id');
       return <BlogByCity city={cityName} />;
+    }
+    if (path === 'search') {
+      const query = params.get('query');
+      return <BlogFeedSearch query={query} />;
     }
     if (path === 'profile-edit') {
       return <ProfileEdit />;

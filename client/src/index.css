@@ -72,6 +72,14 @@ code {
   color: #f2cc31;
 }
 
+.blue-text {
+  color: #144272
+}
+
+.blue-background {
+  background-color: #144272;
+}
+
 /*css from liam's file*/
 #blog{
   display: flex;
@@ -108,11 +116,11 @@ code {
 }
 
 .blog-box{
-  max-width: 350px;
-  width: 100%;
+  width: 350px;
   height: 100%;
   display: flex;
   flex-direction: column;
+  border: 1.5px solid #144272;
 }
 
 .blog-box:hover{
@@ -206,7 +214,6 @@ code {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 20px;
 }
 
 .blog-author-img{
@@ -246,4 +253,8 @@ code {
 
 .user {
   font-size: 1rem !important;
+}
+
+.nm-20 {
+  margin-bottom: -20px;
 }

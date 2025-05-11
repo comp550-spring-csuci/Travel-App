@@ -49,8 +49,13 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //Sign-up route
 app.post('/api/auth/sign-up', async (req, res) => {
+    console.log("💡 sign-up payload:", req.body);
+    console.log("→ username:", req.body.username);
+    console.log("→ password:", req.body.password);
+    console.log("→ latitude:", req.body.latitude);
+    console.log("→ longitude:", req.body.longitude);
+    console.log("→ location:", req.body.location);
     const { username, password, latitude, longitude } = req.body;
-    
     if (!username || !password || latitude == null || longitude == null) {
         return res.status(400).json({ error: "Username and password are required fields"});
     }
@@ -264,7 +269,7 @@ app.get('/api/blogs/city/:cityName', authorizationMiddleware, async (req, res) =
     console.log("fetching posts for city:", req.params.cityName);
     try {
         const cityName = decodeURIComponent(req.params.cityName);
-        const posts = await Blog.find({location: { $regex: cityName, $options: 'i' }}).populate('author', 'username');
+        const posts = await Blog.find({location: { $regex: cityName, $options: 'i' }}).sort({createdAt: -1}).populate('author', 'username');
         if (!posts.length) {
             return res.status(404).json({error: `No posts found for ${cityName}`});
         }

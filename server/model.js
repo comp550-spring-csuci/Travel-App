@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
     createdAt: {type: Date, default: Date.now},
     latitude:  { type: Number, max: 90, min: -90, required: true },
     longitude: { type: Number, max: 180, min: -180, required: true },
-    location:   { type: String, required: true }
+    location:   { type: String, required: true },
+    image: { type: String, default: "/uploads/default-profile-image.jpg"}
 });
 
 const User = mongoose.model("User", userSchema);

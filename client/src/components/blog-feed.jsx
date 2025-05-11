@@ -35,6 +35,9 @@ export default class BlogFeed extends React.Component {
     }
 
     handleDelete = async (postId) => {
+        const confirm = window.confirm("Are you sure you want to delete this post?");
+        if (!confirm) return;
+        
         const { token } = this.context;
         try {
             const res = await fetch(`/api/blog/${postId}`, {

@@ -86,10 +86,18 @@ app.post('/api/post/newblog', authorizationMiddleware, upload.single("image"), a
         if (!title || !content || latitude == null || longitude == null || !location) {
             return res.status(400).json({error: "title, content, latitude, longitude, and location are required fields"});
         }
-        if (!req.file) {
-            return res.status(400).json({error: "Image file required"});
+        // if (!req.file) {
+        //     return res.status(400).json({error: "Image file required"});
+        // }
+
+        const imagePath = req.file ? `uploads/${req.file.filename}` : undefined;
+        const blog = {title, content, latitude: parseFloat(latitude), longitude: parseFloat(longitude), location, country, author};
+        if (imagePath) {
+            blog.image = imagePath;
         }
-        const success = await blogDB.addBlog({title, content, latitude: parseFloat(latitude), longitude: parseFloat(longitude), location, country, author, image: `uploads/${req.file.filename}`});
+
+        const success = await blogDB.addBlog(blog);
+        //const success = await blogDB.addBlog({title, content, latitude: parseFloat(latitude), longitude: parseFloat(longitude), location, country, author, image: `uploads/${req.file.filename}`});
         if (success) {
             return res.status(201).json({message: "Created successfully"});
         } else {

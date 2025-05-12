@@ -13,7 +13,6 @@ export default class AuthPage extends React.Component {
 
         return (
             <div>
-                <NavbarSI action={route.path}/>
                 <AuthForm
                 key={route.path}
                 action={route.path}

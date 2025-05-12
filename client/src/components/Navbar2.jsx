@@ -42,7 +42,7 @@ function Navbar() {
             onChange={handleSearchChange}
             className="search-input"
           />
-          <button type="submit" className="search-button" href="/search-results">Search</button>
+          <button type="submit" className="search-button" style={{backgroundColor: "#144272", color: "white"}} href="/search-results">Search</button>
         </form>
 
           <nav className='navigation-menu'>

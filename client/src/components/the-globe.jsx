@@ -121,7 +121,7 @@ useEffect(() => {
 
       try {
 
-        const homeLocation = await fetch('http://localhost:3001/api/home-location', {
+        const homeLocation = await fetch('https://wndr-serverside.onrender.com/api/home-location', {
           headers: {
             'x-access-token' : token
           }
@@ -141,8 +141,8 @@ useEffect(() => {
         }
 
         const endpoint = currentView === 'all'
-          ? 'http://localhost:3001/api/get/all'
-          : 'http://localhost:3001/api/blog-feed';
+          ? 'https://wndr-serverside.onrender.com/api/get/all'
+          : 'https://wndr-serverside.onrender.com/api/blog-feed';
 
         const postRes = await fetch(endpoint, {
           headers: {
@@ -204,7 +204,7 @@ useEffect(() => {
             try {
               // Fetch the posts for that city (or location) from your API
               const encodedLocation = encodeURIComponent(point.location);
-              const response = await fetch(`http://localhost:3001/api/blogs/city/${encodedLocation}`, {
+              const response = await fetch(`https://wndr-serverside.onrender.com/api/blogs/city/${encodedLocation}`, {
                 headers: {
                   'x-access-token': token,  // x-access-token format
                 },

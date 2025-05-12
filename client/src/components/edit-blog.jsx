@@ -24,7 +24,7 @@ export default class EditBlog extends React.Component {
     componentDidMount() {
         const { token, route } = this.context;
         const { id } = route.params;
-        fetch(`api/blogs/${id}`, {
+        fetch(`https://wndr-serverside.onrender.com/api/blogs/${id}`, {
 
             headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export default class EditBlog extends React.Component {
                 },
                 body: JSON.stringify(this.state)
             };
-            fetch(`/api/auth/${action}`, req)
+            fetch(`https://wndr-serverside.onrender.com/api/auth/${action}`, req)
                 .then(async res => {
                 const result = await res.json();
                 if (action === 'add-blog' && !res.ok) {
@@ -89,7 +89,7 @@ export default class EditBlog extends React.Component {
                 },
                 body: JSON.stringify(this.state)
             };
-            fetch(`/api/auth/${action}`, req)
+            fetch(`https://wndr-serverside.onrender.com/api/auth/${action}`, req)
                 .then(async res => {
                 const result = await res.json();
                 if (action === 'add-blog' && !res.ok) {

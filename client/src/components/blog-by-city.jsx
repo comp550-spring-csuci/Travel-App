@@ -18,7 +18,7 @@ export default class BlogByCity extends React.Component {
     const { token } = this.context;
     const cityName = this.context.route.params.get('id');
 
-    fetch(`/api/blogs/city/${encodeURIComponent(cityName)}`, {
+    fetch(`https://wndr-serverside.onrender.com/api/blogs/city/${encodeURIComponent(cityName)}`, {
         headers: {
             'x-access-token': token
         }

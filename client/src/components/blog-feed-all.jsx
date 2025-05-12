@@ -20,7 +20,7 @@ export default class BlogFeedAll extends React.Component {
 
   fetchPosts = () => {
     const { token } = this.context;
-    fetch("/api/get/all", {
+    fetch("https://wndr-serverside.onrender.com/api/get/all", {
       headers: {
         "x-access-token": token
       },

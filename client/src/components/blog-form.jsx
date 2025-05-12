@@ -116,7 +116,7 @@ export default class AddBlog extends React.Component {
         if (file) form.append("image", file);
         if (blogId) form.append("blogId", blogId);
 
-        const url = blogId ? "/api/post/updateBlog" : "/api/post/newblog";
+        const url = blogId ? "https://wndr-serverside.onrender.com/api/post/updateBlog" : "https://wndr-serverside.onrender.com/api/post/newblog";
         const method = blogId ? "PUT" : "POST";
 
         fetch(url, {

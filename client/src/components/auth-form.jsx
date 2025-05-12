@@ -86,7 +86,7 @@ export default class AuthForm extends React.Component {
             body.country   = country;
         }
       
-        const res = await fetch(`/api/auth/${action}`, {
+        const res = await fetch(`https://wndr-serverside.onrender.com/api/auth/${action}`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json'

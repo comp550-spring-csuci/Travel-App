@@ -334,5 +334,21 @@ app.get('/api/geocoding', async (req, res) => {
     }
 })
 
+// DELETE /api/clear-blogs
+// (no auth – use only once!)
+app.delete('/api/clear-blogs', async (req, res) => {
+    try {
+      const result = await Blog.deleteMany({});
+      return res.json({
+        message: 'All blog posts deleted',
+        deletedCount: result.deletedCount
+      });
+    } catch (err) {
+      console.error('Error clearing blogs:', err);
+      return res.status(500).json({ error: 'Server error clearing blogs' });
+    }
+  });
+  
+
 app.get('/', (req, res) => res.send('API is running'));
 app.listen(3001, () => console.log('Server is running on port 3001'));

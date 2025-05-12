@@ -72,7 +72,7 @@ export default class BlogFeed extends React.Component {
                     {this.state.posts && this.state.posts.length > 0 ? (
                         this.state.posts.map(post => (
                             <div key={post._id} className="col-md-4 blog-box-container" onClick={() => window.location.hash = `#blog/${post._id}`}>  
-                                <div className="blog-post mb-4 p-3 rounded blog-box d-flex flex-column" style={{height: "540px"}}>
+                                <div className="blog-post mb-4 p-3 rounded blog-box d-flex flex-column" style={{height: "565px"}}>
                                     {post.image && (
                                         <div>
                                             <img

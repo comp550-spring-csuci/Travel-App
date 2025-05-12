@@ -56,7 +56,7 @@ export default class BlogByCity extends React.Component {
                     {post.image && (
                       <div>
                         <img
-                          src={post.image}
+                          src={`https://wndr-serverside.onrender.com/${post.image}`}
                           alt={post.title}
                           className="blog-image"
                           style={{ width: "100%", maxWidth: "400px"}}
@@ -73,7 +73,7 @@ export default class BlogByCity extends React.Component {
                       <div className="blog-author d-flex align-items-center mt-auto">
                       {post.author.image
                         ? <img
-                            src={`/${post.author.image}`}
+                            src={`https://wndr-serverside.onrender.com/${post.author.image}`}
                             alt={post.author.username}
                             style={{
                               width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', marginRight: '0.5rem'

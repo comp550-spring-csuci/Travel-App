@@ -340,7 +340,7 @@ useEffect(() => {
           <h3 style={{ color: 'white' }}>{hoveredPoint.title}</h3>
           {/* <p style={{ color: 'white' }}>{hoveredPoint.content}</p> */}
           <img 
-            src={hoveredPoint.image} 
+            src={`https://wndr-serverside.onrender.com/${hoveredPoint.image}`} 
             alt={hoveredPoint.title} 
             style={{ width: '50px', height: 'auto', borderRadius: '8px' }} // Make image size smaller
           />

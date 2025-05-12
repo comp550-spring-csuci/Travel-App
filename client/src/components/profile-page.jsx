@@ -42,7 +42,7 @@ export default class ProfilePage extends React.Component {
             <div className="profile-container">
                 <div className="profile-card">
                     <img
-                        src={`/${image}`}
+                        src={`https://wndr-serverside.onrender.com/${image}`}
                         alt="Your profile"
                         className="profile-pic"
                     />

@@ -44,28 +44,11 @@ export default class BlogFeedAll extends React.Component {
       });
   };
 
-  // handleDelete = async (postId) => {
-  //   const { token } = this.context;
-  //   try {
-  //     const res = await fetch(`/api/delete/${postId}`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "x-access-token": token
-  //       }
-  //     });
-  //     if (!res.ok) throw new Error("Delete failed");
-  //     this.fetchPosts(); // refresh the post list
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed to delete post.");
-  //   }
-  // };
 
   render() {
     return (
       <div className="container-fluid p-5">
-        <div className="d-flex justify-content-center align-items-center gap-3">
+        <div className="d-flex justify-content-center align-items-center">
           <h1 className="pt-5 mt-5">All Posts</h1>
         </div>
 

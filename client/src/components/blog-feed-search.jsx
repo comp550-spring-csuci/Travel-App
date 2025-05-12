@@ -53,29 +53,12 @@ export default class BlogFeedSearch extends React.Component {
       };
   };
 
-  // handleDelete = async (postId) => {
-  //   const { token } = this.context;
-  //   try {
-  //     const res = await fetch(`/api/delete/${postId}`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "x-access-token": token
-  //       }
-  //     });
-  //     if (!res.ok) throw new Error("Delete failed");
-  //     this.fetchPosts(); // refresh the post list
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed to delete post.");
-  //   }
-  // };
 
   render() {
     return (
       <div className="container-fluid p-5">
         <div className="d-flex justify-content-center align-items-center gap-3">
-          <h1 className="p-5">Search Results</h1>
+          <h1 className="pt-5 mt-5">Search Results</h1>
         </div>
 
         {this.state.error && <NotFound />}
@@ -85,24 +68,41 @@ export default class BlogFeedSearch extends React.Component {
             this.state.posts.map(post => (
               <div key={post._id} className="col-md-4 blog-box-container">
                 <a href={`#blog/${post._id}`} className="tile-link">
-                  <div className="blog-post mb-4 p-3 border rounded blog-box">
+                  <div className="blog-post mb-4 p-3 rounded blog-box d-flex" style={{height: "470px"}}>
                     {post.image && (
-                      <img
-                        src={post.image}
-                        alt={post.title}
-                        className="blog-image"
-                        style={{ width: "100%", maxWidth: "400px", marginBottom: "1rem" }}
-                      />
+                      <div>
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="blog-image"
+                          style={{ width: "100%", maxWidth: "400px"}}
+                        />
+                        <div className="border-top border-2 my-2" />
+                      </div>
                     )}
-                    <div className="blog-box-text">
+                    <div className="blog-box-text flex-grow-1">
                       <h2 className="black">{post.title}</h2>
-                      <p>{post.content}</p>
                       <div className="blog-author">
-                        <p className="blog-author-text">
-                          {post.author?.username || "Unknown Author"}
-                        </p>
-                        <p className="p-2">{new Date(post.createdAt).toLocaleDateString()}</p>
                         <p>{post.location}</p>
+                      </div>
+                      <p>{post.content}</p>    
+                      <div className="blog-author d-flex align-items-center mt-auto">
+                      {post.author.image
+                        ? <img
+                            src={`/${post.author.image}`}
+                            alt={post.author.username}
+                            style={{
+                              width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', marginRight: '0.5rem'
+                            }}
+                          />
+                        : <div
+                            style={{width: 32, height: 32, borderRadius: '50%', backgroundColor: '#ddd', marginRight: '0.5rem'
+                            }}
+                        />}
+                        <p className="blog-author-text mb-0">
+                            {post.author && post.author.username ? post.author.username : "Unknown Author"}
+                        </p>
+                        <p className="p-2 mb-0">{new Date(post.createdAt).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>

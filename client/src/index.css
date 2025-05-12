@@ -112,7 +112,6 @@ code {
   justify-content: center;
   align-items: center;
   margin-top: 50px;
-  cursor: pointer;
 }
 
 .blog-box{
@@ -121,6 +120,7 @@ code {
   display: flex;
   flex-direction: column;
   border: 1.5px solid #144272;
+  cursor: pointer;
 }
 
 .blog-box:hover{

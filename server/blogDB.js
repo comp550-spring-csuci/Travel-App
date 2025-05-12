@@ -40,7 +40,7 @@ class BlogDB {
         // Check if the search string is empty
         // Instead of searching for direct relevancy within field, search for fuzzy search match, then
         // add up the scores of the search results.
-        return await Blog.aggregate([
+        const hits = await Blog.aggregate([
             { $search: {
                 index: "dynamic",
                 compound: {
@@ -55,9 +55,10 @@ class BlogDB {
             { $addFields: { score: { $meta: "searchScore" } } },
             { $sort: { score: -1 } }
         ]).exec();
-          
-        return await Blog.find({ $text: { $search: searchString }}, { score: { $meta: "textScore"}}
-            ).sort({ score: { $meta: "textScore" }}).exec();
+         
+        return await Blog.populate(hits, {path: "author", select: "username image"});
+        // return await Blog.find({ $text: { $search: searchString }}, { score: { $meta: "textScore"}}
+        //     ).sort({ score: { $meta: "textScore" }}).exec();
     }
 
     async updateBlog(oldBlogCondition, updatedBlogContent, author) {

@@ -37,11 +37,15 @@ export default class SingleBlog extends React.Component {
             <div className="container"style={{paddingTop: "120px"}}>
                 <div className='card mx-auto mb-3' style={{maxWidth: "800px", border: "none"}}>
                     {post.image && (
-                    <img
-                        src={post.image}
-                        alt={post.title}
-                        style={{ maxWidth: '100%', marginBottom: '1rem' }}
-                    />
+                        <div className='text-center'>
+                            <img
+                                src={post.image}
+                                alt={post.title}
+                                className='img-fluid mx-auto'
+                                style={{ maxHeight: '500px', marginBottom: '1rem' }}
+                            />
+                            <div className="border-top border-2 my-2" />
+                        </div>
                     )}
                     <h1>{post.title}</h1>
                     <div className="blog-author">

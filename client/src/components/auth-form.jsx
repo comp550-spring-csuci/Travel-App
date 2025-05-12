@@ -236,7 +236,7 @@ export default class AuthForm extends React.Component {
                         {action === 'sign-up' && (
                             <div>
                                 <div className="mb-4 position-relative">
-                                    <label htmlFor="location" className="form-label">Home Location</label>
+                                    <label htmlFor="location" className="form-label">Home City</label>
                                     <input
                                     required
                                     id="location"
@@ -244,6 +244,7 @@ export default class AuthForm extends React.Component {
                                     value={location}
                                     onChange={this.handleChange}
                                     className="form-control"
+                                    placeholder="e.g. Los Angeles, CA, US"
                                     />
                                     {suggestions.length > 0 && (
                                         <ul className="list-group position-absolute w-100">
@@ -258,32 +259,6 @@ export default class AuthForm extends React.Component {
                                         </ul>
                                     )}
                                 </div>
-                                {/* <div className="mb-4">
-                                <label htmlFor="latitude" className="form-label">Your Home Latitude</label>
-                                <input 
-                                required
-                                id="latitude"
-                                type="number"
-                                step="any"
-                                name="latitude"
-                                value={this.state.latitude}
-                                onChange={handleChange}
-                                className="form-control"
-                                />
-                                </div>
-                                <div className="mb-4">
-                                <label htmlFor="longitude" className="form-label">Your Home Longitude</label>
-                                <input
-                                required
-                                id="longitude"
-                                type="number"
-                                step="any"
-                                name="longitude"
-                                value={this.state.longitude}
-                                onChange={handleChange}
-                                className="form-control"
-                                />
-                                </div> */}
                             </div>
                         )}
                         {this.state.incorrect === true &&

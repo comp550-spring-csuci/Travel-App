@@ -41,8 +41,8 @@ export default class BlogByCity extends React.Component {
     const decodedCityName = decodeURIComponent(cityName);
     return (
       <div className="container-fluid p-5">
-        <div className="d-flex justify-content-center align-items-center gap-3">
-          <h1 className="p-5">Posts in {decodedCityName}</h1>
+        <div className="d-flex justify-content-center align-items-center">
+          <h1 className="pt-5 mt-5">Posts in {decodedCityName}</h1>
         </div>
 
         {this.state.error && <NotFound />}

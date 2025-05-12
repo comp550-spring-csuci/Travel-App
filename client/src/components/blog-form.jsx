@@ -153,7 +153,7 @@ export default class AddBlog extends React.Component {
         return (
             <div className="blog-background full-screen d-flex justify-content-center align-items-center">
                 <div className='form-style container-fluid col-10 col-md-5 p-4'>
-                    <h1 className='text-center mb-3 mt-5 pt-5 form-font'>{isEdit ? "Edit Blog" : "Create New Blog"}</h1>
+                    <h1 className='text-center mb-3 form-font'>{isEdit ? "Edit Blog" : "Create New Blog"}</h1>
                     <form onSubmit={handleSubmit}>
                         <div className='mb-4'>
                         <label htmlFor="title" className='form-label'>Title</label>
@@ -179,7 +179,7 @@ export default class AddBlog extends React.Component {
                             className='form-control'/>
                         </div>
                         <div className="mb-4 position-relative">
-                            <label htmlFor="location" className="form-label">Location</label>
+                            <label htmlFor="location" className="form-label">City</label>
                             <input
                             required
                             id="location"
@@ -187,6 +187,7 @@ export default class AddBlog extends React.Component {
                             value={location}
                             onChange={this.handleChange}
                             className="form-control"
+                            placeholder="e.g. Los Angeles, CA, US"
                             />
                             {suggestions.length > 0 && (
                                 <ul className="list-group position-absolute w-100">

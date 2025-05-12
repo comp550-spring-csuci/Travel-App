@@ -333,12 +333,6 @@ app.get('/api/geocoding', async (req, res) => {
         res.status(500).json({error: 'Geocoding failed'});
     }
 })
-
-app.use(express.static(path.join(__dirname, 'client', 'build')));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-});
   
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

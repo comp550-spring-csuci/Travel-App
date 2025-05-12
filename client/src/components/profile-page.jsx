@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppContext } from '../lib';
+import './profile-page.css'; // Ensure this path is correct
 
 export default class ProfilePage extends React.Component {
     static contextType = AppContext;
@@ -16,7 +17,7 @@ export default class ProfilePage extends React.Component {
     }
 
     componentDidMount() {
-        const {token} = this.context;
+        const { token } = this.context;
         fetch('/api/profile', {
             headers: {
                 'x-access-token': token
@@ -26,8 +27,8 @@ export default class ProfilePage extends React.Component {
                 if (!res.ok) throw new Error(res.status);
                 return res.json();
             })
-            .then(({username, location, latitude, longitude, image}) => {
-                this.setState({username, location, latitude, longitude, image});
+            .then(({ username, location, latitude, longitude, image }) => {
+                this.setState({ username, location, latitude, longitude, image });
             })
             .catch(err => {
                 console.error(err);
@@ -35,16 +36,27 @@ export default class ProfilePage extends React.Component {
     }
 
     render() {
-        const {username, location, latitude, longitude, image} = this.state;
+        const { username, location, latitude, longitude, image } = this.state;
 
         return (
-            <div className="container p-5">
-                <img src={`/${image}`} alt='your profile picture' className="mt-5" style={{width: 100, height: 100, borderRadius: '50%'}} />
-                <h2 className='mt-5'>Welcome, {username}</h2>
-                <p>Home Location: {location}</p>
-                <p>Coordinates:{latitude}, {longitude}</p>
-                <button onClick={() => window.location.hash = '#profile-edit'}>Edit Profile</button>
+            <div className="profile-container">
+                <div className="profile-card">
+                    <img
+                        src={`/${image}`}
+                        alt="Your profile"
+                        className="profile-pic"
+                    />
+                    <h2 className="profile-name">Welcome, {username}</h2>
+                    <p className="profile-info">Location: {location}</p>
+                    <p className="profile-info">Coordinates: {latitude}, {longitude}</p>
+                    <button
+                        className="btn-edit"
+                        onClick={() => (window.location.hash = '#profile-edit')}
+                    >
+                        ✏️ Edit Profile
+                    </button>
+                </div>
             </div>
-        )
+        );
     }
 }

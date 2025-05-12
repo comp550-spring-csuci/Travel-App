@@ -7,7 +7,7 @@ function LandingPage(){
         <>
         <div className="landingpage-container">
             <div className="landingpage-content">
-                <h1> The Trvl App </h1>
+                <h1> WNDR </h1>
                 <h3> Where will the road take you next?</h3>
             </div>
             <div className="arrow bounce"><i className="fa fa-angle-down fa-5x"></i></div>

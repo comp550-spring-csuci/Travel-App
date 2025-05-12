@@ -10,7 +10,7 @@
     display: flex;
     align-items: center;
     position: fixed;
-    background-color: #fff;
+    background-color: #ffffffbe;
     z-index: 100000005;
     border-bottom: 2px solid #144272;
 }

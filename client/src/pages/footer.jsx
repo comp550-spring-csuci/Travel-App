@@ -15,7 +15,7 @@ function Footer() {
                                     <i className="fas fa-map-marker-alt"></i>
                                     <div className="footer-info-location-text">
                                        
-                                        <span>Lorem ipsum dolor sit amet.</span>
+                                        <span>California.</span>
                                     </div>
                             </div>
                             {/* Number */}
@@ -24,7 +24,7 @@ function Footer() {
                                     <i className="fas fa-phone"></i>
                                     <div className="footer-info-number-text">
                                         
-                                        <span>98765432100</span>
+                                        <span>310-955-9809</span>
                                     </div>
                                 
                             </div>
@@ -34,7 +34,7 @@ function Footer() {
                                     <i className="far fa-envelope-open"></i>
                                     <div className="footer-info-email-text">
                                     
-                                        <span>mail@tmail.com</span>
+                                        <span>Wndr@wndermail.com</span>
                                     </div>
                                 
                             </div>
@@ -46,11 +46,10 @@ function Footer() {
                                 
                                     <div className="footer-content-boxes">
                                         <div className="footer-logo">
-                                            <h2>The-Trvl-App</h2>
+                                            <h2>WNDR</h2>
                                         </div>
                                         <div className="footer-text">
-                                            <p>Lorem ipsum dolor sit amet, consec tetur adipisicing elit, sed do eiusmod tempor incididuntut consec tetur adipisicing
-                                            elit,Lorem ipsum dolor sit amet.</p>
+                                            <p>Life can take you many places, we hope you will use WNDR to share your travel experiences with us!.</p>
                                         </div>
                                         <div className="footer-socials">
                                         <i className="fa-brands fa-instagram"></i>
@@ -91,7 +90,7 @@ function Footer() {
                         <div className="copyright-content-container">
 
                                 <div className="copyright-text">
-                                    <p>Copyright &copy; 2025, All Right Reserved <a href="">The-Trvl-App</a></p>
+                                    <p>Copyright &copy; 2025, All Right Reserved <a href="">WNDR</a></p>
                                 </div>
                           
                                 <div className="footer-menu">

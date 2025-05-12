@@ -1,5 +1,7 @@
 import React from "react";
 import { AppContext } from "../lib";
+import './blog-form.css';
+
 
 export default class AddBlog extends React.Component {
     static contextType = AppContext;

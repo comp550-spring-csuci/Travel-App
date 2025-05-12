@@ -68,7 +68,7 @@ export default class BlogFeedSearch extends React.Component {
             this.state.posts.map(post => (
               <div key={post._id} className="col-md-4 blog-box-container">
                 <a href={`#blog/${post._id}`} className="tile-link">
-                  <div className="blog-post mb-4 p-3 rounded blog-box d-flex" style={{height: "470px"}}>
+                  <div className="blog-post mb-4 p-3 rounded blog-box d-flex" style={{height: "510px"}}>
                     {post.image && (
                       <div>
                         <img

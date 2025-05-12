@@ -4,8 +4,8 @@ import GlobeComponent from '../components/the-globe';
 const GlobePage = () => {
   return (
     <div style={{ textAlign: 'center', marginTop: '20px' }}>
-      <h1>Explore the Globe</h1>
-      <p>See the world as you do.</p>
+      <h1 style={{color: 'white'}}>Explore the Globe</h1>
+      <p style={{color: 'white'}}>See the world as you do.</p>
       
       {/* GlobeComponent renders the interactive globe */}
       <GlobeComponent />

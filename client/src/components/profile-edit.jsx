@@ -137,8 +137,10 @@ export default class ProfileEdit extends React.Component {
 
         return (
             <div className="container p-5">
-                <img src={`/${image}`} alt='your profile picture' className="mt-5" style={{width: 100, height: 100, borderRadius: '50%'}} />
-                <h2 className='mt-5'>Edit Profile</h2>
+                <div className='d-flex justify-content-center mt-5' style={{width: 100, height: 100, borderRadius: "50%", overflow: "hidden", margin: "0 auto"}}>
+                    <img src={`/${image}`} alt='your profile picture' style={{width: "100%", height: "100%", objectFit: "cover"}} />
+                </div>
+                <h2 className='mt-2'>Edit Profile</h2>
                 <form onSubmit={this.handleSubmit}>
                     <div className='mb-4'>
                         <label>Home Location</label>

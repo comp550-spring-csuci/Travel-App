@@ -12,7 +12,7 @@ export default class BlogFeed extends React.Component {
 
     componentDidMount() {
         const { token } = this.context;
-        fetch('api/blog-feed', {
+        fetch('https://wndr-serverside.onrender.com/api/blog-feed', {
             headers: {
                 'Content-Type': 'application/json',
                 'x-access-token': token
@@ -40,7 +40,7 @@ export default class BlogFeed extends React.Component {
         
         const { token } = this.context;
         try {
-            const res = await fetch(`/api/blog/${postId}`, {
+            const res = await fetch(`https://wndr-serverside.onrender.com/api/blog/${postId}`, {
                 method: "DELETE",
                 headers: {
                     "x-access-token": token

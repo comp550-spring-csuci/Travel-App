@@ -33,7 +33,7 @@ export default class AuthForm extends React.Component {
 
     async fetchSuggestions(q) {
         try {
-            const res = await fetch(`/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
+            const res = await fetch(`https://wndr-serverside.onrender.com/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
             if (!res.ok) throw new Error(res.status);
             const data = await res.json();
             this.setState({suggestions: Array.isArray(data) ? data : []});
@@ -65,7 +65,7 @@ export default class AuthForm extends React.Component {
         const body = { username, password };
       
         if (action === 'sign-up') {
-            const geoRes = await fetch(`/api/geocoding?q=${encodeURIComponent(location)}`);
+            const geoRes = await fetch(`https://wndr-serverside.onrender.com/api/geocoding?q=${encodeURIComponent(location)}`);
           if (!geoRes.ok) {
             this.setState({ invalid: true });
             return;

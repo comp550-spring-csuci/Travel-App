@@ -18,7 +18,7 @@ export default class BlogFeedSearch extends React.Component {
   componentDidMount() {
     const { token } = this.context;
     const searchQuery = window.location.href.split("/")[4];
-    fetch(`/api/get/search/${encodeURIComponent(searchQuery)}`, {
+    fetch(`https://wndr-serverside.onrender.com/api/get/search/${encodeURIComponent(searchQuery)}`, {
       method: "GET",
       headers: {
           "x-access-token": token

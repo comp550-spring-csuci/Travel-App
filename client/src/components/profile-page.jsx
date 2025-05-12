@@ -18,7 +18,7 @@ export default class ProfilePage extends React.Component {
 
     componentDidMount() {
         const { token } = this.context;
-        fetch('/api/profile', {
+        fetch('https://wndr-serverside.onrender.com/api/profile', {
             headers: {
                 'x-access-token': token
             }

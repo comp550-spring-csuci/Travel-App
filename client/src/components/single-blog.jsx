@@ -14,7 +14,7 @@ export default class SingleBlog extends React.Component {
         const {token} = this.context;
         const {blogId} = this.props;
 
-        fetch(`api/blogs/${blogId}`, {
+        fetch(`https://wndr-serverside.onrender.com/api/blogs/${blogId}`, {
             headers: {
                 'x-access-token': token
             }

@@ -34,12 +34,7 @@ class DBconnection { //Singleton class
                 const uri = `mongodb+srv://${encodeURIComponent(MONGO_USERNAME)}:${encodeURIComponent(MONGO_PASSWORD)}@${MONGO_CLUSTER}/?retryWrites=true&w=majority&appName=${MONGO_APPNAME}`;
 
                 await mongoose.connect(uri);
-                //const db = mongoose.connection;
-                /*
-                db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-                db.once('open', function() {
-                    console.log('MongoDB successfully connected with Mongoose.')
-                })*/
+                
                 console.log("Connection succesfully made.")
             } catch (error) {
                 console.error("Connection failed:", error)
@@ -49,18 +44,5 @@ class DBconnection { //Singleton class
         return mongoose.connection;
     }
 }
-
-//Use this when making a class for blogDB
-/**
-async insertBlog(i_username, i_blogcontent, i_country, i_latitude, i_longitude) {
-blog = this.createDataBase.collection("blog");
-}
-
-async function main() {
-    testConn = await DBconnection.setupDB();
-    await mongoose.disconnect();
-}
-main();
-*/
 
 module.exports = {DBconnection};

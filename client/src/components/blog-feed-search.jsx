@@ -2,6 +2,7 @@ import React from "react";
 import NotFound from "./not-found";
 import { AppContext } from "../lib";
 import { useLocation } from 'react-router-dom';
+import {API_BASE} from "../lib/api";
 
 export default class BlogFeedSearch extends React.Component {
   static contextType = AppContext;
@@ -18,7 +19,7 @@ export default class BlogFeedSearch extends React.Component {
   componentDidMount() {
     const { token } = this.context;
     const searchQuery = window.location.href.split("/")[4];
-    fetch(`https://wndr-serverside.onrender.com/api/get/search/${encodeURIComponent(searchQuery)}`, {
+    fetch(`${API_BASE}/api/get/search/${encodeURIComponent(searchQuery)}`, {
       method: "GET",
       headers: {
           "x-access-token": token

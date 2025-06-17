@@ -1,6 +1,7 @@
 import React from "react";
 import NotFound from "./not-found";
 import { AppContext } from "../lib";
+import {API_BASE} from "../lib/api";
 
 export default class BlogByCity extends React.Component {
   static contextType = AppContext;
@@ -18,7 +19,7 @@ export default class BlogByCity extends React.Component {
     const { token } = this.context;
     const cityName = this.context.route.params.get('id');
 
-    fetch(`https://wndr-serverside.onrender.com/api/blogs/city/${encodeURIComponent(cityName)}`, {
+    fetch(`${API_BASE}/api/blogs/city/${encodeURIComponent(cityName)}`, {
         headers: {
             'x-access-token': token
         }

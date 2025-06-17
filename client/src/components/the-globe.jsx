@@ -4,6 +4,7 @@ import { AppContext } from '../lib';
 import { useNavigate } from 'react-router-dom';
 import { filterMostRecentPoints } from '../utils/filterMostRecentPoints';
 import Globe from 'globe.gl';
+import {API_BASE} from "../lib/api";
 
 // Create toggle styling
 // let toggleButton = document.getElementById('toggleView');
@@ -121,7 +122,7 @@ useEffect(() => {
 
       try {
 
-        const homeLocation = await fetch('https://wndr-serverside.onrender.com/api/home-location', {
+        const homeLocation = await fetch(`${API_BASE}/api/home-location`, {
           headers: {
             'x-access-token' : token
           }
@@ -204,7 +205,7 @@ useEffect(() => {
             try {
               // Fetch the posts for that city (or location) from your API
               const encodedLocation = encodeURIComponent(point.location);
-              const response = await fetch(`https://wndr-serverside.onrender.com/api/blogs/city/${encodedLocation}`, {
+              const response = await fetch(`${API_BASE}/api/blogs/city/${encodedLocation}`, {
                 headers: {
                   'x-access-token': token,  // x-access-token format
                 },

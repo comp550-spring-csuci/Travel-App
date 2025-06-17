@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from '../components/navbar';
 import { AppContext } from "../lib";
+import {API_BASE} from "../lib/api";
 
 export default class EditBlog extends React.Component {
     static contextType = AppContext;
@@ -24,7 +25,7 @@ export default class EditBlog extends React.Component {
     componentDidMount() {
         const { token, route } = this.context;
         const { id } = route.params;
-        fetch(`https://wndr-serverside.onrender.com/api/blogs/${id}`, {
+        fetch(`${API_BASE}/api/blogs/${id}`, {
 
             headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ export default class EditBlog extends React.Component {
                 },
                 body: JSON.stringify(this.state)
             };
-            fetch(`https://wndr-serverside.onrender.com/api/auth/${action}`, req)
+            fetch(`${API_BASE}/api/auth/${action}`, req)
                 .then(async res => {
                 const result = await res.json();
                 if (action === 'add-blog' && !res.ok) {
@@ -89,7 +90,7 @@ export default class EditBlog extends React.Component {
                 },
                 body: JSON.stringify(this.state)
             };
-            fetch(`https://wndr-serverside.onrender.com/api/auth/${action}`, req)
+            fetch(`${API_BASE}/api/auth/${action}`, req)
                 .then(async res => {
                 const result = await res.json();
                 if (action === 'add-blog' && !res.ok) {

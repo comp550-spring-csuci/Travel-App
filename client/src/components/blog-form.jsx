@@ -1,5 +1,6 @@
 import React from "react";
 import { AppContext } from "../lib";
+import {API_BASE} from "../lib/api";
 import './blog-form.css';
 
 
@@ -31,7 +32,7 @@ export default class AddBlog extends React.Component {
 
         if (blogId) {
             try {
-                const res = await fetch(`https://wndr-serverside.onrender.com/api/blogs/${blogId}`, {
+                const res = await fetch(`${API_BASE}/api/blogs/${blogId}`, {
                     headers: {"x-access-token": token}
                 });
                 if (!res.ok) throw new Error(res.status);
@@ -70,7 +71,7 @@ export default class AddBlog extends React.Component {
 
     async fetchSuggestions(q) {
         try {
-            const res = await fetch(`https://wndr-serverside.onrender.com/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
+            const res = await fetch(`${API_BASE}/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
             if (!res.ok) throw new Error(res.status);
             const data = await res.json();
             this.setState({suggestions: Array.isArray(data) ? data : []});

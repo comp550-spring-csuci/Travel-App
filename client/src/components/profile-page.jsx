@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppContext } from '../lib';
-import './profile-page.css'; // Ensure this path is correct
+import './profile-page.css';
+import {API_BASE} from "../lib/api";
 
 export default class ProfilePage extends React.Component {
     static contextType = AppContext;
@@ -18,7 +19,7 @@ export default class ProfilePage extends React.Component {
 
     componentDidMount() {
         const { token } = this.context;
-        fetch('https://wndr-serverside.onrender.com/api/profile', {
+        fetch(`${API_BASE}/api/profile`, {
             headers: {
                 'x-access-token': token
             }

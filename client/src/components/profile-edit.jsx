@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppContext } from '../lib';
+import {API_BASE} from "../lib/api";
 
 export default class ProfileEdit extends React.Component {
     static contextType = AppContext;
@@ -25,7 +26,7 @@ export default class ProfileEdit extends React.Component {
     async componentDidMount() {
         const {token} = this.context;
         try {
-            const res = await fetch('https://wndr-serverside.onrender.com/api/profile', {
+            const res = await fetch(`${API_BASE}/api/profile`, {
                 headers: {
                     'x-access-token': token
                 }
@@ -60,7 +61,7 @@ export default class ProfileEdit extends React.Component {
 
     async fetchSuggestions(q) {
         try {
-            const res = await fetch(`https://wndr-serverside.onrender.com/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
+            const res = await fetch(`${API_BASE}/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
             if (!res.ok) throw new Error(res.status);
             const data = await res.json();
             this.setState({suggestions: Array.isArray(data) ? data : []});
@@ -94,7 +95,7 @@ export default class ProfileEdit extends React.Component {
         const {file, location, latitude, longitude, country} = this.state;
         const {token} = this.context;
 
-        const geoRes = await fetch(`https://wndr-serverside.onrender.com/api/geocoding?q=${encodeURIComponent(location)}`);
+        const geoRes = await fetch(`${API_BASE}/api/geocoding?q=${encodeURIComponent(location)}`);
         if (!geoRes.ok) {
             this.setState({invalid: true});
             return;
@@ -115,7 +116,7 @@ export default class ProfileEdit extends React.Component {
         form.append("country", country)
         if (file) form.append("image", file);
 
-        const res = await fetch('https://wndr-serverside.onrender.com/api/profile/edit', {
+        const res = await fetch(`${API_BASE}/api/profile/edit`, {
             method: 'PATCH',
             headers: {
                 'x-access-token': token

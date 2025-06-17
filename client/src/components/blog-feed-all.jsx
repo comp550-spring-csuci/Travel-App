@@ -1,6 +1,7 @@
 import React from "react";
 import NotFound from "./not-found";
 import { AppContext } from "../lib";
+import {API_BASE} from "../lib/api";
 
 export default class BlogFeedAll extends React.Component {
   static contextType = AppContext;
@@ -20,7 +21,7 @@ export default class BlogFeedAll extends React.Component {
 
   fetchPosts = () => {
     const { token } = this.context;
-    fetch("https://wndr-serverside.onrender.com/api/get/all", {
+    fetch(`${API_BASE}/api/get/all`, {
       headers: {
         "x-access-token": token
       },

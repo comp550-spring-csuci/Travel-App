@@ -1,6 +1,7 @@
 import React from "react";
 import NotFound from "./not-found";
 import { AppContext } from "../lib";
+import {API_BASE} from "../lib/api";
 
 export default class BlogFeed extends React.Component {
     static contextType = AppContext;
@@ -12,7 +13,7 @@ export default class BlogFeed extends React.Component {
 
     componentDidMount() {
         const { token } = this.context;
-        fetch('https://wndr-serverside.onrender.com/api/blog-feed', {
+        fetch(`${API_BASE}/api/blog-feed`, {
             headers: {
                 'Content-Type': 'application/json',
                 'x-access-token': token
@@ -40,7 +41,7 @@ export default class BlogFeed extends React.Component {
         
         const { token } = this.context;
         try {
-            const res = await fetch(`https://wndr-serverside.onrender.com/api/blog/${postId}`, {
+            const res = await fetch(`${API_BASE}/api/blog/${postId}`, {
                 method: "DELETE",
                 headers: {
                     "x-access-token": token

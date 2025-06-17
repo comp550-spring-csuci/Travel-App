@@ -1,4 +1,5 @@
 import React from "react";
+import {API_BASE} from "../lib/api";
 
 export default class AuthForm extends React.Component {
     constructor(props) {
@@ -33,7 +34,7 @@ export default class AuthForm extends React.Component {
 
     async fetchSuggestions(q) {
         try {
-            const res = await fetch(`https://wndr-serverside.onrender.com/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
+            const res = await fetch(`${API_BASE}/api/geocoding?q=${encodeURIComponent(q)}&limit=5`);
             if (!res.ok) throw new Error(res.status);
             const data = await res.json();
             this.setState({suggestions: Array.isArray(data) ? data : []});
@@ -65,7 +66,7 @@ export default class AuthForm extends React.Component {
         const body = { username, password };
       
         if (action === 'sign-up') {
-            const geoRes = await fetch(`https://wndr-serverside.onrender.com/api/geocoding?q=${encodeURIComponent(location)}`);
+            const geoRes = await fetch(`${API_BASE}/api/geocoding?q=${encodeURIComponent(location)}`);
           if (!geoRes.ok) {
             this.setState({ invalid: true });
             return;
@@ -86,7 +87,7 @@ export default class AuthForm extends React.Component {
             body.country   = country;
         }
       
-        const res = await fetch(`https://wndr-serverside.onrender.com/api/auth/${action}`, {
+        const res = await fetch(`${API_BASE}/api/auth/${action}`, {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json'

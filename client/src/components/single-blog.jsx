@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppContext } from '../lib';
+import {API_BASE} from "../lib/api";
 
 export default class SingleBlog extends React.Component {
     static contextType = AppContext;
@@ -14,7 +15,7 @@ export default class SingleBlog extends React.Component {
         const {token} = this.context;
         const {blogId} = this.props;
 
-        fetch(`https://wndr-serverside.onrender.com/api/blogs/${blogId}`, {
+        fetch(`${API_BASE}/api/blogs/${blogId}`, {
             headers: {
                 'x-access-token': token
             }

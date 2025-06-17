@@ -24,9 +24,14 @@ class DBconnection { //Singleton class
         if (!mongoose.connection.readyState) {
             try {
                 // Attempt to connect to MongoDB using Mongoose
-                const username = 'adminuser_610';
-                const password = 'XS0wdkuPjUaeaG7H';
-                const uri = `mongodb+srv://${username}:${password}@travelapp-db.kr1x6.mongodb.net/?retryWrites=true&w=majority&appName=travelapp-db`;
+                const {
+                    MONGO_USERNAME,
+                    MONGO_PASSWORD,
+                    MONGO_CLUSTER,
+                    MONGO_APPNAME
+                  } = process.env;
+
+                const uri = `mongodb+srv://${encodeURIComponent(MONGO_USERNAME)}:${encodeURIComponent(MONGO_PASSWORD)}@${MONGO_CLUSTER}/?retryWrites=true&w=majority&appName=${MONGO_APPNAME}`;
 
                 await mongoose.connect(uri);
                 //const db = mongoose.connection;

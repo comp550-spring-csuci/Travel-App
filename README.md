@@ -37,3 +37,21 @@ Try the application live at https://wndr.onrender.com/
 * Node.js
 * NPM
 * MongoDB
+
+### Getting Started
+1. Clone the repository.
+2. Install all dependencies with NPM.
+  ```shell
+    npm install
+  ```
+3. Make a copy of the provided server/.env.example file. Name your copy server/.env. Fill in your actual credentials and secrets.
+4. Start the server.
+```shell
+    cd server
+    npm start
+  ``` 
+5. Start the client.
+```shell
+    cd client
+    npm start
+  ``` 
